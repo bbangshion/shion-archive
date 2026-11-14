@@ -1726,5 +1726,23 @@ Object.assign(DICTIONARY, {
   "Objekt 데이터 형식이 올바르지 않습니다. 배열 또는 { objekts: [...] } 형식을 사용하세요.": {
     "en": "Invalid Objekt data format. Expected an array or an objekts list.",
     "ja": "Objektデータ形式が不正です。配列またはobjektsリストを使用してください。"
-  }
+  },
+  "박시온 사진과 날짜별 앨범": { "en": "Photos of ShiOn, organized by date and album", "ja": "日付とアルバムで探せるシオンの写真" },
+  "박시온 사진을 날짜와 앨범으로 모아봤어요": { "en": "ShiOn photos, organized by date and album", "ja": "シオンの写真を日付・アルバム別に整理しました" },
+  "사진 보기 방식": { "en": "Photo view", "ja": "写真の表示方法" },
+  "날짜별": { "en": "By date", "ja": "日付別" },
+  "앨범별": { "en": "By album", "ja": "アルバム別" },
+  "연도 선택": { "en": "Select year", "ja": "年を選択" },
+  "월 선택": { "en": "Select month", "ja": "月を選択" },
+  "전체 월": { "en": "All months", "ja": "すべての月" },
+    "사진 제목, 앨범, 키워드 검색": { "en": "Search photos, albums, keywords", "ja": "写真名・アルバム・キーワードで検索" },
+  "장": { "en": "photos", "ja": "枚" },
+  "날짜 미상": { "en": "Date not available", "ja": "撮影日不明" },
+  "필터 초기화": { "en": "Clear filters", "ja": "絞り込みをリセット" },
+  "사진을 불러오는 중": { "en": "Loading photos", "ja": "写真を読み込み中" },
+  "조건에 맞는 사진이 없습니다": { "en": "No photos match your filters", "ja": "条件に合う写真はありません" },
+  "사진 목록을 불러오지 못해 기본 사진을 표시합니다": { "en": "Photo list unavailable. Showing the initial photo.", "ja": "写真一覧を読み込めないため、初期の写真を表示しています" },
+  "사진은 출처가 확인된 자료를 기준으로 등록합니다": { "en": "Photos are added only with a verified source", "ja": "写真は出典を確認できたものを登録しています" },
+  "원본 게시물": { "en": "Original post", "ja": "元の投稿" },
+
 });
