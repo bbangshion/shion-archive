@@ -18,23 +18,23 @@ const WAV_REPO = 'bbangshion/wav-archive';
 const GITHUB_API = `https://api.github.com/repos/${WAV_REPO}`;
 const WAV_RAW = `https://raw.githubusercontent.com/${WAV_REPO}/main/`;
 const OFFICIAL_CHANNEL = 'tripleS official';
-const MAX_WAV_FILES = 26;
+const MAX_WAV_FILES = 90;
 const MAX_SOURCE_BYTES = 13 * 1024 * 1024;
-const MAX_OFFICIAL_PAGES = 100;
-const MAX_SEARCH_PAGES = 1;
+const MAX_OFFICIAL_PAGES = 160;
+const MAX_SEARCH_PAGES = 2;
 const TRUSTED_TV_CHANNELS = new Set([
   'KBS Kpop', 'KBS WORLD TV', 'KBS Kpop Classic', 'MBCkpop',
   'MBC every1', 'ALL THE K-POP', 'Mnet K-POP', 'M2',
   'SBSKPOP X INKIGAYO', 'SBS Entertainment', 'THE K-POP', '1theK (원더케이)',
 ]);
-const SEED_MIN = 5;
+const SEED_MIN = 25;
 const nowISO = new Date().toISOString();
 
 const isObj = (x) => x && typeof x === 'object' && !Array.isArray(x);
 const str = (x) => typeof x === 'string' ? x.trim() : '';
 const norm = (x) => str(x).normalize('NFKC').toLowerCase().replace(/[\s._-]+/g, '');
 const explicitlyShion = (x) => /시온|박시온|shi[\s._-]*on|shion|s20(?!\d)|빵숀/i.test(str(x));
-const unitInTitle = (x) => /(?:tripleS\s*)?\bNXT\b|hatchi|∞!|msnz[\s._-]*moon/i.test(str(x));
+const unitInTitle = (x) => /(?:tripleS\s*)?\bNXT\b|hatchi|∞!|msnz[\s._-]*moon|tripleS[\s._-]*Aura/i.test(str(x));
 const collectiveMV = (x) => /\bGirls Never Die\b|\bAre You Alive\b|깨어|\bBaby Flower\b|\bAndless\b/i.test(str(x));
 const tidy = (x, limit=200) => str(x).slice(0,limit);
 const cleanDate = (x) => /^\d{4}-\d\d-\d\d/.test(str(x)) && !Number.isNaN(Date.parse(str(x))) ? str(x).slice(0,10) : null;
@@ -73,6 +73,7 @@ function categoryOf(title, raw='') {
   return 'other';
 }
 function groupOf(title) {
+  if (/tripleS[\s._-]*Aura|아우라/i.test(title)) return 'Aura';
   if (/msnz[\s._-]*moon/i.test(title)) return 'Moon';
   if (/\bhatchi\b|∞!/i.test(title)) return '∞! (Hatchi)';
   if (/\bNXT\b/i.test(title)) return 'NXT';
@@ -239,7 +240,7 @@ function youtubeRowFromSnippet(snippet, id, channel, mode='official') {
   };
 }
 async function collectYoutube(target,key) {
-  const stats={channelPages:0,officialAdded:0,tvAdded:0};
+  const stats={channelPages:0,officialAdded:0,tvAdded:0,historicAdded:0};
   if (!key) { console.log('YOUTUBE_API_KEY 미설정: YouTube 전체 업로드 스캔 생략');return stats; }
   const c=await youtubeApi('channels',{part:'contentDetails,snippet',forHandle:'triplescosmos'},key);
   const channel = c.items?.[0];
@@ -261,8 +262,36 @@ async function collectYoutube(target,key) {
   }
   stats.officialAdded=addRecords(target,all,OFFICIAL_CHANNEL);
   console.log(`YouTube official channel: ${stats.channelPages} pages / ${stats.officialAdded} new videos`);
+  // Search historic channel uploads as well. These are channelId-constrained searches,
+  // not broad web searches; matching the title or S20-specific description is required.
+  let historicAdded=0;
+  const officialQueries=['박시온','ShiOn','시온 SIGNAL','시온 SIGNAL LIVE','ParkShiOn','NXT Just Do It','Hatchi','msnz moon','tripleS Aura'];
+  for (const q of officialQueries) {
+    let pageToken='';
+    for (let page=0; page<MAX_SEARCH_PAGES; page++) {
+      try {
+        const result=await youtubeApi('search',{
+          part:'snippet',q,type:'video',channelId:channel.id,
+          maxResults:50,pageToken,
+        },key);
+        const rows=(result.items??[]).flatMap(item=>{
+          const video=videoId(item.id?.videoId);
+          const snippet=item.snippet;
+          if (snippet?.channelId !== channel.id) return [];
+          const record=youtubeRowFromSnippet(snippet,video,OFFICIAL_CHANNEL);
+          return record?[record]:[];
+        });
+        historicAdded+=addRecords(target,rows,OFFICIAL_CHANNEL);
+        pageToken=result.nextPageToken??'';
+        if (!pageToken) break;
+      }catch(error){console.warn(`공식 채널 검색 ${q}: ${error.message}`);break;}
+    }
+  }
+  stats.officialAdded+=historicAdded;
+  stats.historicAdded=historicAdded;
+  console.log(`YouTube official historical search: ${historicAdded} additional S20-title/unit videos`);
   // Broad TV search is intentionally limited to explicit S20 titles and broadcaster channels.
-  for (const query of ['tripleS 박시온 직캠','tripleS ShiOn fancam','tripleS 박시온 무대']) {
+  for (const query of ['tripleS 박시온 직캠','tripleS ShiOn fancam','tripleS 박시온 무대','tripleS 시온 라이브','tripleS ShiOn focuscam']) {
     let pageToken='';
     for (let page=0;page<MAX_SEARCH_PAGES;page++) {
       try {
@@ -313,8 +342,8 @@ async function main() {
   }
   if (records.size<seed.items.length) throw Error('Video count below seed. Preserve previous snapshot.');
   const items=[...records.values()].sort((a,b)=>(b.publishedAt??'').localeCompare(a.publishedAt??'')||a.title.localeCompare(b.title,'ko'));
-  const result={version:2,generatedAt:nowISO,items,coverage:{
-    description:'공식 링크 중심, S20 명시 또는 확인된 참여 유닛/완전체 영상. 모든 출연 영상의 완전 수록을 보장하지 않습니다.',
+  const result={version:3,generatedAt:nowISO,items,coverage:{
+    description:'박시온 S20 명시 영상 + 참여 확인 유닛 및 완전체. WAV 태그와 공식 YouTube 메타데이터 기준으로 확장하며 모든 출연 영상을 보장하지 않습니다.',
     shionCount:items.length,
     categoryCounts:Object.fromEntries(['signal','music','performance','live','other'].map(cat=>[cat,items.filter(f=>f.category===cat).length])),
     wav,official,atom,
