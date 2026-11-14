@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Collection } from './components/Collection';
 import { TournamentArena } from './components/TournamentArena';
+import { ProfilePage } from './components/ProfilePage';
+import { PhotoArchive } from './components/PhotoArchive';
 import { ArrowIcon } from './components/Icons';
 import { ArchiveProvider, useArchive } from './state/ArchiveContext';
 import type { ArchiveScreen } from './state/ArchiveContext';
@@ -9,8 +11,10 @@ const PHOTO_URL = `${import.meta.env.BASE_URL}images/shion-home.jpg`;
 
 const MENU: readonly { key: ArchiveScreen; label: string; number: string }[] = [
   { key: 'home', label: '홈', number: '01' },
-  { key: 'collection', label: '오브젝트', number: '02' },
-  { key: 'worldcup', label: '월드컵', number: '03' },
+  { key: 'profile', label: '프로필', number: '02' },
+  { key: 'photos', label: '사진', number: '03' },
+  { key: 'collection', label: '오브젝트', number: '04' },
+  { key: 'worldcup', label: '월드컵', number: '05' },
 ];
 
 function SiteHeader() {
@@ -106,8 +110,8 @@ function Home() {
             <div className="shion-hero-rule"/>
             <p className="shion-hero-description">박시온의 사진과 기록을 모아둔 팬 아카이브</p>
             <div className="shion-hero-actions">
-              <button type="button" className="shion-hero-primary" onClick={() => setScreen('collection')}>오브젝트 보기 <ArrowIcon width={17} height={17}/></button>
-              <button type="button" className="shion-hero-secondary" onClick={() => setScreen('worldcup')}>월드컵 시작 <ArrowIcon width={17} height={17}/></button>
+              <button type="button" className="shion-hero-primary" onClick={() => setScreen('profile')}>프로필 보기 <ArrowIcon width={17} height={17}/></button>
+              <button type="button" className="shion-hero-secondary" onClick={() => setScreen('photos')}>사진 보기 <ArrowIcon width={17} height={17}/></button>
             </div>
           </div>
           <span className="shion-hero-side" aria-hidden="true">SHION ARCHIVE — S20</span>
@@ -122,15 +126,23 @@ function Home() {
               <p className="shion-section-eyebrow">ARCHIVE / S20</p>
               <h2 id="shion-explore-title">둘러보기</h2>
             </div>
-            <p>박시온의 오브젝트를 찾아보거나<br className="shion-desktop-break"/> 좋아하는 카드를 직접 골라보세요</p>
+            <p>박시온의 프로필과 사진, 오브젝트를 살펴보세요</p>
           </div>
           <div className="shion-feature-grid">
+            <button type="button" className="shion-feature-card" onClick={() => setScreen('profile')}>
+              <span className="shion-feature-top"><span>01 / PROFILE</span><ArrowIcon width={21} height={21}/></span>
+              <span className="shion-feature-bottom"><strong>프로필</strong><span>기본 정보와 활동 유닛</span></span>
+            </button>
+            <button type="button" className="shion-feature-card" onClick={() => setScreen('photos')}>
+              <span className="shion-feature-top"><span>02 / PHOTO</span><ArrowIcon width={21} height={21}/></span>
+              <span className="shion-feature-bottom"><strong>사진</strong><span>박시온 사진과 오브젝트 이미지</span></span>
+            </button>
             <button type="button" className="shion-feature-card" onClick={() => setScreen('collection')}>
-              <span className="shion-feature-top"><span>01 / COLLECTION</span><ArrowIcon width={21} height={21}/></span>
+              <span className="shion-feature-top"><span>03 / COLLECTION</span><ArrowIcon width={21} height={21}/></span>
               <span className="shion-feature-bottom"><strong>오브젝트 컬렉션</strong><span>시즌별 카드 검색과 즐겨찾기</span><small>{catalogState.status === 'loading' ? '불러오는 중' : `${count}개 카드`}</small></span>
             </button>
             <button type="button" className="shion-feature-card" onClick={() => setScreen('worldcup')}>
-              <span className="shion-feature-top"><span>02 / WORLD CUP</span><ArrowIcon width={21} height={21}/></span>
+              <span className="shion-feature-top"><span>04 / WORLD CUP</span><ArrowIcon width={21} height={21}/></span>
               <span className="shion-feature-bottom"><strong>오브젝트 월드컵</strong><span>두 장씩 비교하며 최애 카드 고르기</span><small>즐겨찾기 {favorites.size.toLocaleString('ko-KR')}개</small></span>
             </button>
           </div>
@@ -156,9 +168,9 @@ function ArchivePage() {
         <div className="shion-page-crumb">
           <button type="button" onClick={() => setScreen('home')}>홈</button>
           <span aria-hidden="true">/</span>
-          <span>{screen === 'collection' ? '오브젝트' : '월드컵'}</span>
+          <span>{screen === 'collection' ? '오브젝트' : screen === 'worldcup' ? '월드컵' : screen === 'profile' ? '프로필' : '사진'}</span>
         </div>
-        {state.status === 'loading' ? <LoadingView/> : state.status === 'error' ? (
+        {screen === 'profile' ? <ProfilePage/> : screen === 'photos' ? <PhotoArchive objekts={items} loading={state.status === 'loading'} error={state.status === 'error' ? state.error : undefined}/> : state.status === 'loading' ? <LoadingView/> : state.status === 'error' ? (
           <div role="alert" className="empty-box"><p className="text-lg font-medium text-paper">오브젝트를 불러오지 못했어요</p><p className="mt-3 max-w-xl break-words text-sm leading-7 text-ash">{state.error}</p><button type="button" className="btn-primary mt-6 gap-2" onClick={state.retry}>다시 시도 <ArrowIcon width={16} height={16}/></button></div>
         ) : items.length === 0 ? (
           <div className="empty-box"><p className="text-lg font-medium text-paper">표시할 카드가 없어요</p><p className="mt-3 max-w-xl text-sm leading-7 text-ash">연결된 데이터에서 박시온 카드를 찾지 못했습니다</p><button type="button" className="btn-ghost mt-6" onClick={state.retry}>다시 확인</button></div>
