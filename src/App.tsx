@@ -1,14 +1,21 @@
 import { I18nProvider, Trans, useI18n } from './i18n/I18nContext';
 import { AppearanceControls } from './i18n/AppearanceControls';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Collection } from './components/Collection';
-import { TournamentArena } from './components/TournamentArena';
-import { ProfilePage } from './components/ProfilePage';
-import { PhotoArchive } from './components/PhotoArchive';
+
+
+
+
 import { ArrowIcon } from './components/Icons';
 import { ArchiveProvider, useArchive } from './state/ArchiveContext';
 import type { ArchiveScreen } from './state/ArchiveContext';
+import { ArchiveErrorBoundary } from './components/ArchiveErrorBoundary';
+// 1.8: Do not include every archive screen in the initial HOME bundle.
+// Modules are loaded only when their menu is opened; the data and UX remain unchanged.
 const ShionFilm = lazy(() => import('./components/ShionFilm'));
+const Collection = lazy(() => import('./components/Collection').then((module) => ({ default: module.Collection })));
+const TournamentArena = lazy(() => import('./components/TournamentArena').then((module) => ({ default: module.TournamentArena })));
+const ProfilePage = lazy(() => import('./components/ProfilePage').then((module) => ({ default: module.ProfilePage })));
+const PhotoArchive = lazy(() => import('./components/PhotoArchive').then((module) => ({ default: module.PhotoArchive })));
 const PHOTO_URL = `${import.meta.env.BASE_URL}images/shion-home.jpg`;
 const MENU: readonly {
     key: ArchiveScreen;
@@ -169,7 +176,13 @@ function ArchiveApp() {
     return (<div className="min-h-dvh bg-canvas text-paper">
       <a className="shion-skip-link" href="#main-content"><Trans value="본문으로 건너뛰기"/></a>
       <SiteHeader />
-      {screen === 'home' ? <Home /> : <ArchivePage />}
+      {screen === 'home' ? <Home /> : (
+        <ArchiveErrorBoundary key={screen}>
+          <Suspense fallback={<main id="main-content" className="shion-subpage"><div className="shion-content-width"><LoadingView /></div></main>}>
+            <ArchivePage />
+          </Suspense>
+        </ArchiveErrorBoundary>
+      )}
       <footer className="shion-footer"><div className="shion-content-width shion-footer-inner"><span>SHION ARCHIVE</span><span><Trans value="tripleS S20 박시온 팬 아카이브"/></span><span>CREATED BY @bbangshion</span></div></footer>
     </div>);
 }
