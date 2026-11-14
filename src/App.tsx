@@ -121,7 +121,7 @@ function Home() {
             </button>
             <button type="button" className="shion-feature-card" onClick={() => setScreen('photos')}>
               <span className="shion-feature-top"><span>02 / PHOTO</span><ArrowIcon width={21} height={21}/></span>
-              <span className="shion-feature-bottom"><strong><Trans value="사진"/></strong><span><Trans value="박시온 사진과 오브젝트 이미지"/></span></span>
+              <span className="shion-feature-bottom"><strong><Trans value="사진"/></strong><span><Trans value="박시온 사진과 날짜별 앨범"/></span></span>
             </button>
             <button type="button" className="shion-feature-card" onClick={() => setScreen('film')}>
               <span className="shion-feature-top"><span>03 / FILM</span><ArrowIcon width={21} height={21}/></span>
@@ -157,7 +157,7 @@ function ArchivePage() {
           <span aria-hidden="true">/</span>
           <span>{t(screen === 'collection' ? '오브젝트' : screen === 'worldcup' ? '월드컵' : screen === 'profile' ? '프로필' : screen === 'film' ? '영상' : '사진')}</span>
         </div>
-        {screen === 'profile' ? <ProfilePage /> : screen === 'film' ? <Suspense fallback={<LoadingView />}><ShionFilm /></Suspense> : screen === 'photos' ? <PhotoArchive objekts={items} loading={state.status === 'loading'} error={state.status === 'error' ? state.error : undefined}/> : state.status === 'loading' ? <LoadingView /> : state.status === 'error' ? (<div role="alert" className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="오브젝트를 불러오지 못했어요"/></p><p className="mt-3 max-w-xl break-words text-sm leading-7 text-ash">{t(state.error)}</p><button type="button" className="btn-primary mt-6 gap-2" onClick={state.retry}><Trans value="다시 시도 "/><ArrowIcon width={16} height={16}/></button></div>) : items.length === 0 ? (<div className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="표시할 카드가 없어요"/></p><p className="mt-3 max-w-xl text-sm leading-7 text-ash"><Trans value="연결된 데이터에서 박시온 카드를 찾지 못했습니다"/></p><button type="button" className="btn-ghost mt-6" onClick={state.retry}><Trans value="다시 확인"/></button></div>) : (<>
+        {screen === 'profile' ? <ProfilePage /> : screen === 'film' ? <Suspense fallback={<LoadingView />}><ShionFilm /></Suspense> : screen === 'photos' ? <PhotoArchive/> : state.status === 'loading' ? <LoadingView /> : state.status === 'error' ? (<div role="alert" className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="오브젝트를 불러오지 못했어요"/></p><p className="mt-3 max-w-xl break-words text-sm leading-7 text-ash">{t(state.error)}</p><button type="button" className="btn-primary mt-6 gap-2" onClick={state.retry}><Trans value="다시 시도 "/><ArrowIcon width={16} height={16}/></button></div>) : items.length === 0 ? (<div className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="표시할 카드가 없어요"/></p><p className="mt-3 max-w-xl text-sm leading-7 text-ash"><Trans value="연결된 데이터에서 박시온 카드를 찾지 못했습니다"/></p><button type="button" className="btn-ghost mt-6" onClick={state.retry}><Trans value="다시 확인"/></button></div>) : (<>
             {catalog?.isDemo && <div role="note" className="mb-6 rounded-lg border border-white/10 bg-surface px-4 py-3 text-xs text-ash"><Trans value="미리보기 데이터입니다 · 실제 카드 데이터가 연결되면 자동으로 바뀝니다"/></div>}
             {screen === 'collection' ? <Collection items={items} favorites={favorites} onToggleFavorite={toggleFavorite}/> : <TournamentArena items={items} isDemo={!!catalog?.isDemo} favorites={favorites} onToggleFavorite={toggleFavorite}/>}
           </>)}
