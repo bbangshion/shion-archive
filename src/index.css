@@ -160,3 +160,79 @@ button:disabled { cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) {
   .shion-feature-card:hover { transform: none; }
 }
+
+/* v1.4 / Profile + Photo Archive */
+.shion-page-heading { margin: 0 0 40px; }
+.shion-page-kicker { display: block; margin-bottom: 14px; color: #cdb8c6; font-size: 10px; font-weight: 650; letter-spacing: .18em; }
+.shion-page-heading h1 { margin: 0; font-size: clamp(39px, 6.5vw, 72px); font-weight: 580; line-height: 1.1; letter-spacing: -.065em; }
+.shion-page-heading p { margin-top: 16px; color: #b9b4bb; font-size: 13px; line-height: 1.8; }
+.shion-profile-intro { display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); gap: clamp(28px, 6vw, 90px); align-items: center; }
+.shion-profile-portrait { margin: 0; }
+.shion-profile-portrait img { display: block; width: 100%; max-height: 670px; aspect-ratio: 3 / 4; object-fit: cover; object-position: center 39%; border-radius: 2px; background: #222026; }
+.shion-profile-portrait figcaption { margin-top: 12px; font-size: 10px; color: #a4a0a7; letter-spacing: .13em; }
+.shion-profile-info h2 { margin: 0; font-size: clamp(35px, 5vw, 62px); font-weight: 540; line-height: 1.05; letter-spacing: -.065em; }
+.shion-profile-sub { margin: 13px 0 35px; color: #bab4ba; font-size: 13px; line-height: 1.9; }
+.shion-fact-grid { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; border-top: 1px solid rgba(255,255,255,.12); }
+.shion-fact-grid > div { min-width: 0; border-bottom: 1px solid rgba(255,255,255,.12); padding: 18px 0; }
+.shion-fact-grid dt { margin-bottom: 10px; color: #a49da5; font-size: 11px; }
+.shion-fact-grid dd { margin: 0; color: #f3eff2; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.shion-fact-grid dd small { display: block; color: #9a959d; font-size: 10px; font-weight: 400; margin-top: 5px; line-height: 1.5; }
+.shion-official-link { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 30px; padding: 12px 0; border-bottom: 1px solid #b7adb4; text-decoration: none; font-size: 12px; color: #ede3e9; }
+.shion-official-link:hover { color: #fff; }
+.shion-profile-units { margin-top: 100px; }
+.shion-section-heading-inline { margin-bottom: 26px; }
+.shion-section-heading-inline h2 { margin: 0; font-size: 28px; font-weight: 570; letter-spacing: -.035em; }
+.shion-unit-list { border-top: 1px solid rgba(255,255,255,.17); }
+.shion-unit-row { display: grid; grid-template-columns: 100px minmax(0,1fr); gap: 28px; align-items: center; padding: 26px 4px; border-bottom: 1px solid rgba(255,255,255,.12); }
+.shion-unit-row > span { color: #a59fa8; font-size: 12px; }
+.shion-unit-row h3 { margin: 0; color: #f3eef1; font-size: 21px; font-weight: 550; }
+.shion-unit-row p { margin: 9px 0 0; color: #ada6ae; font-size: 12px; }
+.shion-source-note { margin-top: 24px; color: #99939c; font-size: 11px; line-height: 1.9; }
+.shion-photo-controls { display: flex; flex-direction: column; gap: 18px; padding: 22px; border: 1px solid rgba(255,255,255,.1); border-radius: 5px; background: #17161a; }
+.shion-photo-tabs { display: flex; flex-wrap: wrap; gap: 7px; }
+.shion-photo-tabs button { min-height: 40px; padding: 0 16px; border: 1px solid rgba(255,255,255,.14); border-radius: 2px; background: transparent; color: #c4bdc4; font-size: 12px; transition: background-color 250ms cubic-bezier(.25,1,.5,1); }
+.shion-photo-tabs button.is-active { background: #e3d7df; color: #1a161b; }
+.shion-photo-filters { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; }
+.shion-photo-filters label { display: block; min-width: 0; }
+.shion-photo-filters input, .shion-photo-filters select { width: 100%; height: 45px; padding: 0 12px; color: #f5f2f4; background: #222026; border: 1px solid rgba(255,255,255,.12); border-radius: 2px; font-size: 12px; outline: none; }
+.shion-photo-filters input:focus-visible, .shion-photo-filters select:focus-visible { border-color: #ddc8d6; }
+.shion-photo-result { display: flex; justify-content: space-between; gap: 10px; margin: 26px 0 18px; font-size: 12px; color: #aaa4aa; }
+.shion-photo-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 24px 14px; }
+.shion-gallery-tile { display: block; min-width: 0; padding: 0; color: #f1edf1; border: none; background: transparent; text-align: left; }
+.shion-gallery-image { display: grid; place-items: center; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 3px; background: #201e23; }
+.shion-gallery-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 250ms cubic-bezier(.25,1,.5,1); }
+.shion-gallery-image.is-objekt img { object-fit: contain; }
+.shion-gallery-tile:hover .shion-gallery-image img { transform: scale(1.025); }
+.shion-gallery-image-error { padding: 12px; text-align: center; color: #aaa0aa; font-size: 11px; }
+.shion-gallery-meta { display: flex; justify-content: space-between; gap: 6px; align-items: start; margin-top: 11px; font-size: 12px; }
+.shion-gallery-meta strong { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 550; }
+.shion-gallery-meta span { flex-shrink: 0; color: #a29ca4; max-width: 45%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; }
+.shion-photo-more { display: block; min-width: 145px; min-height: 45px; margin: 38px auto 0; padding: 0 20px; border: 1px solid rgba(255,255,255,.24); border-radius: 2px; background: #19181c; color: #f2ecf0; font-size: 12px; }
+.shion-photo-empty { padding: 65px 15px; border: 1px dashed rgba(255,255,255,.16); border-radius: 4px; text-align: center; color: #b9b1ba; font-size: 13px; }
+.shion-lightbox { position: fixed; inset: 0; z-index: 110; display: flex; flex-direction: column; justify-content: center; background: rgba(8,8,11,.98); padding: max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left)); }
+.shion-gallery-open { overflow: hidden; }
+.shion-lightbox-top, .shion-lightbox-caption { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 auto; width: min(100%,1100px); }
+.shion-lightbox-top { color: #b9b4ba; font-size: 12px; }
+.shion-lightbox-top button { min-height: 45px; padding: 0 8px; color: #fff; }
+.shion-lightbox-stage { display: flex; flex: 1; align-items: center; justify-content: center; gap: 8px; min-height: 0; }
+.shion-lightbox-stage img { width: auto; max-width: calc(100% - 70px); max-height: min(77dvh,900px); object-fit: contain; }
+.shion-lightbox-step { display: grid; place-items: center; flex: 0 0 34px; min-height: 48px; color: #f1eaf0; font-size: 36px; }
+.shion-lightbox-caption { flex-wrap: wrap; padding-top: 15px; font-size: 12px; }
+.shion-lightbox-caption span { color: #b7b0b8; }
+.shion-lightbox-failed { color: #b7b0b8; font-size: 12px; }
+@media (max-width: 760px) {
+  .shion-page-heading { margin-bottom: 27px; }
+  .shion-profile-intro { grid-template-columns: 1fr; gap: 28px; }
+  .shion-profile-portrait img { max-height: 580px; object-position: 50% 39%; }
+  .shion-profile-info h2 { font-size: 42px; }
+  .shion-fact-grid { gap: 0 12px; }
+  .shion-profile-units { margin-top: 65px; }
+  .shion-unit-row { grid-template-columns: 64px minmax(0,1fr); gap: 12px; }
+  .shion-photo-controls { padding: 14px; }
+  .shion-photo-filters { grid-template-columns: 1fr; }
+  .shion-photo-tabs button { padding-inline: 12px; }
+  .shion-photo-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 21px 11px; }
+  .shion-lightbox-stage img { max-height: 71dvh; }
+}
+@media (prefers-reduced-motion: reduce) { .shion-gallery-image.is-objekt img { object-fit: contain; }
+.shion-gallery-tile:hover .shion-gallery-image img { transform: none; } }
