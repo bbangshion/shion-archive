@@ -65,8 +65,9 @@ function PlayerDialog({ video, onClose }: { video: Film; onClose: () => void }) 
         const root = document.getElementById('shion-film-dialog');
         const controls = root?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
         if (!controls?.length) return;
-        const first = controls[0];
-        const last = controls[controls.length - 1];
+        const first = controls.item(0);
+        const last = controls.item(controls.length - 1);
+        if (!first || !last) return;
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
       }
