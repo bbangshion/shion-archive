@@ -1,180 +1,264 @@
-import { Trans, useI18n } from '../i18n/I18nContext';
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
-import type { Objekt } from '../types/objekt';
-import { objektLabel } from './ObjektArtwork';
+import { useI18n } from '../i18n/I18nContext';
+
+type LocalizedText = { ko: string; en?: string; ja?: string };
 type Photo = {
-    id: string;
-    imageUrl: string;
-    title: string;
-    category: 'photo' | 'objekt';
-    season: string;
-    description: string;
+  id: string;
+  image: string;
+  title: LocalizedText;
+  album: LocalizedText;
+  date: string | null;
+  credit: LocalizedText | null;
+  source: string | null;
+  tags: string[];
 };
 type PhotoRecord = Record<string, unknown>;
-type Group = 'all' | 'photo' | 'objekt';
-const HERO = `${import.meta.env.BASE_URL}images/shion-home.jpg`;
-const FIRST_PHOTO: Photo = {
-    id: 'shion-home', imageUrl: HERO, title: '공항에서', category: 'photo',
-    season: '사진', description: '사용자가 제공한 사진',
+type SortOrder = 'newest' | 'oldest';
+type ViewMode = 'date' | 'album';
+const BASE = import.meta.env.BASE_URL;
+const PAGE_SIZE = 36;
+const FALLBACK: Photo = {
+  id: 'airport-photo', image: `${BASE}images/shion-home.jpg`,
+  title: { ko: '공항에서', en: 'At the airport', ja: '空港にて' },
+  album: { ko: '일상', en: 'Daily life', ja: '日常' },
+  date: null,
+  credit: { ko: '사용자 제공 사진', en: 'User-provided photo', ja: 'ユーザー提供写真' },
+  source: null, tags: [],
 };
-const BATCH = 36;
-function isObject(value: unknown): value is PhotoRecord {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
+function isRecord(value: unknown): value is PhotoRecord {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
-function safeImageUrl(value: unknown): string | null {
-    if (typeof value !== 'string' || !value.trim())
-        return null;
-    const clean = value.trim();
-    if (/^https:\/\//i.test(clean))
-        return clean;
-    if (/^http:\/\//i.test(clean))
-        return null;
-    if (/^(?!\/\/)(?!\.\.\/)[a-zA-Z0-9_./%\-]+\.(?:jpg|jpeg|png|webp|avif)$/i.test(clean)) {
-        return `${import.meta.env.BASE_URL}${clean.replace(/^\.?\//, '')}`;
-    }
-    return null;
+function localized(value: unknown, fallback: string): LocalizedText {
+  if (typeof value === 'string' && value.trim()) return { ko: value.trim() };
+  if (!isRecord(value)) return { ko: fallback };
+  const ko = typeof value.ko === 'string' && value.ko.trim() ? value.ko.trim() : fallback;
+  return {
+    ko,
+    ...(typeof value.en === 'string' && value.en.trim() ? { en: value.en.trim() } : {}),
+    ...(typeof value.ja === 'string' && value.ja.trim() ? { ja: value.ja.trim() } : {}),
+  };
 }
-function parsePhotos(raw: unknown): Photo[] {
-    if (!Array.isArray(raw))
-        return [FIRST_PHOTO];
-    const photos: Photo[] = [];
-    for (const candidate of raw) {
-        if (!isObject(candidate))
-            continue;
-        const imageUrl = safeImageUrl(candidate.image);
-        if (!imageUrl)
-            continue;
-        const id = typeof candidate.id === 'string' ? candidate.id.trim() : '';
-        if (!id || photos.some((photo) => photo.id === `user-${id}`))
-            continue;
-        photos.push({
-            id: `user-${id}`,
-            imageUrl,
-            category: 'photo',
-            title: typeof candidate.title === 'string' && candidate.title.trim() ? candidate.title.trim() : '박시온',
-            season: typeof candidate.album === 'string' && candidate.album.trim() ? candidate.album.trim() : '사진',
-            description: typeof candidate.credit === 'string' ? candidate.credit.trim() : '',
-        });
-    }
-    return photos.length ? photos : [FIRST_PHOTO];
+function imageURL(input: unknown): string | null {
+  if (typeof input !== 'string' || !input.trim()) return null;
+  const value = input.trim();
+  if (/^https:\/\//i.test(value)) {
+    try { return new URL(value).protocol === 'https:' ? value : null; } catch { return null; }
+  }
+  if (!/^(?!\/)(?!\.)(?!.*\/\.?\.\/)[a-z\d_./%\-]+\.(?:jpe?g|png|webp|avif)$/i.test(value)) return null;
+  return `${BASE}${value}`;
 }
-function GalleryTile({ photo, onOpen }: {
-    photo: Photo;
-    onOpen: () => void;
+function sourceURL(input: unknown): string | null {
+  if (typeof input !== 'string' || !/^https:\/\//i.test(input.trim())) return null;
+  try { return new URL(input.trim()).protocol === 'https:' ? input.trim() : null; } catch { return null; }
+}
+function validDate(value: unknown): string | null {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const d = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value ? value : null;
+}
+/** Photo-only import: data belonging to Objekt (or any other category) is always rejected. */
+function readPhotos(payload: unknown): Photo[] {
+  const items = Array.isArray(payload) ? payload : isRecord(payload) && Array.isArray(payload.photos) ? payload.photos : [];
+  const ids = new Set<string>();
+  const results: Photo[] = [];
+  for (const raw of items) {
+    if (!isRecord(raw)) continue;
+    if (typeof raw.category === 'string' && raw.category.toLowerCase() !== 'photo') continue;
+    if (typeof raw.type === 'string' && raw.type.toLowerCase() !== 'photo') continue;
+    const id = typeof raw.id === 'string' ? raw.id.trim() : '';
+    const image = imageURL(raw.image);
+    if (!id || !image || ids.has(id)) continue;
+    if (/(^|\/)objekt(?:-collection)?\//i.test(image)) continue;
+    ids.add(id);
+    results.push({
+      id, image,
+      title: localized(raw.title, '박시온'),
+      album: localized(raw.album, '사진'),
+      date: validDate(raw.date),
+      credit: raw.credit ? localized(raw.credit, '') : null,
+      source: sourceURL(raw.sourceUrl ?? raw.source),
+      tags: Array.isArray(raw.tags) ? raw.tags.filter((tag): tag is string => typeof tag === 'string').slice(0, 20) : [],
+    });
+  }
+  return results;
+}
+function dateKey(photo: Photo): string { return photo.date?.slice(0, 7) ?? 'unknown'; }
+function comparePhotos(a: Photo, b: Photo, order: SortOrder): number {
+  if (a.date && !b.date) return -1;
+  if (b.date && !a.date) return 1;
+  const diff = (a.date ?? '').localeCompare(b.date ?? '');
+  return (order === 'newest' ? -diff : diff) || a.id.localeCompare(b.id);
+}
+function PhotoTile({ photo, title, album, onClick }: {
+  photo: Photo;
+  title: string;
+  album: string;
+  onClick: () => void;
 }) {
-    const { t } = useI18n();
-    const [broken, setBroken] = useState(false);
-    useEffect(() => setBroken(false), [photo.imageUrl]);
-    return (<button className="shion-gallery-tile" type="button" onClick={onOpen} aria-label={`${t(photo.title)} ${t("사진 확대")}`}>
-      <div className={`shion-gallery-image ${photo.category === 'objekt' ? 'is-objekt' : ''}`}>
-        {broken ? (<span className="shion-gallery-image-error"><Trans value="이미지를 표시할 수 없습니다"/></span>) : (<img src={photo.imageUrl} alt={t(photo.title)} loading="lazy" decoding="async" onError={() => setBroken(true)}/>)}
-      </div>
-      <div className="shion-gallery-meta"><strong>{t(photo.title)}</strong><span>{t(photo.season)}</span></div>
-    </button>);
+  const { t } = useI18n();
+  const [broken, setBroken] = useState(false);
+  useEffect(() => setBroken(false), [photo.image]);
+  return <button type="button" className="shion-gallery-tile" onClick={onClick} aria-label={`${title} — ${t('사진 확대')}`}>
+    <span className="shion-gallery-image">
+      {broken ? <span className="shion-gallery-image-error">{t('이미지를 표시할 수 없습니다')}</span>
+        : <img src={photo.image} alt={title} loading="lazy" decoding="async" onError={() => setBroken(true)}/>}
+    </span>
+    <span className="shion-gallery-meta"><strong>{title}</strong><span>{album}</span></span>
+  </button>;
 }
-export function PhotoArchive({ objekts, loading, error }: {
-    objekts: Objekt[];
-    loading: boolean;
-    error?: string;
-}) {
-    const { t, formatNumber } = useI18n();
-    const [photos, setPhotos] = useState<Photo[]>([FIRST_PHOTO]);
-    const [group, setGroup] = useState<Group>('all');
-    const [album, setAlbum] = useState('all');
-    const [query, setQuery] = useState('');
-    const [visibleCount, setVisibleCount] = useState(BATCH);
-    const [selectedId, setSelectedId] = useState<string | null>(null);
-    const [failed, setFailed] = useState(false);
-    const deferredQuery = useDeferredValue(query.trim().toLocaleLowerCase('ko-KR'));
-    useEffect(() => {
-        const controller = new AbortController();
-        fetch(`${import.meta.env.BASE_URL}data/photos.json`, { signal: controller.signal })
-            .then((res) => { if (!res.ok)
-            throw new Error('No photo archive'); return res.json(); })
-            .then((data: unknown) => { if (!controller.signal.aborted)
-            setPhotos(parsePhotos(data)); })
-            .catch(() => { if (!controller.signal.aborted)
-            setPhotos([FIRST_PHOTO]); });
-        return () => controller.abort();
-    }, []);
-    const gallery = useMemo(() => {
-        const artwork: Photo[] = objekts.filter((objekt) => !!objekt.imageUrl && !objekt.isDemo).map((objekt) => ({
-            id: `objekt-${objekt.id}`, imageUrl: objekt.imageUrl!, title: `${objekt.season} ${objektLabel(objekt)}`,
-            category: 'objekt', season: objekt.season, description: `${objekt.season} · ${objekt.className}`,
-        }));
-        return [...photos, ...artwork];
-    }, [photos, objekts]);
-    const albums = useMemo(() => Array.from(new Set(gallery.filter((photo) => group === 'all' || photo.category === group).map((photo) => photo.season))).sort((a, b) => a.localeCompare(b, 'ko', { numeric: true })), [gallery, group]);
-    const filtered = useMemo(() => gallery.filter((photo) => (group === 'all' || group === photo.category) &&
-        (album === 'all' || photo.season === album) &&
-        (!deferredQuery || `${photo.title} ${photo.season} ${photo.description}`.toLocaleLowerCase('ko-KR').includes(deferredQuery))), [gallery, group, album, deferredQuery]);
-    const visible = filtered.slice(0, visibleCount);
-    const currentIndex = selectedId ? filtered.findIndex((photo) => photo.id === selectedId) : -1;
-    const selected = currentIndex >= 0 ? filtered[currentIndex] : null;
-    const close = () => setSelectedId(null);
-    const navigate = (direction: -1 | 1) => {
-        if (!filtered.length || currentIndex < 0)
-            return;
-        const nextIndex = (currentIndex + direction + filtered.length) % filtered.length;
-        setSelectedId(filtered[nextIndex]?.id ?? null);
-        setFailed(false);
+// Accept legacy props during staged GitHub uploads; photo data never uses Objekt.
+export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boolean; error?: string }) {
+  const { language, t, formatNumber } = useI18n();
+  const [photos, setPhotos] = useState<Photo[]>([FALLBACK]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [year, setYear] = useState('all');
+  const [month, setMonth] = useState('all');
+  const [album, setAlbum] = useState('all');
+  const [sort, setSort] = useState<SortOrder>('newest');
+  const [mode, setMode] = useState<ViewMode>('date');
+  const [query, setQuery] = useState('');
+  const [limit, setLimit] = useState(PAGE_SIZE);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [brokenDetail, setBrokenDetail] = useState(false);
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const swipeStart = useRef<number | null>(null);
+  const deferred = useDeferredValue(query.trim().toLocaleLowerCase());
+  const text = (label: LocalizedText): string => label[language] || t(label.ko);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(`${BASE}data/photos.json`, { signal: controller.signal, cache: 'no-cache' })
+      .then((response) => { if (!response.ok) throw new Error(`HTTP ${response.status}`); return response.json(); })
+      .then((payload: unknown) => { if (!controller.signal.aborted) { setPhotos(readPhotos(payload)); setLoadError(false); } })
+      .catch(() => { if (!controller.signal.aborted) { setPhotos([FALLBACK]); setLoadError(true); } })
+      .finally(() => { if (!controller.signal.aborted) setIsLoading(false); });
+    return () => controller.abort();
+  }, []);
+
+  const years = useMemo(() => [...new Set(photos.flatMap((photo) => photo.date ? [photo.date.slice(0, 4)] : []))].sort().reverse(), [photos]);
+  const months = useMemo(() => [...new Set(photos.flatMap((photo) => photo.date && (year === 'all' || photo.date.startsWith(year)) ? [photo.date.slice(5, 7)] : []))].sort(), [photos, year]);
+  const albums = useMemo(() => [...new Set(photos.map((photo) => photo.album.ko))].sort((a, b) => a.localeCompare(b, 'ko')), [photos]);
+  const albumNames = useMemo(() => new Map(photos.map((photo) => [photo.album.ko, text(photo.album)])), [photos, language]);
+  const filtered = useMemo(() => photos.filter((photo) =>
+    (year === 'all' || photo.date?.startsWith(year)) &&
+    (month === 'all' || photo.date?.slice(5, 7) === month) &&
+    (album === 'all' || photo.album.ko === album) &&
+    (!deferred || [photo.title.ko, photo.title.en, photo.title.ja, photo.album.ko, photo.album.en,
+      photo.album.ja, photo.date, photo.credit?.ko, ...photo.tags]
+      .filter(Boolean).join(' ').toLocaleLowerCase().includes(deferred))
+  ).sort((a, b) => comparePhotos(a, b, sort)), [photos, year, month, album, deferred, sort]);
+  const visible = filtered.slice(0, limit);
+  const groups = useMemo(() => {
+    const collected = new Map<string, Photo[]>();
+    for (const photo of visible) {
+      const key = mode === 'album' ? photo.album.ko : dateKey(photo);
+      const list = collected.get(key) ?? [];
+      list.push(photo);
+      collected.set(key, list);
+    }
+    return [...collected.entries()];
+  }, [visible, mode]);
+  const currentIndex = selectedId === null ? -1 : filtered.findIndex((photo) => photo.id === selectedId);
+  const selected = currentIndex < 0 ? null : filtered[currentIndex] ?? null;
+  const close = () => setSelectedId(null);
+  const step = (direction: -1 | 1) => {
+    if (currentIndex < 0 || filtered.length === 0) return;
+    setSelectedId(filtered[(currentIndex + direction + filtered.length) % filtered.length]?.id ?? null);
+  };
+  useEffect(() => { setLimit(PAGE_SIZE); }, [year, month, album, sort, deferred, mode]);
+  useEffect(() => { setBrokenDetail(false); }, [selectedId]);
+  useEffect(() => {
+    if (!selected) return;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeButton.current?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') close();
+      if (event.key === 'ArrowLeft') step(-1);
+      if (event.key === 'ArrowRight') step(1);
+      if (event.key === 'Tab') {
+        const controls = document.querySelectorAll<HTMLButtonElement>('.shion-lightbox button, .shion-lightbox a[href]');
+        const first = controls.item(0);
+        const last = controls.item(controls.length - 1);
+        if (!first || !last) return;
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
     };
-    useEffect(() => { setVisibleCount(BATCH); }, [group, album, deferredQuery]);
-    useEffect(() => {
-        if (!selected)
-            return;
-        const onKey = (event: KeyboardEvent) => {
-            if (event.key === 'Escape')
-                close();
-            if (event.key === 'ArrowLeft')
-                navigate(-1);
-            if (event.key === 'ArrowRight')
-                navigate(1);
-        };
-        document.addEventListener('keydown', onKey);
-        const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
-        document.body.classList.add('shion-gallery-open');
-        document.getElementById('shion-photo-close')?.focus();
-        return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = previousOverflow; document.body.classList.remove('shion-gallery-open'); previousFocus?.focus(); };
-        // Keep keyboard navigation synchronized with currently selected image.
-    }, [selectedId, filtered]);
-    return (<section className="shion-photos animate-appear" aria-labelledby="photos-heading">
-      <header className="shion-page-heading">
-        <span className="shion-page-kicker">PHOTO ARCHIVE</span>
-        <h1 id="photos-heading"><Trans value="사진"/></h1>
-        <p><Trans value="박시온의 사진과 오브젝트 이미지"/></p>
-      </header>
-      <div className="shion-photo-controls">
-        <div className="shion-photo-tabs" role="group" aria-label={t("사진 종류")}>
-          {([
-            ['all', '전체'], ['photo', '사진'], ['objekt', '오브젝트 이미지'],
-        ] as const).map(([key, label]) => (<button type="button" key={key} aria-pressed={group === key} className={group === key ? 'is-active' : ''} onClick={() => { setGroup(key); setAlbum('all'); }}>{t(label)}</button>))}
-        </div>
-        <div className="shion-photo-filters">
-          <label><span className="sr-only"><Trans value="사진 검색"/></span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("제목, 시즌 검색")} type="search" maxLength={100}/></label>
-          <label><span className="sr-only"><Trans value="앨범 선택"/></span><select value={album} onChange={(event) => setAlbum(event.target.value)}><option value="all">{t("모든 앨범")}</option>{albums.map((name) => <option key={name} value={name}>{t(name)}</option>)}</select></label>
-        </div>
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow; previous?.focus(); };
+  }, [selectedId, filtered]);
+  const reset = () => { setYear('all'); setMonth('all'); setAlbum('all'); setQuery(''); setSort('newest'); };
+  const photoDate = (date: string | null) => date ?? t('날짜 미상');
+  const monthLabel = (monthValue: string) => new Intl.DateTimeFormat(language === 'en' ? 'en-US' : language === 'ja' ? 'ja-JP' : 'ko-KR', { month: 'long' }).format(new Date(2020, Number(monthValue) - 1, 1));
+  const groupLabel = (key: string) => mode === 'album'
+    ? (albumNames.get(key) ?? key)
+    : (key === 'unknown' ? t('날짜 미상') : `${key.replace('-', '.')}`);
+
+  return <section className="shion-photos shion-photo-v2 animate-appear" aria-labelledby="photos-heading">
+    <header className="shion-page-heading">
+      <span className="shion-page-kicker">PHOTO ARCHIVE</span>
+      <h1 id="photos-heading">{t('사진')}</h1>
+      <p>{t('박시온 사진을 날짜와 앨범으로 모아봤어요')}</p>
+    </header>
+    <div className="shion-photo-controls">
+      <div className="shion-photo-view-tabs" role="group" aria-label={t('사진 보기 방식')}>
+        <button type="button" className={mode === 'date' ? 'is-active' : ''} aria-pressed={mode === 'date'} onClick={() => setMode('date')}>{t('날짜별')}</button>
+        <button type="button" className={mode === 'album' ? 'is-active' : ''} aria-pressed={mode === 'album'} onClick={() => setMode('album')}>{t('앨범별')}</button>
       </div>
-      <div className="shion-photo-result"><span aria-live="polite">{formatNumber(filtered.length)}<Trans value="개 이미지"/></span><span>{formatNumber(visible.length)}<Trans value="개 표시"/></span></div>
-      {filtered.length ? (<>
-          <div className="shion-photo-grid">{visible.map((photo) => <GalleryTile key={photo.id} photo={photo} onOpen={() => { setSelectedId(photo.id); setFailed(false); }}/>)}</div>
-          {visibleCount < filtered.length && <button type="button" className="shion-photo-more" onClick={() => setVisibleCount((n) => n + BATCH)}><Trans value="더 보기"/></button>}
-        </>) : (<div className="shion-photo-empty"><Trans value="조건에 맞는 이미지가 없습니다"/></div>)}
-      <p className="shion-source-note"><Trans value="오브젝트 이미지는 WAV ARCHIVE 데이터에서 불러옵니다. 사진은 별도의 자료로 관리합니다."/></p>
-      {loading && <p className="shion-source-note" role="status"><Trans value="오브젝트 이미지를 불러오는 중입니다"/></p>}
-      {error && <p className="shion-source-note" role="status"><Trans value="오브젝트 이미지를 연결하지 못했습니다: "/>{t(error)}</p>}
-      {selected && createPortal(<div className="shion-lightbox" role="dialog" aria-modal="true" aria-label={`${t(selected.title)} ${t("사진 확대")}`} onMouseDown={(event) => { if (event.target === event.currentTarget)
-            close(); }}>
-          <div className="shion-lightbox-top"><span>{currentIndex + 1} / {filtered.length}</span><button type="button" onClick={close} autoFocus aria-label={t("닫기")} id="shion-photo-close"><Trans value="닫기 ✕"/></button></div>
-          <div className="shion-lightbox-stage">
-            <button className="shion-lightbox-step" type="button" aria-label={t("이전 사진")} onClick={() => navigate(-1)}>‹</button>
-            {failed ? <div className="shion-lightbox-failed"><Trans value="이미지를 표시할 수 없습니다"/></div> : <img key={selected.id} src={selected.imageUrl} alt={t(selected.title)} onError={() => setFailed(true)}/>}
-            <button className="shion-lightbox-step" type="button" aria-label={t("다음 사진")} onClick={() => navigate(1)}>›</button>
-          </div>
-          <div className="shion-lightbox-caption"><strong>{t(selected.title)}</strong><span>{t(selected.description)}</span></div>
-        </div>, document.body)}
-    </section>);
+      <div className="shion-photo-filters">
+        <label className="shion-photo-search"><span className="sr-only">{t('사진 검색')}</span>
+          <input type="search" value={query} maxLength={100} placeholder={t('사진 제목, 앨범, 키워드 검색')} onChange={(e) => setQuery(e.target.value)}/>
+        </label>
+        <label><span className="sr-only">{t('연도 선택')}</span><select value={year} onChange={(e) => { setYear(e.target.value); setMonth('all'); }}>
+          <option value="all">{t('전체 연도')}</option>{years.map((item) => <option value={item} key={item}>{item}</option>)}
+        </select></label>
+        <label><span className="sr-only">{t('월 선택')}</span><select value={month} onChange={(e) => setMonth(e.target.value)}>
+          <option value="all">{t('전체 월')}</option>{months.map((item) => <option value={item} key={item}>{monthLabel(item)}</option>)}
+        </select></label>
+        <label><span className="sr-only">{t('앨범 선택')}</span><select value={album} onChange={(e) => setAlbum(e.target.value)}>
+          <option value="all">{t('모든 앨범')}</option>{albums.map((name) => <option value={name} key={name}>{albumNames.get(name) ?? name}</option>)}
+        </select></label>
+        <label><span className="sr-only">{t('정렬')}</span><select value={sort} onChange={(e) => setSort(e.target.value as SortOrder)}>
+          <option value="newest">{t('최신순')}</option><option value="oldest">{t('오래된순')}</option>
+        </select></label>
+      </div>
+    </div>
+    <div className="shion-photo-result" aria-live="polite">
+      <span>{formatNumber(filtered.length)} {t('장')}</span>
+      <button type="button" className="shion-photo-reset" onClick={reset}>{t('필터 초기화')}</button>
+    </div>
+    {isLoading ? <div role="status" className="shion-photo-empty">{t('사진을 불러오는 중')}</div> : filtered.length === 0 ?
+      <div className="shion-photo-empty">{t('조건에 맞는 사진이 없습니다')}</div> : <>
+        {groups.map(([key, list]) => <section className="shion-photo-group" key={`${mode}-${key}`} aria-label={groupLabel(key)}>
+          <div className="shion-photo-group-head"><h2>{groupLabel(key)}</h2><span>{formatNumber(list.length)} {t('장')}</span></div>
+          <div className="shion-photo-grid">{list.map((photo) =>
+            <PhotoTile key={photo.id} photo={photo} title={text(photo.title)} album={text(photo.album)} onClick={() => setSelectedId(photo.id)}/>)}</div>
+        </section>)}
+        {limit < filtered.length && <button className="shion-photo-more" type="button" onClick={() => setLimit((n) => n + PAGE_SIZE)}>{t('더 보기')}</button>}
+      </>}
+    {loadError && <p className="shion-source-note" role="status">{t('사진 목록을 불러오지 못해 기본 사진을 표시합니다')}</p>}
+    <p className="shion-source-note">{t('사진은 출처가 확인된 자료를 기준으로 등록합니다')}</p>
+    {selected && createPortal(<div role="dialog" aria-modal="true" aria-label={`${text(selected.title)} — ${t('사진 확대')}`}
+      className="shion-lightbox" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
+      <div className="shion-lightbox-top"><span>{formatNumber(currentIndex + 1)} / {formatNumber(filtered.length)}</span>
+        <button type="button" ref={closeButton} id="shion-photo-close" onClick={close} aria-label={t('닫기')}>{t('닫기')} ×</button>
+      </div>
+      <div className="shion-lightbox-stage" onTouchStart={(event) => { swipeStart.current = event.touches[0]?.clientX ?? null; }}
+        onTouchEnd={(event) => { const last = event.changedTouches[0]?.clientX; if (last !== undefined && swipeStart.current !== null && Math.abs(last - swipeStart.current) > 65) step(last < swipeStart.current ? 1 : -1); swipeStart.current = null; }}>
+        <button className="shion-lightbox-step" type="button" onClick={() => step(-1)} aria-label={t('이전 사진')}>‹</button>
+        {brokenDetail ? <div className="shion-lightbox-failed">{t('이미지를 표시할 수 없습니다')}</div> :
+          <img key={selected.id} src={selected.image} alt={text(selected.title)} onError={() => setBrokenDetail(true)} decoding="async"/>}
+        <button className="shion-lightbox-step" type="button" onClick={() => step(1)} aria-label={t('다음 사진')}>›</button>
+      </div>
+      <div className="shion-lightbox-caption shion-lightbox-caption-v2"><div><strong>{text(selected.title)}</strong>
+        <span>{text(selected.album)} · {photoDate(selected.date)}</span>
+        {selected.credit && <span>{t('출처')}: {text(selected.credit)}</span>}</div>
+        {selected.source && <a href={selected.source} target="_blank" rel="noopener noreferrer">{t('원본 게시물')}</a>}
+      </div>
+    </div>, document.body)}
+  </section>;
 }
