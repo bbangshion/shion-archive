@@ -47,6 +47,18 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Restore optimized World Cup card photos
+        uses: actions/cache@v4
+        with:
+          path: public/objekt-poster
+          key: ${{ runner.os }}-objekt-poster-v1-${{ hashFiles('scripts/cache-objekt-poster.mjs') }}
+
+      - name: Verify World Cup photo exporter
+        run: node scripts/cache-objekt-poster.mjs --self-test
+
+      - name: Prepare same-origin card photos for PNG and image sharing
+        run: node scripts/cache-objekt-poster.mjs
+
       - name: Build static site
         run: npm run build
 
