@@ -140,3 +140,9 @@ export function filterObjekts(
   });
   return filtered;
 }
+
+/** Readable card caption without repeated artist names or decorative punctuation. */
+export function objektLabel(item: Objekt): string {
+  if (item.serial) return `#${item.serial.replace(/^#/, '')}`;
+  return item.title.replace(/^SHION\s*[·:—-]\s*/i, '').replace(/\.$/, '').trim() || 'Objekt';
+}
