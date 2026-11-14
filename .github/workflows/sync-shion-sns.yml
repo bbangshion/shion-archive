@@ -1,0 +1,59 @@
+name: Sync S20 SNS Gallery
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: shion-sns-gallery
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out SHION ARCHIVE
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate S20 photo parser
+        run: node scripts/import-shion-fandom.mjs --self-test
+
+      - name: Read the exact Park ShiOn SNS Archive
+        shell: bash
+        run: |
+          if [[ -s public/data/s20-sns-source.wiki ]]; then
+            node scripts/import-shion-fandom.mjs --input public/data/s20-sns-source.wiki --strict
+          else
+            node scripts/import-shion-fandom.mjs --strict
+          fi
+
+      - name: Confirm photo sync result
+        shell: bash
+        run: |
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          const r=JSON.parse(fs.readFileSync('public/data/shion-fandom-sync.json','utf8'));
+          if (r.status !== 'synced' || !r.matchedImages) throw Error('SNS image URLs not verified; previous photos preserved');
+          console.log(`Verified gallery rows: ${r.sourceRows}; resolved: ${r.matchedImages}; added: ${r.added}; total: ${r.total}`);
+          NODE
+
+      - name: Commit new S20 photo metadata (no photo files copied)
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/data/photos.json public/data/shion-fandom-sync.json
+          if git diff --cached --quiet; then
+            echo 'Photo index already up to date'
+          else
+            git commit -m 'data: sync Park ShiOn SNS photo references'
+            git push
+          fi
