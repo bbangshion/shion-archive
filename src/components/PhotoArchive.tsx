@@ -14,41 +14,6 @@ type Photo = {
   tags: string[];
 };
 type PhotoRecord = Record<string, unknown>;
-type PhotoSourceRef = {
-  id: string;
-  memberId: 'S20';
-  year: string;
-  title: LocalizedText;
-  album: LocalizedText;
-  sourceUrl: string;
-  kind: 'photo-reference';
-};
-type SocialSource = { id: string; date: string; sourceUrl: string; mediaCountReported: number; title: LocalizedText; memberId: 'S20' };
-function validSourceRefs(payload: unknown): PhotoSourceRef[] {
-  if (!Array.isArray(payload)) return [];
-  const ids = new Set<string>();
-  return payload.flatMap((item: unknown): PhotoSourceRef[] => {
-    if (!isRecord(item) || item.memberId !== 'S20' || item.kind !== 'photo-reference') return [];
-    const id = typeof item.id === 'string' ? item.id.trim() : '';
-    const url = sourceURL(item.sourceUrl);
-    const year = typeof item.year === 'string' && /^20\d\d$/.test(item.year) ? item.year : '';
-    if (!id || ids.has(id) || !url || !year) return [];
-    ids.add(id);
-    return [{ id, memberId: 'S20', kind: 'photo-reference', year, sourceUrl: url, title: localized(item.title, '박시온 사진 자료'), album: localized(item.album, '사진 자료') }];
-  });
-}
-function validSocialSources(payload: unknown): SocialSource[] {
-  if (!Array.isArray(payload)) return [];
-  const ids = new Set<string>();
-  return payload.flatMap((item: unknown): SocialSource[] => {
-    if (!isRecord(item) || item.memberId !== 'S20' || typeof item.id !== 'string') return [];
-    const url = sourceURL(item.sourceUrl);
-    const count = typeof item.mediaCountReported === 'number' ? item.mediaCountReported : 0;
-    if (!url || ids.has(item.id) || !Number.isInteger(count) || count < 1 || count > 30) return [];
-    ids.add(item.id);
-    return [{id:item.id, memberId:'S20', date:typeof item.date==='string'?item.date:'', sourceUrl:url, mediaCountReported:count, title:localized(item.title, '공식 SNS 자료')}];
-  });
-}
 type SortOrder = 'newest' | 'oldest';
 type ViewMode = 'date' | 'album';
 const BASE = import.meta.env.BASE_URL;
@@ -146,10 +111,6 @@ function PhotoTile({ photo, title, album, onClick }: {
 export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boolean; error?: string }) {
   const { language, t, formatNumber } = useI18n();
   const [photos, setPhotos] = useState<Photo[]>([FALLBACK]);
-  const [sourceRefs, setSourceRefs] = useState<PhotoSourceRef[]>([]);
-  const [socialSources, setSocialSources] = useState<SocialSource[]>([]);
-  const [sourceTab, setSourceTab] = useState<'photos' | 'sources'>('photos');
-  const [referenceLimit, setReferenceLimit] = useState(48);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [year, setYear] = useState('all');
@@ -176,27 +137,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
     return () => controller.abort();
   }, []);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const read = async (file: string) => {
-      const response = await fetch(`${BASE}data/${file}`, { signal: controller.signal, cache: 'no-cache' });
-      if (!response.ok) return [];
-      return response.json() as Promise<unknown>;
-    };
-    Promise.all([read('photo-source-index.json'), read('photo-social-sources.json')])
-      .then(([index, posts]) => {
-        if (controller.signal.aborted) return;
-        setSourceRefs(validSourceRefs(index));
-        setSocialSources(validSocialSources(posts));
-      }).catch(() => { /* Keep the existing gallery working if the optional index is unavailable. */ });
-    return () => controller.abort();
-  }, []);
-  const referenceRows = useMemo(() => sourceRefs.filter(item =>
-    (year === 'all' || item.year === year) &&
-    (!deferred || `${item.title.ko} ${item.title.en ?? ''} ${item.album.ko} ${item.year}`.toLowerCase().includes(deferred))
-  ).sort((a,b) => (sort === 'newest' ? -1 : 1) * a.year.localeCompare(b.year) || a.id.localeCompare(b.id)), [sourceRefs, year, deferred, sort]);
-  const sourceYearOptions = useMemo(() => [...new Set(sourceRefs.map(item => item.year))].sort().reverse(), [sourceRefs]);
-  const years = useMemo(() => [...new Set([...photos.flatMap((photo) => photo.date ? [photo.date.slice(0, 4)] : []), ...sourceYearOptions])].sort().reverse(), [photos, sourceYearOptions]);
+  const years = useMemo(() => [...new Set(photos.flatMap((photo) => photo.date ? [photo.date.slice(0, 4)] : []))].sort().reverse(), [photos]);
   const months = useMemo(() => [...new Set(photos.flatMap((photo) => photo.date && (year === 'all' || photo.date.startsWith(year)) ? [photo.date.slice(5, 7)] : []))].sort(), [photos, year]);
   const albums = useMemo(() => [...new Set(photos.map((photo) => photo.album.ko))].sort((a, b) => a.localeCompare(b, 'ko')), [photos]);
   const albumNames = useMemo(() => new Map(photos.map((photo) => [photo.album.ko, text(photo.album)])), [photos, language]);
@@ -226,7 +167,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
     if (currentIndex < 0 || filtered.length === 0) return;
     setSelectedId(filtered[(currentIndex + direction + filtered.length) % filtered.length]?.id ?? null);
   };
-  useEffect(() => { setLimit(PAGE_SIZE); setReferenceLimit(48); }, [year, month, album, sort, deferred, mode, sourceTab]);
+  useEffect(() => { setLimit(PAGE_SIZE); }, [year, month, album, sort, deferred, mode]);
   useEffect(() => { setBrokenDetail(false); }, [selectedId]);
   useEffect(() => {
     if (!selected) return;
@@ -264,20 +205,11 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
       <p>{t('박시온 사진을 날짜와 앨범으로 모아봤어요')}</p>
       <p className="shion-source-note">{language === 'en' ? 'Curated by @bbangshion' : language === 'ja' ? 'アーカイブ編集 · @bbangshion' : '아카이브 정리 · @bbangshion'}</p>
     </header>
-    <div className="shion-photo-source-switch" role="group" aria-label={language === 'ja' ? '表示対象' : language === 'en' ? 'Gallery section' : '갤러리 구분'}>
-      <button type="button" className={sourceTab === 'photos' ? 'is-active' : ''} aria-pressed={sourceTab === 'photos'} onClick={() => setSourceTab('photos')}>
-        {language === 'ja' ? '写真' : language === 'en' ? 'Photos' : '사진'} <span>{formatNumber(photos.length)}</span>
-      </button>
-      <button type="button" className={sourceTab === 'sources' ? 'is-active' : ''} aria-pressed={sourceTab === 'sources'} onClick={() => setSourceTab('sources')}>
-        {language === 'ja' ? '資料を探す' : language === 'en' ? 'Source index' : '사진 출처 찾기'} <span>{formatNumber(sourceRefs.length)}</span>
-      </button>
-    </div>
-    {sourceTab === 'sources' && <p className="shion-source-explanation">{language === 'ja' ? 'ここは写真の掲載枚数ではなく、元画像を確認するための資料リストです。画像・使用許諾の確認前に写真として追加しません。' : language === 'en' ? 'This is a reference index, not a count of displayed photos. Each image and reuse permission needs separate verification.' : '여기는 실제 표시된 사진이 아니라 원본을 확인할 수 있는 자료 목록이야. 개별 사진 주소와 사용 조건을 확인한 뒤 갤러리에 추가해.'}</p>}
     <div className="shion-photo-controls">
-      {sourceTab === 'photos' && <div className="shion-photo-view-tabs" role="group" aria-label={t('사진 보기 방식')}>
+      <div className="shion-photo-view-tabs" role="group" aria-label={t('사진 보기 방식')}>
         <button type="button" className={mode === 'date' ? 'is-active' : ''} aria-pressed={mode === 'date'} onClick={() => setMode('date')}>{t('날짜별')}</button>
         <button type="button" className={mode === 'album' ? 'is-active' : ''} aria-pressed={mode === 'album'} onClick={() => setMode('album')}>{t('앨범별')}</button>
-      </div>}
+      </div>
       <div className="shion-photo-filters">
         <label className="shion-photo-search"><span className="sr-only">{t('사진 검색')}</span>
           <input type="search" value={query} maxLength={100} placeholder={t('사진 제목, 앨범, 키워드 검색')} onChange={(e) => setQuery(e.target.value)}/>
@@ -285,22 +217,22 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
         <label><span className="sr-only">{t('연도 선택')}</span><select value={year} onChange={(e) => { setYear(e.target.value); setMonth('all'); }}>
           <option value="all">{t('전체 연도')}</option>{years.map((item) => <option value={item} key={item}>{item}</option>)}
         </select></label>
-        {sourceTab === 'photos' && <label><span className="sr-only">{t('월 선택')}</span><select value={month} onChange={(e) => setMonth(e.target.value)}>
+        <label><span className="sr-only">{t('월 선택')}</span><select value={month} onChange={(e) => setMonth(e.target.value)}>
           <option value="all">{t('전체 월')}</option>{months.map((item) => <option value={item} key={item}>{monthLabel(item)}</option>)}
-        </select></label>}
-        {sourceTab === 'photos' && <label><span className="sr-only">{t('앨범 선택')}</span><select value={album} onChange={(e) => setAlbum(e.target.value)}>
+        </select></label>
+        <label><span className="sr-only">{t('앨범 선택')}</span><select value={album} onChange={(e) => setAlbum(e.target.value)}>
           <option value="all">{t('모든 앨범')}</option>{albums.map((name) => <option value={name} key={name}>{albumNames.get(name) ?? name}</option>)}
-        </select></label>}
+        </select></label>
         <label><span className="sr-only">{t('정렬')}</span><select value={sort} onChange={(e) => setSort(e.target.value as SortOrder)}>
           <option value="newest">{t('최신순')}</option><option value="oldest">{t('오래된순')}</option>
         </select></label>
       </div>
     </div>
     <div className="shion-photo-result" aria-live="polite">
-      <span>{sourceTab === 'photos' ? `${formatNumber(filtered.length)} ${t('장')}` : `${formatNumber(referenceRows.length)} ${language === 'ja' ? '件の資料' : language === 'en' ? 'references' : '개 자료'}`}</span>
+      <span>{formatNumber(filtered.length)} {t('장')}</span>
       <button type="button" className="shion-photo-reset" onClick={reset}>{t('필터 초기화')}</button>
     </div>
-    {sourceTab === 'photos' ? <>
+    <>
     {isLoading ? <div role="status" className="shion-photo-empty">{t('사진을 불러오는 중')}</div> : filtered.length === 0 ?
       <div className="shion-photo-empty">{t('조건에 맞는 사진이 없습니다')}</div> : <>
         {groups.map(([key, list]) => <section className="shion-photo-group" key={`${mode}-${key}`} aria-label={groupLabel(key)}>
@@ -310,31 +242,8 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
         </section>)}
         {limit < filtered.length && <button className="shion-photo-more" type="button" onClick={() => setLimit((n) => n + PAGE_SIZE)}>{t('더 보기')}</button>}
       </>}
-    </> : <div className="shion-reference-section">
-      {socialSources.length > 0 && <section aria-label="Social source pages" className="shion-social-source-section">
-        <h2>{language === 'ja' ? '公式SNS 写真の掲載元' : language === 'en' ? 'Official social post references' : '공식 SNS 게시물 출처'}</h2>
-        <p>{language === 'ja' ? '個別写真を複製せず、元の投稿やアーカイブ資料に移動します。' : language === 'en' ? 'Links lead to indexed social posts; image files are not mirrored.' : '게시물에 포함된 사진 수를 참고할 수 있어. 실제 사진 파일은 이 목록에서 복제하지 않아.'}</p>
-        <div className="shion-source-cards">
-          {socialSources.filter(item => year === 'all' || item.date.startsWith(year)).slice(0, 24).map(item =>
-            <a key={item.id} href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="shion-source-card">
-              <span className="shion-source-card-type">SNS · {item.date}</span>
-              <strong>{text(item.title)}</strong>
-              <small>{language === 'ja' ? '掲載元を見る' : language === 'en' ? 'Open source' : '출처 페이지 열기'} ↗</small>
-            </a>)}
-        </div>
-      </section>}
-      <h2>{language === 'ja' ? '写真の参照項目' : language === 'en' ? 'Photo reference entries' : '사진 출처 목록'}</h2>
-      <div className="shion-source-cards">
-        {referenceRows.slice(0, referenceLimit).map(item =>
-          <a key={item.id} href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="shion-source-card">
-            <span className="shion-source-card-type">{item.year} · S20</span>
-            <strong>{text(item.title)}</strong>
-            <small>{language === 'ja' ? 'ギャラリー資料を見る' : language === 'en' ? 'View gallery reference' : '원본 자료에서 확인'} ↗</small>
-          </a>)}
-      </div>
-      {referenceLimit < referenceRows.length && <button className="shion-photo-more" type="button" onClick={() => setReferenceLimit(n=>n+48)}>{t('더 보기')}</button>}
-    </div>}
-    {sourceTab === 'photos' && loadError && <p className="shion-source-note" role="status">{t('사진 목록을 불러오지 못해 기본 사진을 표시합니다')}</p>}
+    </>
+    {loadError && <p className="shion-source-note" role="status">{t('사진 목록을 불러오지 못해 기본 사진을 표시합니다')}</p>}
     <p className="shion-source-note">{t('사진은 출처가 확인된 자료를 기준으로 등록합니다')}</p>
     {selected && createPortal(<div role="dialog" aria-modal="true" aria-label={`${text(selected.title)} — ${t('사진 확대')}`}
       className="shion-lightbox" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
