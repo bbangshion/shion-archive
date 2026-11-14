@@ -444,3 +444,56 @@ button:disabled { cursor: not-allowed; }
   .shion-photo-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .shion-film-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
+
+/* 1.5.5 — language and theme controls; five restrained palettes inspired by WAV ARCHIVE. */
+:root, html[data-theme="obsidian"] { --theme-canvas: #0b0b0e; --theme-surface: #17161b; --theme-elevated: #232127; --theme-accent: #d9c6d6; --theme-accent-soft: rgba(217,198,214,.12); --theme-header: rgba(11,11,14,.94); --theme-line: rgba(255,255,255,.13); --theme-rgb: 11,11,14; }
+html[data-theme="violet"] { --theme-canvas: #110d1e; --theme-surface: #1c1630; --theme-elevated: #28203c; --theme-accent: #c8a8ef; --theme-accent-soft: rgba(200,168,239,.14); --theme-header: rgba(17,13,30,.94); --theme-line: rgba(215,188,242,.19); --theme-rgb: 17,13,30; }
+html[data-theme="navy"] { --theme-canvas: #0a1426; --theme-surface: #121e33; --theme-elevated: #1a2b45; --theme-accent: #8fb8e9; --theme-accent-soft: rgba(143,184,233,.14); --theme-header: rgba(10,20,38,.95); --theme-line: rgba(178,205,240,.17); --theme-rgb: 10,20,38; }
+html[data-theme="rose"] { --theme-canvas: #190f19; --theme-surface: #271827; --theme-elevated: #39243a; --theme-accent: #f4adc7; --theme-accent-soft: rgba(244,173,199,.13); --theme-header: rgba(25,15,25,.95); --theme-line: rgba(255,198,224,.17); --theme-rgb: 25,15,25; }
+html[data-theme="aqua"] { --theme-canvas: #091b20; --theme-surface: #11262d; --theme-elevated: #18353b; --theme-accent: #91d6d5; --theme-accent-soft: rgba(145,214,213,.14); --theme-header: rgba(9,27,32,.95); --theme-line: rgba(160,226,224,.18); --theme-rgb: 9,27,32; }
+html { background: var(--theme-canvas); }
+body, .shion-home, .shion-hero, .shion-subpage, .shion-footer, .archive-tab-bar { background-color: var(--theme-canvas); }
+.bg-canvas { background-color: var(--theme-canvas) !important; }
+.bg-surface, .shion-mobile-menu, .shion-photo-controls, .shion-film-controls, .shion-film-card, .shion-film-dialog, .shion-film-note, .shion-theme-popover { background-color: var(--theme-surface) !important; }
+.bg-raised { background-color: var(--theme-elevated) !important; }
+.shion-site-header, .shion-site-header.on-home { background: var(--theme-header); border-color: var(--theme-line); }
+.shion-theme-disc { display: block; width: 17px; height: 17px; border-radius: 50%; background: linear-gradient(125deg, var(--theme-accent) 48%, var(--theme-canvas) 50%); border: 1px solid rgba(255,255,255,.55); }
+.shion-site-header .shion-header-inner { gap: clamp(8px, 1.6vw, 24px); }
+.shion-site-header .shion-desktop-nav { gap: clamp(12px, 2vw, 36px); }
+.shion-appearance { display: flex; flex: none; align-items: center; position: relative; gap: 5px; }
+.shion-language-control select { appearance: none; -webkit-appearance: none; padding: 8px 7px; border: 1px solid var(--theme-line); color: #f5f0f5; font-size: 11px; font-weight: 700; letter-spacing: .06em; border-radius: 5px; background: var(--theme-surface); min-height: 34px; }
+.shion-language-control option { background: var(--theme-surface); color: white; }
+.shion-theme-toggle { display: grid; place-items: center; width: 35px; height: 35px; border: 1px solid var(--theme-line); border-radius: 5px; background: var(--theme-surface); }
+.shion-theme-popover { position: absolute; z-index: 90; top: calc(100% + 14px); right: 0; width: min(280px, calc(100vw - 32px)); padding: 14px; border: 1px solid var(--theme-line); border-radius: 10px; box-shadow: 0 18px 60px rgba(0,0,0,.42); }
+.shion-theme-heading { padding: 3px 7px 10px; font-size: 11px; font-weight: 650; color: #f7eef8; }
+.shion-theme-options { display: grid; gap: 3px; }
+.shion-theme-options button { display: flex; align-items: center; gap: 12px; min-height: 43px; padding: 6px 8px; text-align: left; color: #e6dfea; font-size: 12px; border-radius: 6px; }
+.shion-theme-options button:hover, .shion-theme-options button[aria-pressed="true"] { background: var(--theme-accent-soft); }
+.shion-theme-swatch { width: 23px; height: 23px; border: 1px solid rgba(255,255,255,.32); border-radius: 50%; }
+.shion-theme-check { margin-left: auto; color: var(--theme-accent); }
+.shion-feature-card:hover, .shion-photo-tabs button.is-active, .shion-film-tabs button.is-active { border-color: var(--theme-accent); }
+.shion-hero-gradient { background: linear-gradient(90deg, rgba(var(--theme-rgb),1) 1%, rgba(var(--theme-rgb),.96) 22%, rgba(var(--theme-rgb),.68) 49%, rgba(var(--theme-rgb),.06) 75%), linear-gradient(0deg, rgba(var(--theme-rgb),.77), transparent 30%, rgba(var(--theme-rgb),.18)); }
+.shion-feature-card, .shion-profile .bg-\[\#17161b\], .shion-profile .bg-white\/\[\.025\] { background-color: var(--theme-surface) !important; }
+.shion-gallery-image { background: var(--theme-elevated); }
+.shion-lightbox { z-index: 9999 !important; isolation: isolate; background: rgba(var(--theme-rgb),.985); }
+.shion-lightbox-stage img { max-height: min(77dvh, 900px); max-width: min(calc(100vw - 110px), 1200px); width: auto; height: auto; object-fit: contain; }
+.shion-lightbox button { touch-action: manipulation; }
+:where(button, select, input):focus-visible { outline: 2px solid var(--theme-accent); outline-offset: 3px; }
+@media (max-width: 1050px) { .shion-header-tag { display: none; } }
+@media (max-width: 650px) {
+  .shion-header-inner { width: min(100% - 28px, 1240px); }
+  .shion-header-right { gap: 6px; }
+  .shion-brand { gap: 6px; }
+  .shion-brand-name { font-size: 10px; letter-spacing: .09em; }
+  .shion-brand-mark { width: 28px; height: 28px; font-size: 20px; }
+  .shion-language-control select { font-size: 10px; padding: 7px 5px; }
+  .shion-theme-toggle { width: 33px; height: 33px; }
+  .shion-menu-toggle { width: 37px; height: 37px; }
+}
+@media (max-width: 370px) { .shion-brand-name span { display: none; } }
+
+.shion-theme-swatch[data-swatch="obsidian"] { background-color: #18171d; }
+.shion-theme-swatch[data-swatch="violet"] { background-color: #342544; }
+.shion-theme-swatch[data-swatch="navy"] { background-color: #1b2c4f; }
+.shion-theme-swatch[data-swatch="rose"] { background-color: #4b273c; }
+.shion-theme-swatch[data-swatch="aqua"] { background-color: #173f45; }
