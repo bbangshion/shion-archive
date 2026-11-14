@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useCatalog } from '../hooks/useCatalog';
 import { useFavorites } from '../hooks/useFavorites';
 
-export type ArchiveScreen = 'home' | 'collection' | 'worldcup';
+export type ArchiveScreen = 'home' | 'profile' | 'photos' | 'collection' | 'worldcup';
 
 type ArchiveContextValue = {
   screen: ArchiveScreen;
@@ -18,6 +18,8 @@ const ArchiveContext = createContext<ArchiveContextValue | null>(null);
 function getScreenFromAddress(): ArchiveScreen {
   if (typeof window === 'undefined') return 'home';
   const route = window.location.hash.toLowerCase().replace(/^#\/?/, '');
+  if (route === 'profile') return 'profile';
+  if (route === 'photos' || route === 'photo') return 'photos';
   if (route === 'objekt' || route === 'collection') return 'collection';
   if (route === 'worldcup' || route === 'world-cup') return 'worldcup';
   return 'home';
@@ -39,7 +41,7 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setScreen = useCallback((next: ArchiveScreen) => {
-    const nextHash = next === 'home' ? '' : next === 'collection' ? '#objekt' : '#worldcup';
+    const nextHash = next === 'home' ? '' : next === 'profile' ? '#profile' : next === 'photos' ? '#photos' : next === 'collection' ? '#objekt' : '#worldcup';
     const nextAddress = `${window.location.pathname}${window.location.search}${nextHash}`;
     if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== nextAddress) {
       window.history.pushState({ screen: next }, '', nextAddress);
