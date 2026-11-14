@@ -262,6 +262,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
       <span className="shion-page-kicker">PHOTO ARCHIVE</span>
       <h1 id="photos-heading">{t('사진')}</h1>
       <p>{t('박시온 사진을 날짜와 앨범으로 모아봤어요')}</p>
+      <p className="shion-source-note">{language === 'en' ? 'Curated by @bbangshion' : language === 'ja' ? 'アーカイブ編集 · @bbangshion' : '아카이브 정리 · @bbangshion'}</p>
     </header>
     <div className="shion-photo-source-switch" role="group" aria-label={language === 'ja' ? '表示対象' : language === 'en' ? 'Gallery section' : '갤러리 구분'}>
       <button type="button" className={sourceTab === 'photos' ? 'is-active' : ''} aria-pressed={sourceTab === 'photos'} onClick={() => setSourceTab('photos')}>
@@ -349,7 +350,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
       </div>
       <div className="shion-lightbox-caption shion-lightbox-caption-v2"><div><strong>{text(selected.title)}</strong>
         <span>{text(selected.album)} · {photoDate(selected.date)}</span>
-        {selected.credit && <span>{t('출처')}: {text(selected.credit)}</span>}</div>
+        {selected.credit && <span>{selected.id.startsWith('fandom-s20-') ? text(selected.credit) : `${t('출처')}: ${text(selected.credit)}`}</span>}</div>
         {selected.source && <a href={selected.source} target="_blank" rel="noopener noreferrer">{t('원본 게시물')}</a>}
       </div>
     </div>, document.body)}
