@@ -581,11 +581,11 @@ body, .shion-home, .shion-hero, .shion-subpage, .shion-footer, .archive-tab-bar 
   aspect-ratio: 1;
   top: 50%;
   left: 59%;
-  background: center / contain no-repeat url('https://upload.wikimedia.org/wikipedia/commons/d/dd/Logo_of_tripleS.png');
-  mix-blend-mode: screen;
-  opacity: .055;
+  background: center / contain no-repeat url('./assets/triples-symbol.png');
+  mix-blend-mode: normal;
+  opacity: .052;
   transform: translate(-50%, -50%) perspective(900px) rotateY(-14deg) rotateX(8deg);
-  filter: drop-shadow(14px 20px 15px rgba(255,255,255,.25));
+  filter: drop-shadow(14px 20px 15px rgba(255,255,255,.12));
   animation: shion-emblem-float 14s ease-in-out infinite alternate;
   will-change: auto;
 }
@@ -623,7 +623,7 @@ body, .shion-home, .shion-hero, .shion-subpage, .shion-footer, .archive-tab-bar 
 .shion-rank-favorite { margin-top: 13px; padding: 8px 0; color: var(--theme-accent, #d9c6d6); font-size: 12px; text-align: left; }
 @media (max-width: 760px) {
   .shion-subpage::before, .shion-home-explore::before {
-    left: 50%; width: min(75vw, 330px); opacity: .035;
+    left: 50%; width: min(75vw, 330px); opacity: .032;
     animation: none; transform: translate(-50%, -50%) perspective(900px) rotateY(-9deg);
   }
   .shion-top-four-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
