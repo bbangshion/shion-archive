@@ -1,4 +1,5 @@
 export type FilmCategory = 'signal' | 'music' | 'performance' | 'live' | 'other';
+export type FilmScope = 'solo' | 'unit' | 'group';
 
 export interface Film {
   id: string;
@@ -8,82 +9,79 @@ export interface Film {
   publishedAt: string | null;
   group: string;
   note: string;
+  source: string;
+  verified: boolean;
+  scope: FilmScope;
 }
 
 const CATEGORY_MAP: Record<string, FilmCategory> = {
-  signal: 'signal', sssignal: 'signal', '시그널': 'signal',
-  mv: 'music', music: 'music', '뮤직비디오': 'music', 'visual': 'music',
+  signal: 'signal', sssignal: 'signal', secretbase: 'signal', '시그널': 'signal',
+  mv: 'music', music: 'music', '뮤직비디오': 'music', visual: 'music',
   performance: 'performance', fancam: 'performance', dance: 'performance', '직캠': 'performance',
   live: 'live', '라이브': 'live', other: 'other', reveal: 'other', teaser: 'other',
 };
+const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
+const asText = (v: unknown): string => typeof v === 'string' ? v.trim() : '';
 
-function objectRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function stringValue(value: unknown): string {
-  return typeof value === 'string' ? value.trim() : '';
-}
-
-function videoIdFromUrl(value: unknown): string {
-  const input = stringValue(value);
+function findVideoId(value: unknown): string {
+  const input = asText(value);
   if (/^[\w-]{11}$/.test(input)) return input;
   try {
     const url = new URL(input);
     if (url.protocol !== 'https:') return '';
-    if (url.hostname === 'youtu.be') return url.pathname.split('/')[1] ?? '';
-    if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'www.youtube-nocookie.com'].includes(url.hostname)) {
-      if (url.pathname === '/watch') return url.searchParams.get('v') ?? '';
-      if (/^\/(shorts|embed|live)\//.test(url.pathname)) return url.pathname.split('/')[2] ?? '';
+    let raw = '';
+    if (url.hostname === 'youtu.be') raw = url.pathname.split('/')[1] ?? '';
+    else if (['youtube.com','www.youtube.com','m.youtube.com','www.youtube-nocookie.com'].includes(url.hostname)) {
+      if (url.pathname === '/watch') raw = url.searchParams.get('v') ?? '';
+      else if (/^\/(shorts|embed|live)\//.test(url.pathname)) raw = url.pathname.split('/')[2] ?? '';
     }
+    return /^[\w-]{11}$/.test(raw) ? raw : '';
   } catch { return ''; }
-  return '';
 }
-
-function includesS20(row: Record<string, unknown>): boolean {
-  const members = row.memberIds ?? row.members ?? row.memberId ?? row.member;
-  const list = Array.isArray(members) ? members : [members];
-  // Do not claim that an OT24 video features Shion unless its source explicitly tags S20.
-  return list.some((item) => {
-    const value = stringValue(item).toLowerCase().replace(/[\s_-]/g, '');
-    return ['s20', 's20shion', 'shion', 'parkshion', '박시온', '시온'].includes(value);
+function hasS20(row: Record<string, unknown>): boolean {
+  const possible = row.memberIds ?? row.members ?? row.memberId ?? row.member;
+  const list = Array.isArray(possible) ? possible : [possible];
+  return list.some((value) => {
+    const s = (isObject(value) ? asText(value.id ?? value.name ?? value.memberId) : asText(value)).toLowerCase().replace(/[\s._-]/g, '');
+    return ['s20','s20shion','shion','parkshion','박시온','시온'].includes(s);
   });
 }
-
 function validDate(value: unknown): string | null {
-  const date = stringValue(value);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
-  const parsed = new Date(`${date}T00:00:00Z`);
-  return Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date ? null : date;
+  const text = asText(value);
+  if (!/^\d{4}-\d\d-\d\d/.test(text)) return null;
+  const date = text.slice(0,10);
+  const parsed = new Date(date + 'T00:00:00Z');
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0,10) === date ? date : null;
 }
-
 export function normalizeFilms(input: unknown): Film[] {
-  const rows = Array.isArray(input) ? input : objectRecord(input) && Array.isArray(input.items) ? input.items : objectRecord(input) && Array.isArray(input.videos) ? input.videos : [];
-  const unique = new Map<string, Film>();
-  for (const value of rows) {
-    if (!objectRecord(value) || !includesS20(value)) continue;
-    const youtubeId = videoIdFromUrl(value.youtubeId ?? value.youtubeUrl ?? value.videoUrl ?? value.url);
-    if (!/^[\w-]{11}$/.test(youtubeId)) continue;
-    const title = stringValue(value.title);
-    if (!title || title.length > 180 || unique.has(youtubeId)) continue;
-    const rawCategory = stringValue(value.category ?? value.type).toLowerCase();
-    unique.set(youtubeId, {
-      id: youtubeId,
-      title,
-      youtubeId,
-      category: CATEGORY_MAP[rawCategory] ?? 'other',
-      publishedAt: validDate(value.publishedAt ?? value.date),
-      group: stringValue(value.group ?? value.dimension).slice(0, 70) || 'tripleS',
-      note: stringValue(value.note ?? value.description).slice(0, 220),
-    });
+  const rows: unknown[] = Array.isArray(input) ? input : isObject(input) && Array.isArray(input.items) ? input.items : isObject(input) && Array.isArray(input.videos) ? input.videos : [];
+  const seen = new Map<string,Film>();
+  for (const v of rows) {
+    if (!isObject(v) || !hasS20(v)) continue;
+    const id = findVideoId(v.youtubeId ?? v.youtubeUrl ?? v.videoId ?? v.videoUrl ?? v.url);
+    const title = asText(v.title);
+    if (!id || title.length < 1 || title.length > 190) continue;
+    const category = CATEGORY_MAP[asText(v.category ?? v.type).toLowerCase()] ?? 'other';
+    const scopeCandidate = asText(v.scope);
+    const scope: FilmScope = scopeCandidate === 'unit' || scopeCandidate === 'group' ? scopeCandidate : 'solo';
+    const film: Film = {
+      id, youtubeId: id, title, category,
+      publishedAt: validDate(v.publishedAt ?? v.date),
+      group: asText(v.group ?? v.dimension).slice(0,70) || 'tripleS',
+      note: asText(v.note ?? v.description).slice(0,160),
+      source: asText(v.source ?? v.channel).slice(0,90) || '공식 영상 링크',
+      verified: v.verified === true,
+      scope,
+    };
+    const prev = seen.get(id);
+    if (!prev || (!prev.verified && film.verified)) seen.set(id, film);
   }
-  return Array.from(unique.values()).sort((a, b) => (b.publishedAt ?? '').localeCompare(a.publishedAt ?? '') || a.title.localeCompare(b.title, 'ko'));
+  return [...seen.values()].sort((a,b)=>(b.publishedAt??'').localeCompare(a.publishedAt??'') || a.title.localeCompare(b.title,'ko'));
 }
-
 export const filmThumbnail = (id: string): string => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 export const filmYoutubeUrl = (id: string): string => `https://www.youtube.com/watch?v=${encodeURIComponent(id)}`;
 export const filmEmbedUrl = (id: string): string => `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?rel=0`;
-
 export function readableFilmDate(date: string | null): string {
   return date ? date.replace(/-/g, '.') : '날짜 미등록';
 }
+export const filmScopeLabel = (scope: FilmScope): string => ({solo:'개인',unit:'유닛',group:'완전체'}[scope]);
