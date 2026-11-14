@@ -1,9 +1,25 @@
 [
   {
     "id": "airport-01",
+    "category": "photo",
     "image": "images/shion-home.jpg",
-    "title": "공항에서",
-    "album": "일상",
-    "credit": "사용자 제공 사진"
+    "title": {
+      "ko": "공항에서",
+      "en": "At the airport",
+      "ja": "空港にて"
+    },
+    "album": {
+      "ko": "일상",
+      "en": "Daily life",
+      "ja": "日常"
+    },
+    "date": null,
+    "credit": {
+      "ko": "사용자 제공 사진",
+      "en": "User-provided photo",
+      "ja": "ユーザー提供写真"
+    },
+    "sourceUrl": null,
+    "tags": ["박시온", "공항"]
   }
 ]
