@@ -66,6 +66,8 @@ function readPhotos(payload: unknown): Photo[] {
     if (!isRecord(raw)) continue;
     if (typeof raw.category === 'string' && raw.category.toLowerCase() !== 'photo') continue;
     if (typeof raw.type === 'string' && raw.type.toLowerCase() !== 'photo') continue;
+    // A curated photo must be explicitly reviewed as tripleS S20 Park ShiOn.
+    if (raw.memberId !== 'S20' || raw.identityVerified !== true) continue;
     const id = typeof raw.id === 'string' ? raw.id.trim() : '';
     const image = imageURL(raw.image);
     if (!id || !image || ids.has(id)) continue;
@@ -99,7 +101,10 @@ function PhotoTile({ photo, title, album, onClick }: {
   const { t } = useI18n();
   const [broken, setBroken] = useState(false);
   useEffect(() => setBroken(false), [photo.image]);
-  return <button type="button" className="shion-gallery-tile" onClick={onClick} aria-label={`${title} — ${t('사진 확대')}`}>
+  return <button type="button" className="shion-gallery-tile" onClick={() => {
+    if (broken && photo.source) { window.open(photo.source, '_blank', 'noopener,noreferrer'); return; }
+    onClick();
+  }} aria-label={`${title} — ${t('사진 확대')}`}> 
     <span className="shion-gallery-image">
       {broken ? <span className="shion-gallery-image-error">{t('이미지를 표시할 수 없습니다')}</span>
         : <img src={photo.image} alt={title} loading="lazy" decoding="async" onError={() => setBroken(true)}/>}
