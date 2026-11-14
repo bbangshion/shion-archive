@@ -35,3 +35,128 @@ button:disabled { cursor: not-allowed; }
 .bracket-progress::-webkit-progress-bar { background: rgba(255,255,255,.1); border-radius: 999px; }
 .bracket-progress::-webkit-progress-value { background: #D9C6D6; border-radius: 999px; transition: width 250ms cubic-bezier(.25,1,.5,1); }
 .bracket-progress::-moz-progress-bar { background: #D9C6D6; border-radius: 999px; }
+
+/* SHION ARCHIVE / HOME — restrained editorial layout */
+:root { --shion-ink: #0b0b0e; --shion-line: rgba(255,255,255,.12); }
+.shion-content-width { width: min(100% - 48px, 1240px); margin-inline: auto; }
+.shion-skip-link { position: fixed; top: -100px; left: 16px; z-index: 100; padding: 12px 16px; background: #fff; color: #101014; border-radius: 3px; }
+.shion-skip-link:focus { top: 14px; }
+.shion-site-header { position: fixed; inset: 0 0 auto; z-index: 55; height: 76px; border-bottom: 1px solid rgba(255,255,255,.10); background: rgba(11,11,14,.80); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); }
+.shion-site-header.on-home { background: rgba(11,11,14,.34); }
+.shion-header-inner { display: flex; align-items: center; justify-content: space-between; width: min(100% - 48px, 1240px); height: 100%; margin-inline: auto; gap: 24px; }
+.shion-brand { display: inline-flex; align-items: center; min-width: 0; gap: 13px; color: #f8f7f6; text-decoration: none; }
+.shion-brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; font-family: Georgia, 'Times New Roman', serif; font-size: 24px; font-weight: 400; line-height: 1; }
+.shion-brand-name { white-space: nowrap; font-size: 13px; font-weight: 650; letter-spacing: .15em; }
+.shion-brand-name span { font-weight: 400; }
+.shion-desktop-nav { display: flex; align-items: center; gap: 36px; height: 100%; }
+.shion-desktop-nav button { height: 100%; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #b9b8be; font-size: 13px; font-weight: 500; transition: color 250ms cubic-bezier(.25,1,.5,1), border-color 250ms cubic-bezier(.25,1,.5,1); }
+.shion-desktop-nav button:hover, .shion-desktop-nav button.is-active { color: white; border-bottom-color: #e7d4e1; }
+.shion-header-right { display: flex; align-items: center; gap: 14px; }
+.shion-header-tag { white-space: nowrap; color: rgba(255,255,255,.65); font-size: 10px; font-weight: 500; letter-spacing: .19em; }
+.shion-menu-toggle { display: none; width: 42px; height: 42px; place-items: center; align-content: center; gap: 6px; border: 1px solid rgba(255,255,255,.28); border-radius: 50%; background: rgba(0,0,0,.16); }
+.shion-menu-toggle span { display: block; width: 18px; height: 1px; background: #fff; transition: transform 250ms cubic-bezier(.25,1,.5,1); }
+.shion-menu-toggle.is-open span:first-child { transform: translateY(3.5px) rotate(45deg); }
+.shion-menu-toggle.is-open span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+.shion-menu-backdrop { position: fixed; inset: 0; z-index: 53; width: 100%; background: rgba(0,0,0,.62); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.shion-mobile-menu[hidden] { display: none !important; }
+.shion-mobile-menu { position: fixed; z-index: 54; top: 76px; right: 0; left: 0; padding: 30px max(24px, env(safe-area-inset-right)) 36px; border-bottom: 1px solid rgba(255,255,255,.16); background: #151418; box-shadow: 0 14px 50px rgba(0,0,0,.3); animation: appear 250ms cubic-bezier(.25,1,.5,1) both; }
+.shion-menu-eyebrow { margin-bottom: 12px; color: #aaa6ac; font-size: 10px; font-weight: 550; letter-spacing: .22em; }
+.shion-mobile-link { display: flex; align-items: center; width: 100%; min-height: 66px; padding: 7px 0; gap: 16px; border-bottom: 1px solid var(--shion-line); background: none; text-align: left; color: #f7f5f6; font-size: 24px; font-weight: 550; letter-spacing: -.035em; }
+.shion-mobile-link .shion-mobile-index { color: #aaa6ac; font-family: Georgia, serif; font-size: 13px; }
+.shion-mobile-link svg { margin-left: auto; opacity: .65; }
+.shion-mobile-link.is-active { color: #e4cadd; }
+.shion-mobile-menu p { margin-top: 25px; color: #aaa6ac; font-size: 12px; }
+.shion-menu-open { overflow: hidden; }
+
+.shion-home { background: #0b0b0e; }
+.shion-hero { position: relative; isolation: isolate; display: flex; align-items: stretch; min-height: 680px; height: 100svh; max-height: 1020px; overflow: hidden; background: #0b0b0e; }
+.shion-hero-image { position: absolute; z-index: -2; inset: 0 0 0 41%; overflow: hidden; }
+.shion-hero-image img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: 53% 39%; }
+.shion-hero-gradient { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(11,11,14,1) 1%, rgba(11,11,14,.97) 23%, rgba(11,11,14,.67) 48%, rgba(11,11,14,.05) 75%), linear-gradient(0deg, rgba(11,11,14,.78) 0%, transparent 28%, rgba(11,11,14,.14) 100%); }
+.shion-hero-inner { position: relative; display: flex; align-items: center; width: min(100% - 72px, 1240px); margin-inline: auto; padding-top: 90px; padding-bottom: 70px; }
+.shion-hero-copy { max-width: 730px; padding-bottom: 5px; }
+.shion-hero-overline { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; color: #f2eff1; font-size: 11px; font-weight: 650; letter-spacing: .25em; }
+.shion-hero-overline span { width: 22px; height: 1px; background: rgba(255,255,255,.7); }
+.shion-hero-copy h1 { margin: 0; color: #fff; font-size: clamp(74px, 10.2vw, 150px); font-weight: 540; letter-spacing: -.092em; line-height: .91; }
+.shion-hero-ko { margin-top: 17px; color: #fff; font-size: 19px; font-weight: 500; letter-spacing: .03em; }
+.shion-hero-rule { width: 38px; height: 1px; margin-top: 31px; background: rgba(255,255,255,.65); }
+.shion-hero-description { margin-top: 24px; color: rgba(255,255,255,.88); font-size: 13px; line-height: 1.9; word-break: keep-all; }
+.shion-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 27px; }
+.shion-hero-actions button { display: flex; align-items: center; justify-content: space-between; min-height: 48px; min-width: 154px; gap: 18px; padding: 0 16px; border: 1px solid rgba(255,255,255,.56); border-radius: 3px; font-size: 12px; font-weight: 600; transition: background-color 250ms cubic-bezier(.25,1,.5,1), color 250ms cubic-bezier(.25,1,.5,1), transform 250ms cubic-bezier(.25,1,.5,1); }
+.shion-hero-actions button:active { transform: scale(.98); }
+.shion-hero-primary { background: #fff; color: #101014; }
+.shion-hero-primary:hover { background: #e5e2e4; }
+.shion-hero-secondary { background: rgba(13,13,18,.16); color: #fff; }
+.shion-hero-secondary:hover { background: rgba(255,255,255,.15); }
+.shion-hero-side { position: absolute; right: 0; bottom: 46px; color: rgba(255,255,255,.88); font-size: 10px; letter-spacing: .18em; writing-mode: vertical-rl; }
+.shion-scroll-note { position: absolute; bottom: 39px; left: max(36px, calc((100vw - 1240px)/2)); display: flex; align-items: center; gap: 11px; color: rgba(255,255,255,.72); font-size: 9px; letter-spacing: .18em; }
+.shion-scroll-note span { display: block; height: 1px; width: 31px; background: rgba(255,255,255,.8); }
+
+.shion-home-explore { padding: 104px 0 64px; background: #0b0b0e; }
+.shion-section-lead { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding-bottom: 34px; }
+.shion-section-eyebrow { margin: 0 0 15px; color: #cdb6c7; font-size: 10px; font-weight: 600; letter-spacing: .21em; }
+.shion-section-lead h2 { margin: 0; color: #f6f5f6; font-size: clamp(32px, 5vw, 47px); font-weight: 550; letter-spacing: -.065em; line-height: 1.2; }
+.shion-section-lead > p { color: #a7a4ad; font-size: 13px; line-height: 1.9; text-align: right; }
+.shion-feature-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.shion-feature-card { display: flex; flex-direction: column; justify-content: space-between; min-height: 286px; padding: 30px; border: 1px solid rgba(255,255,255,.13); border-radius: 3px; background: #16151a; text-align: left; color: #f7f5f6; transition: border-color 250ms cubic-bezier(.25,1,.5,1), background-color 250ms cubic-bezier(.25,1,.5,1), transform 250ms cubic-bezier(.25,1,.5,1); }
+.shion-feature-card:hover { border-color: rgba(255,255,255,.34); background: #1c1a20; transform: translateY(-2px); }
+.shion-feature-card:active { transform: scale(.995); }
+.shion-feature-top { display: flex; justify-content: space-between; color: #bcb6bd; font-size: 11px; font-weight: 600; letter-spacing: .15em; }
+.shion-feature-bottom { display: flex; flex-direction: column; align-items: flex-start; }
+.shion-feature-bottom strong { color: #f7f4f7; font-size: clamp(21px, 3vw, 30px); font-weight: 550; letter-spacing: -.045em; }
+.shion-feature-bottom > span { margin-top: 12px; color: #bab5be; font-size: 13px; }
+.shion-feature-bottom small { margin-top: 22px; color: #e0cadc; font-size: 11px; font-weight: 550; }
+.shion-home-footnote { display: flex; justify-content: space-between; gap: 18px; margin-top: 28px; color: #8c8790; font-size: 10px; letter-spacing: .15em; }
+.shion-subpage { min-height: 75svh; padding: 112px 0 84px; background: #101014; }
+.shion-page-crumb { display: flex; align-items: center; gap: 10px; margin-bottom: 40px; color: #aaa4b0; font-size: 12px; }
+.shion-page-crumb button { padding: 5px 1px; background: none; color: #d9d6da; }
+.shion-page-crumb button:hover { color: #fff; }
+.shion-page-crumb span:last-child { color: #f2e9f0; }
+.shion-footer { border-top: 1px solid var(--shion-line); padding: 27px 0; background: #0b0b0e; }
+.shion-footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; color: #9e99a1; font-size: 11px; }
+.shion-footer-inner > span:first-child { color: #f5f1f4; font-weight: 650; letter-spacing: .12em; }
+.shion-site-header :is(button,a):focus-visible, .shion-home :is(button,a):focus-visible, .shion-subpage :is(button,a):focus-visible { outline: 2px solid #e4cadd; outline-offset: 4px; }
+
+@media (max-width: 760px) {
+  .shion-content-width, .shion-header-inner { width: calc(100% - 40px); }
+  .shion-site-header { height: 68px; }
+  .shion-desktop-nav, .shion-header-tag { display: none; }
+  .shion-menu-toggle { display: grid; }
+  .shion-brand-name { font-size: 12px; letter-spacing: .12em; }
+  .shion-brand-mark { width: 32px; height: 32px; font-size: 22px; }
+  .shion-mobile-menu { top: 68px; }
+  .shion-hero { min-height: 670px; height: 100svh; max-height: 940px; }
+  .shion-hero-image { inset: 0; }
+  .shion-hero-image img { object-position: 52% 32%; }
+  .shion-hero-gradient { background: linear-gradient(to top, rgba(11,11,14,.99) 0%, rgba(11,11,14,.88) 21%, rgba(11,11,14,.17) 64%, rgba(11,11,14,.09) 100%); }
+  .shion-hero-inner { width: calc(100% - 40px); align-items: flex-end; padding-top: 100px; padding-bottom: 90px; }
+  .shion-hero-overline { margin-bottom: 17px; font-size: 9px; letter-spacing: .14em; }
+  .shion-hero-overline span { width: 12px; }
+  .shion-hero-copy h1 { font-size: clamp(58px, 15.2vw, 86px); line-height: .9; letter-spacing: -.08em; }
+  .shion-hero-ko { margin-top: 12px; font-size: 17px; }
+  .shion-hero-rule { margin-top: 23px; }
+  .shion-hero-description { max-width: 340px; margin-top: 18px; font-size: 12px; }
+  .shion-hero-actions { margin-top: 21px; }
+  .shion-hero-actions button { flex: 1 1 140px; min-width: 0; min-height: 47px; padding-inline: 12px; gap: 6px; }
+  .shion-scroll-note { left: 20px; bottom: 24px; font-size: 8px; }
+  .shion-hero-side { display: none; }
+  .shion-home-explore { padding: 71px 0 55px; }
+  .shion-section-lead { align-items: start; flex-direction: column; gap: 13px; padding-bottom: 25px; }
+  .shion-section-lead > p { text-align: left; font-size: 12px; }
+  .shion-desktop-break { display: none; }
+  .shion-feature-grid { grid-template-columns: 1fr; gap: 12px; }
+  .shion-feature-card { min-height: 210px; padding: 23px; }
+  .shion-feature-bottom strong { font-size: 25px; }
+  .shion-home-footnote { font-size: 9px; letter-spacing: .04em; }
+  .shion-subpage { padding-top: 98px; padding-bottom: 64px; }
+  .shion-page-crumb { margin-bottom: 30px; }
+  .shion-footer-inner { flex-direction: column; gap: 6px; }
+}
+@media (max-height: 730px) and (max-width: 760px) {
+  .shion-hero-inner { padding-bottom: 68px; }
+  .shion-hero-copy h1 { font-size: clamp(56px, 14vw, 76px); }
+  .shion-scroll-note { bottom: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shion-feature-card:hover { transform: none; }
+}
