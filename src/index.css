@@ -593,41 +593,61 @@ body, .shion-home, .shion-hero, .shion-subpage, .shion-footer, .archive-tab-bar 
   from { transform: translate(-50%, -49%) perspective(900px) rotateY(-14deg) rotateX(8deg); }
   to { transform: translate(-50%, -51%) perspective(900px) rotateY(-8deg) rotateX(5deg); }
 }
-.shion-top-four-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(9px, 1.2vw, 16px);
-}
-.shion-rank-card {
-  min-width: 0;
-  padding: clamp(11px, 1.6vw, 19px);
-  background: var(--theme-surface, #17161b);
-  border: 1px solid var(--theme-line, rgba(255,255,255,.14));
-  border-radius: 11px;
-}
-.shion-rank-first {
-  border-color: var(--theme-accent, #d9c6d6);
-  background: linear-gradient(180deg, var(--theme-accent-soft, rgba(217,198,214,.12)), var(--theme-surface, #17161b) 48%);
-}
-.shion-rank-number {
-  display: inline-block;
-  margin-bottom: 12px;
-  color: var(--theme-accent, #d9c6d6);
-  font-size: 12px;
-  font-weight: 650;
-  letter-spacing: .05em;
-}
-.shion-rank-art { width: 100%; min-width: 0; }
-.shion-rank-label { margin-top: 12px; overflow-wrap: anywhere; color: #f7f2f6; font-size: 14px; font-weight: 650; }
-.shion-rank-season { margin-top: 4px; color: #aca5af; font-size: 12px; overflow-wrap: anywhere; }
-.shion-rank-favorite { margin-top: 13px; padding: 8px 0; color: var(--theme-accent, #d9c6d6); font-size: 12px; text-align: left; }
 @media (max-width: 760px) {
   .shion-subpage::before, .shion-home-explore::before {
     left: 50%; width: min(75vw, 330px); opacity: .032;
     animation: none; transform: translate(-50%, -50%) perspective(900px) rotateY(-9deg);
   }
-  .shion-top-four-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .shion-subpage::before, .shion-home-explore::before { animation: none; }
+}
+
+/* SHION ARCHIVE 1.7 — portrait TOP 4 result, editorial podium (no text-only ranking tiles). */
+.shion-top-four { width: min(100%, 870px); }
+.shion-podium-header { margin: 0 0 23px; text-align: center; }
+.shion-podium-eyebrow { margin: 0 0 6px; color: #8b8796; font-size: 11px; font-weight: 650; letter-spacing: .34em; }
+.shion-podium-header h3 { margin: 0; color: #faf9fc; font-size: clamp(52px, 9vw, 78px); font-weight: 710; line-height: 1.08; letter-spacing: -.06em; }
+.shion-podium-subtitle { margin: 4px 0 0; color: #9a94a2; font-size: 13px; }
+.shion-podium-stage { position: relative; isolation: isolate; padding: 6px 10px 28px; background: var(--theme-canvas, #101014); border-radius: 14px; text-align: center; }
+.shion-podium-stage::before { content: ''; position: absolute; z-index: -1; top: 9%; left: 50%; width: 70%; height: 66%; pointer-events: none; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(ellipse at center, rgba(255,255,255,.035) 0%, transparent 68%); }
+.shion-podium-champion { display: flex; flex-direction: column; align-items: center; }
+.shion-podium-hero-image { width: min(54%, 346px); min-width: 0; padding: 4px; border: 1px solid #cbb57c; border-radius: 14px; background: var(--theme-canvas, #111014); }
+.shion-podium-hero-image > div { aspect-ratio: 2 / 3; border: 0; border-radius: 10px; }
+.shion-podium-winner-label { margin: 15px 0 3px; color: #d1b779; font-size: 11px; font-weight: 750; letter-spacing: .22em; }
+.shion-podium-winner-label span { margin-left: 7px; }
+.shion-podium-winner-title { max-width: 92%; margin: 0; color: #f8f7fa; font-size: clamp(20px, 3.5vw, 30px); font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
+.shion-podium-winner-title span { color: #b5aeb9; font-weight: 300; }
+.shion-podium-favorite { margin-top: 5px; padding: 5px 12px; border: 0; color: #b3acb6; background: none; font-size: 11px; text-decoration: underline; text-underline-offset: 4px; }
+.shion-podium-favorite:hover { color: #fbf8fc; }
+.shion-podium-runners { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; justify-items: center; gap: clamp(9px, 3vw, 25px); max-width: 720px; margin: 26px auto 0; }
+.shion-podium-runner { width: 100%; min-width: 0; }
+.shion-podium-runner-2 { --rank-color: #c8c4d2; }
+.shion-podium-runner-3 { --rank-color: #c19577; }
+.shion-podium-runner-4 { --rank-color: #827e91; }
+.shion-podium-rank { margin: 0 0 10px; color: var(--rank-color); font-size: clamp(16px, 2.8vw, 23px); font-weight: 710; line-height: 1; }
+.shion-podium-runner-image { width: 100%; margin: 0 auto; }
+.shion-podium-runner-image > div { aspect-ratio: 2 / 3; border-color: rgba(255,255,255,.12); border-radius: 8px; }
+.shion-podium-runner-2 .shion-podium-runner-image { max-width: 197px; }
+.shion-podium-runner-3 .shion-podium-runner-image { max-width: 166px; }
+.shion-podium-runner-4 .shion-podium-runner-image { max-width: 148px; }
+.shion-podium-runner-line { width: 100%; max-width: 197px; height: 2px; margin: 10px auto 0; background: var(--rank-color); opacity: .85; }
+.shion-podium-runner-3 .shion-podium-runner-line { max-width: 166px; }
+.shion-podium-runner-4 .shion-podium-runner-line { max-width: 148px; }
+.shion-podium-serial { margin: 9px 0 0; overflow: hidden; color: #d8d4dc; font-size: clamp(11px, 1.9vw, 15px); font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.shion-podium-runner-season { margin: 3px 0 0; overflow: hidden; color: #8e8995; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.shion-podium-credit { margin: 33px 0 0; color: #87828f; font-size: 10px; font-weight: 550; letter-spacing: .13em; }
+.shion-podium-credit span { padding: 0 4px; }
+@media (max-width: 600px) {
+  .shion-podium-header { margin-bottom: 18px; }
+  .shion-podium-eyebrow { font-size: 9px; letter-spacing: .25em; }
+  .shion-podium-stage { padding-inline: 0; }
+  .shion-podium-hero-image { width: min(68%, 306px); }
+  .shion-podium-runners { gap: 9px; margin-top: 22px; }
+  .shion-podium-runner-2 .shion-podium-runner-image,
+  .shion-podium-runner-3 .shion-podium-runner-image,
+  .shion-podium-runner-4 .shion-podium-runner-image { max-width: 100%; }
+  .shion-podium-runner-line { width: 100%; }
+  .shion-podium-runner-season { font-size: 9px; }
+  .shion-podium-credit { font-size: 9px; }
 }
