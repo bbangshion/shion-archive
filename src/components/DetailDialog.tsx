@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { Objekt } from '../types/objekt';
+import { objektLabel } from '../lib/catalog';
 import { CloseIcon, HeartIcon } from './Icons';
 import { ObjektArtwork } from './ObjektArtwork';
 
@@ -44,35 +45,34 @@ export function DetailDialog({ item, isFavorite, onToggleFavorite, onClose }: Pr
 
   if (!item) return null;
   const rows = [
-    ['MEMBER', 'S20 / 박시온'], ['COLLECTION', item.series],
-    ['SEASON', item.season], ['CLASS', item.className],
-    ['SERIAL', item.serial ?? '—'], ['ISSUED', item.issuedAt ?? '—'],
-    ['ID', item.id],
+    ['멤버', 'S20 박시온'], ['시리즈', item.series],
+    ['시즌', item.season], ['클래스', item.className],
+    ['카드 번호', item.serial ?? '—'], ['발행일', item.issuedAt ?? '—'],
   ];
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm sm:items-center sm:p-5" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <div data-objekt-dialog role="dialog" aria-modal="true" aria-labelledby="objekt-dialog-title" className="relative max-h-[94dvh] w-full max-w-[790px] overflow-y-auto rounded-t-[22px] border border-white/[.08] bg-surface p-5 shadow-ambient sm:rounded-[22px] sm:p-8">
-        <div className="mb-6 flex items-start justify-between gap-4">
-          <div><p className="micro-label">SHION / OBJECT DETAIL</p><h2 id="objekt-dialog-title" className="mt-2 text-2xl font-semibold tracking-[-.045em] text-paper">{item.title}</h2></div>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 p-0 sm:items-center sm:p-5" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <div data-objekt-dialog role="dialog" aria-modal="true" aria-labelledby="objekt-dialog-title" className="max-h-[94dvh] w-full max-w-[760px] overflow-y-auto overscroll-contain rounded-t-2xl border border-white/[.08] bg-surface p-5 pb-[max(20px,env(safe-area-inset-bottom))] shadow-ambient sm:rounded-2xl sm:p-8">
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div><p className="text-[11px] text-ash">{item.season}</p><h2 id="objekt-dialog-title" className="mt-1 break-words text-2xl font-semibold tracking-[-.045em] text-paper">{objektLabel(item)}</h2></div>
           <button ref={closeButton} type="button" onClick={onClose} aria-label="닫기" className="icon-button"><CloseIcon /></button>
         </div>
-        <div className="grid gap-7 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:gap-9">
-          <div className="max-w-[360px]"><ObjektArtwork item={item} eager large /></div>
+        <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:gap-8">
+          <div className="mx-auto w-full max-w-[350px]"><ObjektArtwork item={item} eager large /></div>
           <div className="flex flex-col">
-            <p className="mb-4 text-sm leading-7 text-ash">{item.description ?? '시온의 Objekt를 기록하는 컬렉션 페이지입니다.'}</p>
+            {item.description && <p className="mb-4 text-sm leading-6 text-ash">{item.description}</p>}
             <dl className="divide-y divide-white/[.07] border-y border-white/[.09]">
               {rows.map(([label, value]) => (
                 <div key={label} className="flex items-start justify-between gap-3 py-3">
-                  <dt className="text-[10px] font-semibold tracking-[.15em] text-ash">{label}</dt>
-                  <dd className="max-w-[64%] break-all text-right text-xs text-paper/90">{value}</dd>
+                  <dt className="text-[12px] text-ash">{label}</dt>
+                  <dd className="max-w-[65%] break-words text-right text-xs text-paper/90">{value}</dd>
                 </div>
               ))}
             </dl>
-            <button type="button" onClick={() => onToggleFavorite(item.id)} className="btn-primary mt-7 w-full justify-center gap-2">
+            <button type="button" onClick={() => onToggleFavorite(item.id)} className="btn-primary mt-6 w-full justify-center gap-2">
               <HeartIcon width={17} height={17} fill={isFavorite ? 'currentColor' : 'none'} />
-              {isFavorite ? '즐겨찾기에서 제거' : '내 즐겨찾기에 저장'}
+              {isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가'}
             </button>
-            {item.isDemo && <p className="mt-4 text-xs leading-5 text-ash">현재 항목은 화면·기능 점검용 예시입니다. 실제 카드 정보는 원본 JSON 연결 후 표시됩니다.</p>}
+            {item.isDemo && <p className="mt-4 text-xs leading-5 text-ash">미리보기용 데이터입니다</p>}
           </div>
         </div>
       </div>
