@@ -1,25 +1,519 @@
 [
   {
-    "id": "airport-01",
+    "id": "user-airport-portrait",
     "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
     "image": "images/shion-home.jpg",
     "title": {
       "ko": "공항에서",
       "en": "At the airport",
-      "ja": "空港にて"
+      "ja": "空港で"
     },
     "album": {
       "ko": "일상",
-      "en": "Daily life",
+      "en": "Daily",
       "ja": "日常"
     },
     "date": null,
     "credit": {
       "ko": "사용자 제공 사진",
-      "en": "User-provided photo",
-      "ja": "ユーザー提供写真"
+      "en": "사용자 제공 사진",
+      "ja": "사용자 제공 사진"
     },
     "sourceUrl": null,
-    "tags": ["박시온", "공항"]
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "공항",
+      "핑크머리"
+    ],
+    "assetType": "user-provided",
+    "rightsStatus": "user-provided",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2023-nxt-reveal",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://i0.wp.com/kstationtv.com/wp-content/uploads/2023/12/TRIPLE-S-NXT-SHION-1-e1703492390750.jpg?fit=1000%2C1499&ssl=1",
+    "title": {
+      "ko": "NXT 멤버 공개",
+      "en": "NXT member reveal",
+      "ja": "NXT メンバー公開"
+    },
+    "album": {
+      "ko": "공식 콘셉트",
+      "en": "Official concept",
+      "ja": "公式コンセプト"
+    },
+    "date": "2023-12-24",
+    "credit": {
+      "ko": "MODHAUS 제공 · KSTATION TV 게재",
+      "en": "MODHAUS 제공 · KSTATION TV 게재",
+      "ja": "MODHAUS 제공 · KSTATION TV 게재"
+    },
+    "sourceUrl": "https://kstationtv.com/2023/12/25/triple-s-the-face-of-the-last-member/?lang=en",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2023",
+      "NXT",
+      "Just Do It"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2023-nxt-brick",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://legacy.kpopping.com/f7/5/231230-tripleS-Instagram-Twitter-Update-Park-Shion-documents-1.jpeg",
+    "title": {
+      "ko": "NXT 공개 사진 · 벽돌 배경",
+      "en": "NXT reveal · brick wall",
+      "ja": "NXT公開写真 · レンガ壁"
+    },
+    "album": {
+      "ko": "SNS 사진",
+      "en": "SNS photos",
+      "ja": "SNS写真"
+    },
+    "date": "2023-12-30",
+    "credit": {
+      "ko": "tripleS 공식 SNS 사진 · kpopping 기록",
+      "en": "tripleS 공식 SNS 사진 · kpopping 기록",
+      "ja": "tripleS 공식 SNS 사진 · kpopping 기록"
+    },
+    "sourceUrl": "https://kpopping.com/kpics/tripleS-ShiOn-SSS-S20-Member-Reveal-Teaser-Photos",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2023",
+      "NXT",
+      "공개"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2024-hanteo",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://img.hankyung.com/photo/202402/03.35878537.1.jpg",
+    "title": {
+      "ko": "한터뮤직어워즈 2024",
+      "en": "Hanteo Music Awards 2024",
+      "ja": "ハント音楽賞 2024"
+    },
+    "album": {
+      "ko": "현장 사진",
+      "en": "Event photos",
+      "ja": "イベント写真"
+    },
+    "date": "2024-02-18",
+    "credit": {
+      "ko": "한국경제 · 사진 저작권 별도",
+      "en": "한국경제 · 사진 저작권 별도",
+      "ja": "한국경제 · 사진 저작권 별도"
+    },
+    "sourceUrl": "https://www.hankyung.com/article/202402181946H",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2024",
+      "한터뮤직어워즈"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2024-assemble24",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://meta.kpoppann.com/uploads/default/original/2X/d/d3b9a5b78ab82580e77ca4666bb402fcd7fb7c84.jpeg",
+    "title": {
+      "ko": "ASSEMBLE24 콘셉트",
+      "en": "ASSEMBLE24 concept",
+      "ja": "ASSEMBLE24 コンセプト"
+    },
+    "album": {
+      "ko": "공식 콘셉트",
+      "en": "Official concept",
+      "ja": "公式コンセプト"
+    },
+    "date": null,
+    "credit": {
+      "ko": "tripleS 콘셉트 사진 · Kpann 게재",
+      "en": "tripleS 콘셉트 사진 · Kpann 게재",
+      "ja": "tripleS 콘셉트 사진 · Kpann 게재"
+    },
+    "sourceUrl": "https://kpoppann.com/3638.html",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2024",
+      "ASSEMBLE24"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2025-assemble25-concept",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://www.allkpop.com/upload/2025/05/content/031653/1746305580-gprvagrbqaagc7y.jpg",
+    "title": {
+      "ko": "ASSEMBLE25 콘셉트",
+      "en": "ASSEMBLE25 concept",
+      "ja": "ASSEMBLE25 コンセプト"
+    },
+    "album": {
+      "ko": "공식 콘셉트",
+      "en": "Official concept",
+      "ja": "公式コンセプト"
+    },
+    "date": "2025-05-03",
+    "credit": {
+      "ko": "tripleS 공식 공개 이미지 · allkpop 게재",
+      "en": "tripleS 공식 공개 이미지 · allkpop 게재",
+      "ja": "tripleS 공식 공개 이미지 · allkpop 게재"
+    },
+    "sourceUrl": "https://www.allkpop.com/article/2025/05/triples-showcases-their-stunning-beauty-in-new-teaser-photos-for-are-you-alive",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2025",
+      "ASSEMBLE25",
+      "깨어"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2025-assemble25-close",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://pbs.twimg.com/media/GprVaGGbEAEoc3r?format=jpg&name=large",
+    "title": {
+      "ko": "ASSEMBLE25 클로즈업",
+      "en": "ASSEMBLE25 close-up",
+      "ja": "ASSEMBLE25 クローズアップ"
+    },
+    "album": {
+      "ko": "공식 콘셉트",
+      "en": "Official concept",
+      "ja": "公式コンセプト"
+    },
+    "date": null,
+    "credit": {
+      "ko": "tripleS 공개 이미지 · X 미디어 원본",
+      "en": "tripleS 공개 이미지 · X 미디어 원본",
+      "ja": "tripleS 공개 이미지 · X 미디어 원본"
+    },
+    "sourceUrl": "https://kprofiles.com/forums/threads/triples-official-thread-full-group.44558/page-5",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2025",
+      "ASSEMBLE25",
+      "클로즈업"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2025-showcase-heart-tv",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://news.nateimg.co.kr/orgImg/tv/2025/05/12/1747036988_1749938.jpg",
+    "title": {
+      "ko": "ASSEMBLE25 쇼케이스 · 하트",
+      "en": "ASSEMBLE25 showcase · heart",
+      "ja": "ASSEMBLE25 ショーケース · ハート"
+    },
+    "album": {
+      "ko": "쇼케이스",
+      "en": "Showcase",
+      "ja": "ショーケース"
+    },
+    "date": "2025-05-12",
+    "credit": {
+      "ko": "티브이데일리 · 사진 저작권 별도",
+      "en": "티브이데일리 · 사진 저작권 별도",
+      "ja": "티브이데일리 · 사진 저작권 별도"
+    },
+    "sourceUrl": "https://news.nate.com/view/20250512n31814",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2025",
+      "ASSEMBLE25",
+      "하트"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2025-showcase-heart-ten",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://img.hankyung.com/photo/202505/BF.40454490.1.jpg",
+    "title": {
+      "ko": "ASSEMBLE25 쇼케이스 · 손하트",
+      "en": "ASSEMBLE25 showcase · hand heart",
+      "ja": "ASSEMBLE25 ショーケース · ハート"
+    },
+    "album": {
+      "ko": "쇼케이스",
+      "en": "Showcase",
+      "ja": "ショーケース"
+    },
+    "date": "2025-05-12",
+    "credit": {
+      "ko": "텐아시아 · 사진 저작권 별도",
+      "en": "텐아시아 · 사진 저작권 별도",
+      "ja": "텐아시아 · 사진 저작권 별도"
+    },
+    "sourceUrl": "https://plus.hankyung.com/apps/newsinside.view?aid=2025051280284&category=&sns=y",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2025",
+      "ASSEMBLE25",
+      "손하트"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2025-showcase-pose",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://img.hankyung.com/photo/202505/03.40453973.1.jpg",
+    "title": {
+      "ko": "ASSEMBLE25 쇼케이스 · 포즈",
+      "en": "ASSEMBLE25 showcase · pose",
+      "ja": "ASSEMBLE25 ショーケース · ポーズ"
+    },
+    "album": {
+      "ko": "쇼케이스",
+      "en": "Showcase",
+      "ja": "ショーケース"
+    },
+    "date": "2025-05-13",
+    "credit": {
+      "ko": "한국경제 · 사진 저작권 별도",
+      "en": "한국경제 · 사진 저작권 별도",
+      "ja": "한국경제 · 사진 저작권 별도"
+    },
+    "sourceUrl": "https://www.hankyung.com/article/202505138322H",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2025",
+      "ASSEMBLE25",
+      "포즈"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2025-moon-showcase-newdaily",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://image.newdaily.co.kr/site/data/img/2025/11/24/2025112400352_0.jpg",
+    "title": {
+      "ko": "Beyond Beauty 쇼케이스 · 문",
+      "en": "Beyond Beauty showcase · Moon",
+      "ja": "Beyond Beauty ショーケース · moon"
+    },
+    "album": {
+      "ko": "쇼케이스",
+      "en": "Showcase",
+      "ja": "ショーケース"
+    },
+    "date": "2025-11-24",
+    "credit": {
+      "ko": "뉴데일리 · 사진 저작권 별도",
+      "en": "뉴데일리 · 사진 저작권 별도",
+      "ja": "뉴데일리 · 사진 저작권 별도"
+    },
+    "sourceUrl": "https://www.newdaily.co.kr/site/data/html/2025/11/24/2025112400352.html",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2025",
+      "Moon",
+      "Beyond Beauty",
+      "msnz"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2025-moon-showcase-hk",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://img.hankyung.com/photo/202511/03.42477757.1.jpg",
+    "title": {
+      "ko": "Beyond Beauty 쇼케이스 · 핑거하트",
+      "en": "Beyond Beauty showcase · finger heart",
+      "ja": "Beyond Beauty ショーケース · 指ハート"
+    },
+    "album": {
+      "ko": "쇼케이스",
+      "en": "Showcase",
+      "ja": "ショーケース"
+    },
+    "date": "2025-11-24",
+    "credit": {
+      "ko": "한국경제 · 사진 저작권 별도",
+      "en": "한국경제 · 사진 저작권 별도",
+      "ja": "한국경제 · 사진 저작권 별도"
+    },
+    "sourceUrl": "https://www.hankyung.com/article/202511242875H",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2025",
+      "Moon",
+      "Beyond Beauty",
+      "msnz"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2025-sns-backstage",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://legacy.kpopping.com/f5/5/251226-tripleS-SNS-Update-ShiOn-documents-1.jpeg",
+    "title": {
+      "ko": "공식 SNS · 무대 뒤",
+      "en": "Official SNS · backstage",
+      "ja": "公式SNS · 舞台裏"
+    },
+    "album": {
+      "ko": "SNS 사진",
+      "en": "SNS photos",
+      "ja": "SNS写真"
+    },
+    "date": "2025-12-26",
+    "credit": {
+      "ko": "tripleS SNS · kpopping 게재",
+      "en": "tripleS SNS · kpopping 게재",
+      "ja": "tripleS SNS · kpopping 게재"
+    },
+    "sourceUrl": "https://kpopping.com/profiles/idol/ShiOn2",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2025",
+      "SNS",
+      "무대"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
+  },
+  {
+    "id": "s20-2026-profile",
+    "category": "photo",
+    "memberId": "S20",
+    "identityVerified": true,
+    "image": "https://cdn.kpopping.com/kpics/2026/03/1774219850264-43kuxs-0.jpg",
+    "title": {
+      "ko": "2026 활동 프로필",
+      "en": "2026 profile",
+      "ja": "2026年プロフィール"
+    },
+    "album": {
+      "ko": "프로필",
+      "en": "Profile",
+      "ja": "プロフィール"
+    },
+    "date": null,
+    "credit": {
+      "ko": "kpopping 사진 아카이브 · 원저작자 확인 필요",
+      "en": "kpopping 사진 아카이브 · 원저작자 확인 필요",
+      "ja": "kpopping 사진 아카이브 · 원저작자 확인 필요"
+    },
+    "sourceUrl": "https://kpopping.com/profiles/idol/ShiOn2",
+    "tags": [
+      "박시온",
+      "시온",
+      "ShiOn",
+      "S20",
+      "tripleS",
+      "2026",
+      "프로필",
+      "활동"
+    ],
+    "assetType": "external-reference",
+    "rightsStatus": "unverified",
+    "captureDateVerified": false
   }
 ]
