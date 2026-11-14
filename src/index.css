@@ -319,3 +319,128 @@ button:disabled { cursor: not-allowed; }
   .shion-film-skeleton > div, .shion-film-skeleton > span { animation: none; }
   .shion-film-card-main:hover .shion-film-poster img { transform: none; }
 }
+
+/* SHION ARCHIVE 1.5.4 — balanced desktop layout
+   Desktop/tablet-only overrides. Mobile (<=760px), data, and interactions stay unchanged.
+   Shared content rail follows the same 1180px centerline on every main screen.
+*/
+@media (min-width: 761px) {
+  :root {
+    --shion-pc-max: 1180px;
+    --shion-pc-gutter: clamp(24px, 3.3vw, 54px);
+  }
+
+  .shion-content-width,
+  .shion-header-inner,
+  .shion-hero-inner {
+    width: min(calc(100% - (var(--shion-pc-gutter) * 2)), var(--shion-pc-max));
+    margin-inline: auto;
+  }
+
+  .shion-header-inner { position: relative; gap: 20px; }
+  .shion-desktop-nav {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: clamp(13px, 1.85vw, 25px);
+  }
+  .shion-brand { position: relative; z-index: 1; }
+  .shion-header-right { position: relative; z-index: 1; margin-left: auto; }
+
+  .shion-hero {
+    height: min(840px, 100svh);
+    min-height: 690px;
+    max-height: none;
+  }
+  .shion-hero-inner {
+    padding-top: 102px;
+    padding-bottom: 82px;
+  }
+  .shion-hero-copy {
+    width: 45.5%;
+    max-width: 530px;
+    min-width: 0;
+    padding-bottom: 0;
+  }
+  .shion-hero-copy h1 {
+    font-size: clamp(67px, 7.3vw, 115px);
+    letter-spacing: -.087em;
+  }
+  .shion-hero-image {
+    inset: 105px max(var(--shion-pc-gutter), calc((100vw - var(--shion-pc-max)) / 2))
+      72px max(50vw, calc((100vw - var(--shion-pc-max)) / 2 + 564px));
+    border-radius: 3px;
+    background: #18161a;
+  }
+  .shion-hero-image img { object-position: 52% 37%; }
+  .shion-hero-gradient {
+    background: linear-gradient(90deg,
+      #0b0b0e 0%, rgba(11,11,14,.97) 23%, rgba(11,11,14,.46) 50%,
+      rgba(11,11,14,.02) 68%),
+      linear-gradient(0deg,rgba(11,11,14,.38), transparent 27%,transparent 78%,rgba(11,11,14,.15));
+  }
+  .shion-hero-side {
+    right: max(var(--shion-pc-gutter), calc((100vw - var(--shion-pc-max)) / 2));
+    bottom: 35px;
+  }
+  .shion-scroll-note {
+    left: max(var(--shion-pc-gutter), calc((100vw - var(--shion-pc-max)) / 2));
+  }
+
+  .shion-home-explore { padding-block: 88px 72px; }
+  .shion-feature-grid { gap: 16px; }
+  .shion-feature-card { min-width: 0; }
+  .shion-subpage { padding-top: 118px; padding-bottom: 90px; }
+  .shion-subpage > .shion-content-width { min-width: 0; }
+  .shion-profile-intro {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(30px, 4vw, 60px);
+    align-items: start;
+  }
+  .shion-profile-portrait,
+  .shion-profile-info { min-width: 0; }
+  .shion-profile-portrait img {
+    width: 100%;
+    max-height: none;
+    aspect-ratio: 3 / 4;
+  }
+  .shion-fact-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .shion-page-heading, .shion-film-controls, .shion-photo-controls { width: 100%; min-width: 0; }
+  .shion-photo-grid, .shion-film-grid { width: 100%; margin-inline: auto; }
+  .shion-photo-grid { gap: 24px 18px; }
+  .shion-film-grid { gap: 30px 20px; }
+}
+
+/* Wide desktop: five feature cards have a centered 3 + 2 composition, not 2 + 2 + 1. */
+@media (min-width: 1200px) {
+  .shion-feature-grid { grid-template-columns: repeat(6,minmax(0,1fr)); }
+  .shion-feature-grid > .shion-feature-card { grid-column: span 2; min-height: 252px; }
+  .shion-feature-grid > .shion-feature-card:nth-child(n+4) { grid-column: span 3; }
+  .shion-photo-grid { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  .shion-film-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+
+/* Standard PC & laptop: pair cards and center the fifth as a full-width final row. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .shion-header-tag { display: none; }
+  .shion-feature-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .shion-feature-grid > .shion-feature-card:last-child { grid-column: 1 / -1; min-height: 220px; }
+  .shion-profile-intro { gap: 32px; }
+  .shion-photo-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+
+/* Tablet and narrow desktop: use a menu button rather than squeezed navigation. */
+@media (min-width: 761px) and (max-width: 1023px) {
+  .shion-desktop-nav, .shion-header-tag { display: none; }
+  .shion-menu-toggle { display: grid; }
+  .shion-feature-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .shion-feature-grid > .shion-feature-card:last-child { grid-column: 1 / -1; min-height: 210px; }
+  .shion-feature-card { min-height: 245px; padding: 25px; }
+  .shion-hero-copy { width: 46%; }
+  .shion-hero-copy h1 { font-size: clamp(57px, 7.2vw, 76px); }
+  .shion-hero-image { inset-inline-start: 51%; }
+  .shion-profile-intro { gap: 26px; }
+  .shion-profile-info h2 { font-size: clamp(34px,4vw,49px); }
+  .shion-photo-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .shion-film-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
