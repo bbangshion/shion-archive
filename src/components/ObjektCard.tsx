@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/I18nContext';
 import type { Objekt } from '../types/objekt';
 import { HeartIcon } from './Icons';
 import { ObjektArtwork, objektLabel } from './ObjektArtwork';
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export function ObjektCard({ item, isFavorite, onToggleFavorite, onOpen }: Props) {
+  const { t } = useI18n();
   const label = objektLabel(item);
 
   return (
@@ -18,14 +20,14 @@ export function ObjektCard({ item, isFavorite, onToggleFavorite, onOpen }: Props
         <button
           type="button"
           onClick={() => onOpen(item)}
-          aria-label={`${item.season} ${label} 상세 보기`}
+          aria-label={`${item.season} ${label} ${t("사진 확대")}`}
           className="block w-full rounded-lg text-left transition-transform duration-[250ms] ease-plush motion-safe:hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blush"
         >
           <ObjektArtwork item={item} />
         </button>
         <button
           type="button"
-          aria-label={`${label} ${isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가'}`}
+          aria-label={`${label} ${t(isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가')}`}
           aria-pressed={isFavorite}
           onClick={() => onToggleFavorite(item.id)}
           className={`absolute bottom-2.5 right-2.5 grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-black/65 backdrop-blur-sm transition-colors duration-[250ms] ease-plush hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blush ${isFavorite ? 'text-blush' : 'text-white'}`}
