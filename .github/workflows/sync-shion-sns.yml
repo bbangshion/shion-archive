@@ -45,6 +45,9 @@ jobs:
           console.log(`Verified gallery rows: ${r.sourceRows}; resolved: ${r.matchedImages}; added: ${r.added}; total: ${r.total}`);
           NODE
 
+      - name: Ensure imported metadata is intact and previous data was not lost
+        run: node scripts/audit-archive.mjs --ci --protect-baseline
+
       - name: Commit new S20 photo metadata (no photo files copied)
         shell: bash
         run: |

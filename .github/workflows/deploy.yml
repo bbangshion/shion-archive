@@ -59,6 +59,9 @@ jobs:
       - name: Prepare same-origin card photos for PNG and image sharing
         run: node scripts/cache-objekt-poster.mjs
 
+      - name: Verify archive data integrity
+        run: node scripts/audit-archive.mjs --self-test && node scripts/audit-archive.mjs --ci --protect-baseline --write
+
       - name: Build static site
         run: npm run build
 
