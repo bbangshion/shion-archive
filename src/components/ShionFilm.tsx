@@ -1,6 +1,6 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowIcon } from './Icons';
-import { filmEmbedUrl, filmThumbnail, filmYoutubeUrl, normalizeFilms, readableFilmDate } from '../lib/films';
+import { filmEmbedUrl, filmThumbnail, filmYoutubeUrl, normalizeFilms, readableFilmDate, filmScopeLabel } from '../lib/films';
 import type { Film, FilmCategory } from '../lib/films';
 
 const DATA_PATH = `${import.meta.env.BASE_URL}data/films.json`;
@@ -41,9 +41,9 @@ function FilmCard({ video, saved, onPlay, onSave }: { video: Film; saved: boolea
     <button className="shion-film-card-main" type="button" onClick={onPlay} aria-label={`${video.title} 영상 열기`}>
       <FilmImage video={video}/>
       <span className="shion-film-card-details">
-        <span className="shion-film-category">{video.group} <span aria-hidden="true">/</span> {readableFilmDate(video.publishedAt)}</span>
+        <span className="shion-film-category">{filmScopeLabel(video.scope)} · {video.group} <span aria-hidden="true">/</span> {readableFilmDate(video.publishedAt)}</span>
         <strong>{video.title}</strong>
-        <span className="shion-film-caption">{video.note || '영상 보기'}</span>
+        <span className="shion-film-caption">{video.note || video.source}</span>
       </span>
     </button>
     <button className={`shion-film-save ${saved ? 'is-active' : ''}`} type="button" onClick={onSave} aria-pressed={saved} aria-label={`${video.title} ${saved ? '저장 해제' : '저장'}`} title={saved ? '저장 해제' : '저장'}>
@@ -65,9 +65,8 @@ function PlayerDialog({ video, onClose }: { video: Film; onClose: () => void }) 
         const root = document.getElementById('shion-film-dialog');
         const controls = root?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
         if (!controls?.length) return;
-        const first = controls.item(0);
-        const last = controls.item(controls.length - 1);
-        if (!first || !last) return;
+        const first = controls[0];
+        const last = controls[controls.length - 1];
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
       }
@@ -90,7 +89,7 @@ function PlayerDialog({ video, onClose }: { video: Film; onClose: () => void }) 
         <iframe title={`${video.title} YouTube 영상`} src={filmEmbedUrl(video.youtubeId)} referrerPolicy="strict-origin-when-cross-origin" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
       </div>
       <div className="shion-film-dialog-foot">
-        <p>{video.group} <span aria-hidden="true">/</span> {readableFilmDate(video.publishedAt)}</p>
+        <p>{filmScopeLabel(video.scope)} · {video.group} · {readableFilmDate(video.publishedAt)}</p>
         <a href={filmYoutubeUrl(video.youtubeId)} target="_blank" rel="noopener noreferrer">YouTube에서 보기 <ArrowIcon width={16} height={16}/></a>
       </div>
     </div>
@@ -99,6 +98,7 @@ function PlayerDialog({ video, onClose }: { video: Film; onClose: () => void }) 
 
 export default function ShionFilm() {
   const [films, setFilms] = useState<Film[]>([]);
+  const [syncMessage, setSyncMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState<FilmFilter>('all');
@@ -117,7 +117,12 @@ export default function ShionFilm() {
         const response = await fetch(DATA_PATH, { signal: controller.signal, cache: 'no-cache' });
         if (!response.ok) throw new Error(`영상 목록을 불러오지 못했습니다 (${response.status})`);
         const payload: unknown = await response.json();
-        if (!controller.signal.aborted) setFilms(normalizeFilms(payload));
+        if (!controller.signal.aborted) {
+          setFilms(normalizeFilms(payload));
+          const report = (payload && typeof payload === 'object' && !Array.isArray(payload) ? (payload as { coverage?: { wav?: {status?: string}; official?: {status?: string} }; generatedAt?: string }) : null);
+          const youtube = report?.coverage?.official?.status;
+          setSyncMessage(youtube === 'no-api-key' ? '공식 채널 전체 자동 검색은 미연결' : youtube === 'ok' ? '공식 채널 목록과 동기화' : '공식 링크를 기준으로 정리');
+        }
       } catch (reason) {
         if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : '영상 목록을 불러오지 못했습니다');
       } finally {
@@ -151,7 +156,7 @@ export default function ShionFilm() {
     <header className="shion-page-heading">
       <span className="shion-page-kicker">SHION FILM</span>
       <h1>영상</h1>
-      <p>박시온이 출연한 공식 영상과 활동 기록</p>
+      <p>박시온 개인, 유닛, 완전체 공식 영상</p>
     </header>
 
     <div className="shion-film-controls">
@@ -164,14 +169,14 @@ export default function ShionFilm() {
       </div>
     </div>
 
-    <div className="shion-film-result"><span>{loading ? '불러오는 중' : `${filtered.length.toLocaleString('ko-KR')}개 영상`}</span><span>영상 재생 시 YouTube에 연결됩니다</span></div>
+    <div className="shion-film-result"><span>{loading ? '불러오는 중' : `${filtered.length.toLocaleString('ko-KR')}개 영상`}</span><span>{syncMessage}</span></div>
     {loading ? <div className="shion-film-grid" role="status" aria-label="영상 불러오는 중">{Array.from({ length: 6 }, (_, index) => <div className="shion-film-skeleton" key={index}><div/><span/></div>)}</div> : error ?
       <div className="shion-film-empty" role="alert"><h2>영상 목록을 불러오지 못했어요</h2><p>{error}</p><a href="https://www.youtube.com/@triplescosmos" target="_blank" rel="noopener noreferrer">tripleS 공식 YouTube 열기</a></div> : filtered.length ?
       <><div className="shion-film-grid">{filtered.slice(0, visible).map((video) => <FilmCard key={video.id} video={video} saved={saved.has(video.id)} onPlay={() => setPlayingId(video.id)} onSave={() => toggleSaved(video.id)}/>)}</div>
         {visible < filtered.length && <div className="shion-film-more"><button type="button" onClick={() => setVisible((size) => size + PAGE_SIZE)}>더 보기 <span>{visible} / {filtered.length}</span></button></div>}
       </> : <div className="shion-film-empty"><h2>표시할 영상이 없습니다</h2><p>다른 분류를 선택하거나 검색어를 바꿔보세요</p>{(filter !== 'all' || query || year !== 'all') && <button type="button" onClick={() => { setFilter('all'); setQuery(''); setYear('all'); }}>전체 보기</button>}</div>}
 
-    <aside className="shion-film-note"><span>OFFICIAL SOURCES</span><p>공식 공개 영상의 링크를 정리한 목록입니다. 전체 영상 중 박시온의 출연 여부가 확인된 항목부터 등록하고 있어요.</p><a href="https://www.youtube.com/@triplescosmos" target="_blank" rel="noopener noreferrer">tripleS 공식 채널 <ArrowIcon width={14} height={14}/></a></aside>
+    <aside className="shion-film-note"><span>영상 안내</span><p>공식 채널과 방송사에서 공개한 영상 링크를 정리합니다. 출연 여부가 확인된 영상부터 등록하며, 전체 영상이 모두 수록된 것은 아닙니다. 재생은 YouTube에서 이루어집니다.</p><a href="https://www.youtube.com/@triplescosmos" target="_blank" rel="noopener noreferrer">tripleS 공식 채널 <ArrowIcon width={14} height={14}/></a></aside>
     {selected && <PlayerDialog video={selected} onClose={() => setPlayingId(null)}/>}
   </div>;
 }
