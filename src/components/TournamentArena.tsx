@@ -3,6 +3,7 @@ import type { BracketSize, Objekt, TournamentState } from '../types/objekt';
 import { useI18n } from '../i18n/I18nContext';
 import { createTournament, INITIAL_TOURNAMENT, selectWinner, undoWinner } from '../lib/tournament';
 import { finishTopFour, getTopFourCandidates } from '../lib/topFour';
+import { renderWorldCupPoster } from '../lib/worldCupPoster';
 import { ArrowIcon, TrophyIcon } from './Icons';
 import { ObjektArtwork, objektLabel } from './ObjektArtwork';
 
@@ -26,7 +27,7 @@ type Copy = {
   saveImage: string; copied: string; copyFailed: string; shareFailed: string; saved: string;
   reset: string; replay: string; favorite: string; unfavorite: string; preview: string;
   editThird: string; progress: string; match: (n: number) => string; round: (n: number) => string;
-  resultHeader: string;
+  resultHeader: string; imageBlocked: string; imageSaving: string;
 };
 const COPIES: Record<'ko' | 'en' | 'ja', Copy> = {
   ko: {
@@ -40,7 +41,7 @@ const COPIES: Record<'ko' | 'en' | 'ja', Copy> = {
     copyFailed: '복사할 수 없습니다. 다시 시도해 주세요', shareFailed: '공유할 수 없습니다', saved: '결과 이미지를 저장했어요',
     reset: '설정으로', replay: '다시 하기', favorite: '즐겨찾기 추가', unfavorite: '즐겨찾기 해제',
     preview: '미리보기 카드로 진행 중입니다', editThird: '3·4위 다시 선택', progress: '진행도',
-    match: (n) => `${n}번째 대결`, round: (n) => `${n}강`, resultHeader: '박시온 오브젝트 월드컵',
+    match: (n) => `${n}번째 대결`, round: (n) => `${n}강`, resultHeader: '박시온 오브젝트 월드컵', imageBlocked: '외부 카드 이미지의 저장 권한이 없어 사진 포함 PNG를 만들 수 없어요. 위 결과 화면을 캡처해 공유해 주세요.', imageSaving: '카드 이미지를 불러오고 있어요…',
   },
   en: {
     heading: 'Objekt World Cup', tagline: 'Pick your favorite Objekt in each match', setup: 'Tournament setup',
@@ -53,7 +54,7 @@ const COPIES: Record<'ko' | 'en' | 'ja', Copy> = {
     copyFailed: 'Could not copy the ranking', shareFailed: 'Could not share the results', saved: 'Result image saved',
     reset: 'Setup', replay: 'Play again', favorite: 'Add favorite', unfavorite: 'Remove favorite',
     preview: 'Using preview cards', editThird: 'Change third place', progress: 'Progress',
-    match: (n) => `Match ${n}`, round: (n) => `Round of ${n}`, resultHeader: 'ShiOn Objekt World Cup',
+    match: (n) => `Match ${n}`, round: (n) => `Round of ${n}`, resultHeader: 'ShiOn Objekt World Cup', imageBlocked: 'The image host blocks exporting photos. Please share a screenshot of the ranking above instead.', imageSaving: 'Preparing the photo poster…',
   },
   ja: {
     heading: 'Objektワールドカップ', tagline: '好きなObjektを選んでください', setup: '大会設定',
@@ -66,7 +67,7 @@ const COPIES: Record<'ko' | 'en' | 'ja', Copy> = {
     copyFailed: 'コピーできませんでした', shareFailed: '共有できませんでした', saved: '結果画像を保存しました',
     reset: '設定', replay: 'もう一度', favorite: 'お気に入りに追加', unfavorite: 'お気に入りを解除',
     preview: 'プレビューカードを使用中', editThird: '3位決定戦をやり直す', progress: '進行状況',
-    match: (n) => `第${n}対戦`, round: (n) => `${n}枚対戦`, resultHeader: 'シオンObjektワールドカップ',
+    match: (n) => `第${n}対戦`, round: (n) => `${n}枚対戦`, resultHeader: 'シオンObjektワールドカップ', imageBlocked: '画像配信元の制限により写真入りPNGを保存できません。上の結果画面をスクリーンショットで共有してください。', imageSaving: '画像を準備しています…',
   },
 };
 
@@ -89,47 +90,6 @@ function MatchCard({ item, label, choose, onSelect }: {
   );
 }
 
-function resultImage(records: { label: string; item: Objekt }[], title: string, size: number): string {
-  // Uses typography only. No cross-origin images enter the canvas: exporting never taints it.
-  const canvas = document.createElement('canvas');
-  canvas.width = 1080;
-  canvas.height = 1350;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('Canvas unavailable');
-  ctx.fillStyle = '#100F14';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#CDB7CB';
-  ctx.font = '600 25px sans-serif';
-  ctx.fillText('SHION ARCHIVE', 78, 100);
-  ctx.fillStyle = '#FAF6F9';
-  ctx.font = '600 55px sans-serif';
-  ctx.fillText(title, 78, 205);
-  ctx.fillStyle = '#9E97A5';
-  ctx.font = '24px sans-serif';
-  ctx.fillText(`${size} • TOP 4`, 80, 258);
-  records.forEach(({ label, item }, index) => {
-    const y = 320 + index * 218;
-    ctx.fillStyle = index === 0 ? '#28212F' : '#1D1B23';
-    ctx.fillRect(74, y, 932, 195);
-    ctx.strokeStyle = index === 0 ? '#A990AE' : '#39323F';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(74, y, 932, 195);
-    ctx.fillStyle = index === 0 ? '#E8CBE2' : '#C6B5C8';
-    ctx.font = '600 36px sans-serif';
-    ctx.fillText(label, 110, y + 66);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '600 45px sans-serif';
-    ctx.fillText(objektLabel(item).slice(0, 36), 110, y + 125);
-    ctx.fillStyle = '#ADA5B0';
-    ctx.font = '26px sans-serif';
-    ctx.fillText(item.season.slice(0, 48), 510, y + 129);
-  });
-  ctx.fillStyle = '#9E97A5';
-  ctx.font = '22px sans-serif';
-  ctx.fillText('CREATED BY @bbangshion', 78, 1278);
-  return canvas.toDataURL('image/png');
-}
-
 export function TournamentArena({ items, isDemo, favorites, onToggleFavorite }: Props) {
   const { language, formatNumber } = useI18n();
   const copy = COPIES[language];
@@ -138,6 +98,7 @@ export function TournamentArena({ items, isDemo, favorites, onToggleFavorite }: 
   const [state, setState] = useState<TournamentState>(INITIAL_TOURNAMENT);
   const [thirdId, setThirdId] = useState<string | null>(null);
   const [notice, setNotice] = useState('');
+  const [saving, setSaving] = useState(false);
   const pool = useMemo(() => poolMode === 'favorites' ? items.filter((item) => favorites.has(item.id)) : items, [items, favorites, poolMode]);
   const byId = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
 
@@ -196,24 +157,35 @@ export function TournamentArena({ items, isDemo, favorites, onToggleFavorite }: 
       setNotice(copy.shareFailed);
     }
   };
-  const saveImage = () => {
-    if (ranking.length !== 4) return;
+  const saveImage = async () => {
+    if (ranking.length !== 4 || saving) return;
+    setSaving(true);
+    setNotice(copy.imageSaving);
     try {
-      const records = ranking.map((item, index) => ({ label: rankLabels[index] ?? String(index + 1), item }));
-      const url = resultImage(records, copy.resultHeader, size);
+      const output = await renderWorldCupPoster(
+        ranking.map((item) => ({ item })), size,
+      );
+      if (!output.blob || output.missingImages > 0) {
+        setNotice(copy.imageBlocked);
+        return;
+      }
+      const objectUrl = URL.createObjectURL(output.blob);
       const link = document.createElement('a');
       link.download = `SHION-Objekt-Top4-${size}.png`;
-      link.href = url;
+      link.href = objectUrl;
       document.body.appendChild(link);
       link.click();
       link.remove();
+      // Object URLs must stay alive until the browser has started the download.
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
       setNotice(copy.saved);
-    } catch { setNotice(copy.shareFailed); }
+    } catch { setNotice(copy.imageBlocked); }
+    finally { setSaving(false); }
   };
 
   return (
     <section className="animate-appear" aria-labelledby="tournament-title">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+      <div className={ranked && ranking.length === 4 ? "sr-only" : "mb-6 flex flex-wrap items-end justify-between gap-3"}>
         <div>
           <h2 id="tournament-title" className="text-[24px] font-semibold tracking-[-.045em] text-paper sm:text-[32px]">{copy.heading}</h2>
           <p className="mt-1 text-[13px] text-ash">{copy.tagline}</p>
@@ -289,34 +261,45 @@ export function TournamentArena({ items, isDemo, favorites, onToggleFavorite }: 
           <p className="mt-6 text-center text-xs text-ash">{copy.firstPlace} · {copy.secondPlace} — {copy.final} / {copy.thirdPlace} · {copy.fourthPlace} — {copy.third}</p>
         </div>
       ) : ranked && ranking.length === 4 ? (
-        <div className="shion-top-four mx-auto max-w-[900px]">
-          <div className="mb-7 text-center"><TrophyIcon width={28} height={28} className="mx-auto mb-3 text-blush" />
-            <h3 className="text-[26px] font-semibold tracking-[-.05em] text-paper sm:text-[34px]">{copy.finished}</h3>
-            <p className="mt-2 text-xs text-ash">{copy.round(size)}</p>
+        <div className="shion-top-four mx-auto" aria-label={copy.finished}>
+          <div className="shion-podium-header">
+            <p className="shion-podium-eyebrow">OBJEKT WORLD CUP</p>
+            <h3>ShiOn</h3>
+            <p className="shion-podium-subtitle">{copy.round(size)} · TOP 4</p>
           </div>
-          <div className="shion-top-four-grid">
-            {ranking.map((item, index) => (
-              <div key={item.id} className={`shion-rank-card ${index === 0 ? 'shion-rank-first' : ''}`}>
-                <span className="shion-rank-number">{rankLabels[index]}</span>
-                <div className="shion-rank-art"><ObjektArtwork item={item} eager={index === 0} /></div>
-                <p className="shion-rank-label">{objektLabel(item)}</p>
-                <p className="shion-rank-season">{item.season}</p>
-                {index === 0 && <button type="button" className="shion-rank-favorite" onClick={() => onToggleFavorite(item.id)}>
-                  {favorites.has(item.id) ? copy.unfavorite : copy.favorite}</button>}
-              </div>
-            ))}
+          <div className="shion-podium-stage">
+            <div className="shion-podium-champion">
+              <div className="shion-podium-hero-image"><ObjektArtwork item={ranking[0]!} eager large /></div>
+              <p className="shion-podium-winner-label">01 <span>WINNER</span></p>
+              <h4 className="shion-podium-winner-title">{ranking[0]!.season} <span>·</span> {objektLabel(ranking[0]!).replace(/^#/, '')}</h4>
+              <button type="button" className="shion-podium-favorite" onClick={() => onToggleFavorite(ranking[0]!.id)}>
+                {favorites.has(ranking[0]!.id) ? copy.unfavorite : copy.favorite}
+              </button>
+            </div>
+            <div className="shion-podium-runners" aria-label={`${copy.secondPlace} · ${copy.thirdPlace} · ${copy.fourthPlace}`}>
+              {ranking.slice(1).map((item, index) => (
+                <div key={item.id} className={`shion-podium-runner shion-podium-runner-${index + 2}`}>
+                  <p className="shion-podium-rank">{String(index + 2).padStart(2, '0')}</p>
+                  <div className="shion-podium-runner-image"><ObjektArtwork item={item} eager /></div>
+                  <div className="shion-podium-runner-line" />
+                  <p className="shion-podium-serial">{objektLabel(item).replace(/^#/, '')}</p>
+                  <p className="shion-podium-runner-season">{item.season}</p>
+                </div>
+              ))}
+            </div>
+            <p className="shion-podium-credit">SHION ARCHIVE <span>·</span> @bbangshion</p>
           </div>
           <div className="mt-7 flex flex-wrap justify-center gap-2">
             <button type="button" onClick={() => void shareResult()} className="btn-primary">{copy.share}</button>
             <button type="button" onClick={() => void copyResult()} className="btn-ghost">{copy.copy}</button>
-            <button type="button" onClick={saveImage} className="btn-ghost">{copy.saveImage}</button>
+            <button type="button" disabled={saving} onClick={() => void saveImage()} className="btn-ghost">{saving ? copy.imageSaving : copy.saveImage}</button>
           </div>
           <div className="mt-3 flex flex-wrap justify-center gap-2">
             <button type="button" onClick={() => { setThirdId(null); setNotice(''); }} className="btn-ghost">{copy.editThird}</button>
             <button type="button" onClick={begin} className="btn-ghost">{copy.replay}</button>
             <button type="button" onClick={goToSetup} className="btn-ghost">{copy.reset}</button>
           </div>
-          {notice && <p className="mt-4 text-center text-sm text-ash" role="status">{notice}</p>}
+          {notice && <p className="mt-4 text-center text-sm leading-6 text-ash" role="status">{notice}</p>}
         </div>
       ) : <div role="alert" className="empty-box">{copy.error}<button type="button" className="btn-ghost mt-3" onClick={goToSetup}>{copy.reset}</button></div>}
       {isDemo && <p className="mt-9 text-xs text-ash">{copy.preview}</p>}
