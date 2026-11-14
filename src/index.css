@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; background: #101014; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+::selection { background: #D9C6D6; color: #141116; }
+
+@layer components {
+  .micro-label { @apply text-[10px] font-semibold uppercase tracking-[.20em] text-blush/85; }
+  .heading-lg { @apply text-[clamp(29px,4.5vw,53px)] font-semibold leading-[1.1] tracking-[-.065em] text-paper; }
+  .field { @apply h-[46px] rounded-lg border border-white/[.11] bg-[#202027] px-3.5 text-[13px] text-paper outline-none transition-[border-color,box-shadow] duration-[250ms] ease-plush placeholder:text-ash/70 focus:border-blush/55 focus:ring-1 focus:ring-blush/20; }
+  .pill { @apply inline-flex min-h-9 items-center justify-center rounded-full border border-white/10 px-4 py-2 text-[12px] font-medium text-ash transition-all duration-[250ms] ease-plush hover:border-white/25 hover:text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-blush; }
+  .pill-active { @apply border-blush/65 bg-blush/10 text-[#F1E2F0]; }
+  .btn-primary { @apply inline-flex min-h-[46px] items-center justify-center rounded-lg border border-transparent bg-blush px-5 py-3 text-sm font-semibold text-[#1B1720] transition-[background,transform] duration-[250ms] ease-plush hover:bg-[#ECDDEC] active:scale-[.985] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blush; }
+  .btn-ghost { @apply inline-flex min-h-[43px] items-center justify-center rounded-lg border border-white/15 bg-white/[.03] px-4 py-2 text-xs font-medium text-paper/85 transition-all duration-[250ms] ease-plush hover:border-white/35 hover:bg-white/[.07] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blush disabled:opacity-35; }
+  .icon-button { @apply grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/15 text-paper/80 transition-all duration-[250ms] ease-plush hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-blush; }
+  .nav-item { @apply relative flex h-[62px] shrink-0 items-center gap-2 whitespace-nowrap border-b-2 border-transparent text-[11px] font-semibold tracking-[.13em] text-ash transition-colors duration-[250ms] ease-plush hover:text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-blush sm:text-xs; }
+  .nav-current { @apply border-blush text-paper; }
+  .empty-box { @apply flex min-h-[260px] flex-col items-center justify-center rounded-[14px] border border-dashed border-white/[.13] bg-surface/60 p-7 text-center; }
+}
+@keyframes appear { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+.animate-appear { animation: appear 260ms cubic-bezier(.25,1,.5,1) both; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+.bracket-progress::-webkit-progress-bar { background: rgba(255,255,255,.1); border-radius: 999px; }
+.bracket-progress::-webkit-progress-value { background: #D9C6D6; border-radius: 999px; transition: width 250ms cubic-bezier(.25,1,.5,1); }
+.bracket-progress::-moz-progress-bar { background: #D9C6D6; border-radius: 999px; }
