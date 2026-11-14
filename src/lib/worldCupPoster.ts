@@ -3,9 +3,9 @@ import { objektLabel } from '../components/ObjektArtwork';
 
 /**
  * Create a clean, portrait share card using the tournament's REAL Objekt photos.
- * Cross-origin hosts without CORS support cannot be drawn into canvas. When that
- * happens, return the missing count so the UI never silently exports a photo-less
- * result as if it were a completed photo poster.
+ * Use same-origin optimized card images prepared by the GitHub Actions build.
+ * Fall back to directly CORS-enabled originals for local development and older
+ * deployments. Never silently export a text-only poster instead of card photos.
  */
 export type PosterEntry = Readonly<{ item: Objekt }>;
 export type PosterRender = { blob: Blob | null; missingImages: number };
@@ -43,7 +43,31 @@ function fitText(ctx: CanvasRenderingContext2D, value: string, maxWidth: number,
   ctx.fillText(text, 0, 0);
 }
 
-function fetchCanvasImage(url: string | null): Promise<HTMLImageElement | null> {
+type PosterCache = Readonly<{ sources: Readonly<Record<string, string>> }>;
+let posterCacheRequest: Promise<PosterCache> | null = null;
+
+function siteBase(): URL {
+  return new URL(import.meta.env.BASE_URL, window.location.href);
+}
+
+async function posterCache(): Promise<PosterCache> {
+  if (!posterCacheRequest) {
+    posterCacheRequest = fetch(new URL('data/objekt-poster-map.json', siteBase()).href, { cache: 'no-store' })
+      .then(async (response) => {
+        if (!response.ok) return { sources: {} };
+        const payload: unknown = await response.json();
+        if (typeof payload !== 'object' || payload === null || !('sources' in payload)) return { sources: {} };
+        const sources = (payload as { sources?: unknown }).sources;
+        return sources && typeof sources === 'object' && !Array.isArray(sources)
+          ? { sources: sources as Record<string, string> }
+          : { sources: {} };
+      })
+      .catch(() => ({ sources: {} }));
+  }
+  return posterCacheRequest;
+}
+
+function fetchCanvasImage(url: string | null, timeoutMs = 5500): Promise<HTMLImageElement | null> {
   if (!url) return Promise.resolve(null);
   return new Promise((resolve) => {
     const img = new Image();
@@ -56,14 +80,26 @@ function fetchCanvasImage(url: string | null): Promise<HTMLImageElement | null> 
       img.onerror = null;
       resolve(value);
     };
-    // Important: set crossOrigin BEFORE src, so canvas stays readable.
     img.crossOrigin = 'anonymous';
     img.decoding = 'async';
-    const timeout = setTimeout(() => complete(null), 5500);
+    const timeout = setTimeout(() => complete(null), timeoutMs);
     img.onload = () => complete(img.naturalWidth && img.naturalHeight ? img : null);
     img.onerror = () => complete(null);
     img.src = url;
   });
+}
+
+async function fetchPosterImage(originalUrl: string | null, cache: PosterCache): Promise<HTMLImageElement | null> {
+  if (!originalUrl?.trim()) return null;
+  const normalizedUrl = originalUrl.trim();
+  const path = cache.sources[normalizedUrl];
+  // A manifest entry is only allowed to identify a build-generated local WebP.
+  if (path && /^objekt-poster\/[a-f0-9]{24}\.webp$/.test(path)) {
+    const local = await fetchCanvasImage(new URL(path, siteBase()).href, 8000);
+    if (local) return local;
+  }
+  // Some photo hosts already permit canvas export; try them without a third-party proxy.
+  return fetchCanvasImage(normalizedUrl, 4500);
 }
 
 function photo(ctx: CanvasRenderingContext2D, img: HTMLImageElement | null, box: Box, border: string): void {
@@ -107,7 +143,8 @@ export async function renderWorldCupPoster(entries: readonly PosterEntry[], brac
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) throw new Error('Canvas rendering is not supported.');
 
-  const images = await Promise.all(entries.map(({ item }) => fetchCanvasImage(item.imageUrl)));
+  const cache = await posterCache();
+  const images = await Promise.all(entries.map(({ item }) => fetchPosterImage(item.imageUrl, cache)));
   const missingImages = images.filter((img) => !img).length;
 
   ctx.fillStyle = '#101014';
@@ -164,6 +201,6 @@ export async function renderWorldCupPoster(entries: readonly PosterEntry[], brac
   ctx.fillStyle = '#77737F';
   ctx.font = '18px system-ui, sans-serif';
   ctx.fillText('SHION ARCHIVE  ·  @bbangshion', 540, 1361);
-  // If a host blocks CORS, toBlob stays safe because only CORS images were drawn.
+  // All drawn photos are same-origin or loaded with CORS; toBlob remains safe.
   return { blob: await canvasBlob(canvas), missingImages };
 }
