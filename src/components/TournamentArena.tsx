@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { BracketSize, Objekt, TournamentState } from '../types/objekt';
 import { useI18n } from '../i18n/I18nContext';
 import { createTournament, INITIAL_TOURNAMENT, selectWinner, undoWinner } from '../lib/tournament';
@@ -27,7 +28,8 @@ type Copy = {
   saveImage: string; copied: string; copyFailed: string; shareFailed: string; saved: string;
   reset: string; replay: string; favorite: string; unfavorite: string; preview: string;
   editThird: string; progress: string; match: (n: number) => string; round: (n: number) => string;
-  resultHeader: string; imageBlocked: string; imageSaving: string;
+  resultHeader: string; imageBlocked: string; imageSaving: string; imageOpen: string; imageClose: string; imagePreview: string;
+  shareFileFallback: string; imageDownloadHint: string; shared: string;
 };
 const COPIES: Record<'ko' | 'en' | 'ja', Copy> = {
   ko: {
@@ -41,7 +43,9 @@ const COPIES: Record<'ko' | 'en' | 'ja', Copy> = {
     copyFailed: '복사할 수 없습니다. 다시 시도해 주세요', shareFailed: '공유할 수 없습니다', saved: '결과 이미지를 저장했어요',
     reset: '설정으로', replay: '다시 하기', favorite: '즐겨찾기 추가', unfavorite: '즐겨찾기 해제',
     preview: '미리보기 카드로 진행 중입니다', editThird: '3·4위 다시 선택', progress: '진행도',
-    match: (n) => `${n}번째 대결`, round: (n) => `${n}강`, resultHeader: '박시온 오브젝트 월드컵', imageBlocked: '외부 카드 이미지의 저장 권한이 없어 사진 포함 PNG를 만들 수 없어요. 위 결과 화면을 캡처해 공유해 주세요.', imageSaving: '카드 이미지를 불러오고 있어요…',
+    match: (n) => `${n}번째 대결`, round: (n) => `${n}강`, resultHeader: '박시온 오브젝트 월드컵', imageBlocked: '카드 원본 이미지가 일부 준비되지 않아 사진 4장이 포함된 PNG를 만들 수 없어요. GitHub Actions의 World Cup photo cache 로그를 확인해 주세요.', imageSaving: '카드 이미지로 PNG를 만드는 중…', imageOpen: '사진 크게 열기', imageClose: '닫기', imagePreview: '결과 사진 미리보기',
+    shareFileFallback: '이 브라우저는 사진 파일 직접 공유를 지원하지 않아요. PNG를 저장한 다음 갤러리에서 공유해 주세요.',
+    imageDownloadHint: 'PNG 다운로드를 요청했어요. 저장이 안 되면 아래 사진을 길게 눌러 저장하거나 사진 크게 열기를 선택해 주세요.', shared: '결과 사진을 공유했어요',
   },
   en: {
     heading: 'Objekt World Cup', tagline: 'Pick your favorite Objekt in each match', setup: 'Tournament setup',
@@ -54,7 +58,9 @@ const COPIES: Record<'ko' | 'en' | 'ja', Copy> = {
     copyFailed: 'Could not copy the ranking', shareFailed: 'Could not share the results', saved: 'Result image saved',
     reset: 'Setup', replay: 'Play again', favorite: 'Add favorite', unfavorite: 'Remove favorite',
     preview: 'Using preview cards', editThird: 'Change third place', progress: 'Progress',
-    match: (n) => `Match ${n}`, round: (n) => `Round of ${n}`, resultHeader: 'ShiOn Objekt World Cup', imageBlocked: 'The image host blocks exporting photos. Please share a screenshot of the ranking above instead.', imageSaving: 'Preparing the photo poster…',
+    match: (n) => `Match ${n}`, round: (n) => `Round of ${n}`, resultHeader: 'ShiOn Objekt World Cup', imageBlocked: 'Some card images could not be prepared for PNG export. Please check the World Cup photo cache step in GitHub Actions.', imageSaving: 'Preparing your photo PNG…', imageOpen: 'Open full image', imageClose: 'Close', imagePreview: 'Result photo preview',
+    shareFileFallback: 'This browser cannot share image files directly. Save the PNG and share it from your photo gallery.',
+    imageDownloadHint: 'PNG download requested. If it does not save, long-press the preview image or open it full-size.', shared: 'Image shared',
   },
   ja: {
     heading: 'Objektワールドカップ', tagline: '好きなObjektを選んでください', setup: '大会設定',
@@ -67,7 +73,9 @@ const COPIES: Record<'ko' | 'en' | 'ja', Copy> = {
     copyFailed: 'コピーできませんでした', shareFailed: '共有できませんでした', saved: '結果画像を保存しました',
     reset: '設定', replay: 'もう一度', favorite: 'お気に入りに追加', unfavorite: 'お気に入りを解除',
     preview: 'プレビューカードを使用中', editThird: '3位決定戦をやり直す', progress: '進行状況',
-    match: (n) => `第${n}対戦`, round: (n) => `${n}枚対戦`, resultHeader: 'シオンObjektワールドカップ', imageBlocked: '画像配信元の制限により写真入りPNGを保存できません。上の結果画面をスクリーンショットで共有してください。', imageSaving: '画像を準備しています…',
+    match: (n) => `第${n}対戦`, round: (n) => `${n}枚対戦`, resultHeader: 'シオンObjektワールドカップ', imageBlocked: '一部のカード画像をPNG用に準備できませんでした。GitHub ActionsのWorld Cup photo cacheを確認してください。', imageSaving: '写真入りPNGを作成しています…', imageOpen: '画像を開く', imageClose: '閉じる', imagePreview: '結果画像プレビュー',
+    shareFileFallback: 'このブラウザは画像ファイルの直接共有に非対応です。PNGを保存してギャラリーから共有してください。',
+    imageDownloadHint: 'PNGのダウンロードを開始しました。保存されない場合は画像を長押しするか、大きく開いてください。', shared: '結果画像を共有しました',
   },
 };
 
@@ -98,7 +106,10 @@ export function TournamentArena({ items, isDemo, favorites, onToggleFavorite }: 
   const [state, setState] = useState<TournamentState>(INITIAL_TOURNAMENT);
   const [thirdId, setThirdId] = useState<string | null>(null);
   const [notice, setNotice] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [poster, setPoster] = useState<{ blob: Blob; url: string } | null>(null);
+  const [posterBusy, setPosterBusy] = useState(false);
+  const [posterError, setPosterError] = useState('');
+  const [previewOpen, setPreviewOpen] = useState(false);
   const pool = useMemo(() => poolMode === 'favorites' ? items.filter((item) => favorites.has(item.id)) : items, [items, favorites, poolMode]);
   const byId = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
 
@@ -127,8 +138,55 @@ export function TournamentArena({ items, isDemo, favorites, onToggleFavorite }: 
   const candidates = useMemo(() => getTopFourCandidates(state), [state]);
   const ranked = useMemo(() => finishTopFour(candidates, thirdId), [candidates, thirdId]);
   const thirdCandidates = candidates?.thirdPlaceMatch.map((id) => byId.get(id)).filter((item): item is Objekt => Boolean(item)) ?? [];
-  const ranking = ranked ? [ranked.first, ranked.second, ranked.third, ranked.fourth]
-    .map((id) => byId.get(id)).filter((item): item is Objekt => Boolean(item)) : [];
+  const ranking = useMemo(() => ranked
+    ? [ranked.first, ranked.second, ranked.third, ranked.fourth]
+      .map((id) => byId.get(id)).filter((item): item is Objekt => Boolean(item))
+    : [], [ranked, byId]);
+
+  // Build the PNG as soon as a World Cup ends. Share and save buttons then work
+  // inside the user's actual tap gesture (important in Samsung Internet and PWAs).
+  useEffect(() => {
+    let abandoned = false;
+    let objectUrl: string | null = null;
+    setPoster(null);
+    setPosterError('');
+    setPreviewOpen(false);
+    if (ranking.length !== 4) {
+      setPosterBusy(false);
+      return;
+    }
+    setPosterBusy(true);
+    void (async () => {
+      try {
+        const output = await renderWorldCupPoster(ranking.map((item) => ({ item })), size);
+        if (abandoned) return;
+        if (!output.blob || output.missingImages !== 0) {
+          setPosterError(copy.imageBlocked);
+          return;
+        }
+        objectUrl = URL.createObjectURL(output.blob);
+        setPoster({ blob: output.blob, url: objectUrl });
+      } catch {
+        if (!abandoned) setPosterError(copy.imageBlocked);
+      } finally {
+        if (!abandoned) setPosterBusy(false);
+      }
+    })();
+    return () => {
+      abandoned = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [ranking, size, copy.imageBlocked]);
+
+  useEffect(() => {
+    if (!previewOpen) return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setPreviewOpen(false);
+    };
+    window.addEventListener('keydown', onEscape);
+    return () => window.removeEventListener('keydown', onEscape);
+  }, [previewOpen]);
+
   const rankLabels = [copy.firstPlace, copy.secondPlace, copy.thirdPlace, copy.fourthPlace];
   const totalMatches = state.size - 1;
   const completedMatches = state.history.length;
@@ -145,45 +203,36 @@ export function TournamentArena({ items, isDemo, favorites, onToggleFavorite }: 
       setNotice(copy.copied);
     } catch { setNotice(copy.copyFailed); }
   };
+  const posterFilename = `SHION-Objekt-Top4-${size}.png`;
   const shareResult = async () => {
     if (ranking.length !== 4) return;
-    const text = shareText();
-    const url = new URL(import.meta.env.BASE_URL, window.location.origin).href;
+    if (!poster) {
+      setNotice(posterBusy ? copy.imageSaving : posterError || copy.imageBlocked);
+      return;
+    }
     try {
-      if (navigator.share) await navigator.share({ title: copy.resultHeader, text, url });
-      else await copyResult();
+      const file = new File([poster.blob], posterFilename, { type: 'image/png' });
+      const files = [file];
+      if (navigator.share && navigator.canShare?.({ files })) {
+        // The photo PNG is attached to the Android share sheet, not just a URL.
+        await navigator.share({
+          title: copy.resultHeader,
+          files,
+        });
+        setNotice(copy.shared);
+      } else {
+        setPreviewOpen(true);
+        setNotice(copy.shareFileFallback);
+      }
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') return;
-      setNotice(copy.shareFailed);
+      setPreviewOpen(true);
+      setNotice(copy.shareFileFallback);
     }
-  };
-  const saveImage = async () => {
-    if (ranking.length !== 4 || saving) return;
-    setSaving(true);
-    setNotice(copy.imageSaving);
-    try {
-      const output = await renderWorldCupPoster(
-        ranking.map((item) => ({ item })), size,
-      );
-      if (!output.blob || output.missingImages > 0) {
-        setNotice(copy.imageBlocked);
-        return;
-      }
-      const objectUrl = URL.createObjectURL(output.blob);
-      const link = document.createElement('a');
-      link.download = `SHION-Objekt-Top4-${size}.png`;
-      link.href = objectUrl;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      // Object URLs must stay alive until the browser has started the download.
-      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
-      setNotice(copy.saved);
-    } catch { setNotice(copy.imageBlocked); }
-    finally { setSaving(false); }
   };
 
   return (
+    <>
     <section className="animate-appear" aria-labelledby="tournament-title">
       <div className={ranked && ranking.length === 4 ? "sr-only" : "mb-6 flex flex-wrap items-end justify-between gap-3"}>
         <div>
@@ -290,10 +339,19 @@ export function TournamentArena({ items, isDemo, favorites, onToggleFavorite }: 
             <p className="shion-podium-credit">SHION ARCHIVE <span>·</span> @bbangshion</p>
           </div>
           <div className="mt-7 flex flex-wrap justify-center gap-2">
-            <button type="button" onClick={() => void shareResult()} className="btn-primary">{copy.share}</button>
+            <button type="button" disabled={posterBusy} onClick={() => void shareResult()}
+              className="btn-primary disabled:cursor-wait disabled:opacity-50">{posterBusy ? copy.imageSaving : copy.share}</button>
+            {poster ? (
+              <a href={poster.url} download={posterFilename} className="btn-ghost"
+                onClick={() => { setPreviewOpen(true); setNotice(copy.imageDownloadHint); }}>{copy.saveImage}</a>
+            ) : (
+              <button type="button" className="btn-ghost disabled:opacity-40" disabled
+                aria-label={copy.saveImage}>{posterBusy ? copy.imageSaving : copy.saveImage}</button>
+            )}
             <button type="button" onClick={() => void copyResult()} className="btn-ghost">{copy.copy}</button>
-            <button type="button" disabled={saving} onClick={() => void saveImage()} className="btn-ghost">{saving ? copy.imageSaving : copy.saveImage}</button>
+            {poster && <button type="button" onClick={() => setPreviewOpen(true)} className="btn-ghost">{copy.imagePreview}</button>}
           </div>
+          {posterError && <p role="alert" className="mx-auto mt-3 max-w-[650px] text-center text-xs leading-6 text-[#E8BEAE]">{posterError}</p>}
           <div className="mt-3 flex flex-wrap justify-center gap-2">
             <button type="button" onClick={() => { setThirdId(null); setNotice(''); }} className="btn-ghost">{copy.editThird}</button>
             <button type="button" onClick={begin} className="btn-ghost">{copy.replay}</button>
@@ -304,5 +362,29 @@ export function TournamentArena({ items, isDemo, favorites, onToggleFavorite }: 
       ) : <div role="alert" className="empty-box">{copy.error}<button type="button" className="btn-ghost mt-3" onClick={goToSetup}>{copy.reset}</button></div>}
       {isDemo && <p className="mt-9 text-xs text-ash">{copy.preview}</p>}
     </section>
+    {previewOpen && poster && createPortal(
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 p-3 sm:p-7"
+        role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setPreviewOpen(false); }}>
+        <div role="dialog" aria-modal="true" aria-label={copy.imagePreview}
+          className="flex max-h-[96dvh] w-full max-w-[720px] flex-col overflow-hidden rounded-xl border border-white/20 bg-[#121116] text-white shadow-2xl">
+          <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
+            <p className="text-sm font-semibold">{copy.imagePreview}</p>
+            <button type="button" autoFocus onClick={() => setPreviewOpen(false)}
+              className="rounded-md border border-white/20 px-3 py-2 text-xs">{copy.imageClose}</button>
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 text-center">
+            <img src={poster.url} alt={copy.resultHeader}
+              className="mx-auto block h-auto max-h-[78dvh] max-w-full select-auto object-contain" />
+            <p className="mt-3 text-xs leading-6 text-white/70">{copy.imageDownloadHint}</p>
+          </div>
+          <div className="flex shrink-0 flex-wrap justify-center gap-2 border-t border-white/10 p-3">
+            <a className="btn-primary" href={poster.url} download={posterFilename}>{copy.saveImage}</a>
+            <a className="btn-ghost" href={poster.url} target="_blank" rel="noopener noreferrer">{copy.imageOpen}</a>
+            <button type="button" className="btn-ghost" onClick={() => void shareResult()}>{copy.share}</button>
+          </div>
+        </div>
+      </div>, document.body,
+    )}
+    </>
   );
 }
