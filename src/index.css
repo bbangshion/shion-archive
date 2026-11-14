@@ -541,3 +541,21 @@ body, .shion-home, .shion-hero, .shion-subpage, .shion-footer, .archive-tab-bar 
 @media (prefers-reduced-motion: reduce) {
   .shion-photo-v2 .shion-gallery-image img { transition: none; }
 }
+
+/* 1.6.3 S20 PHOTO SOURCE INDEX: source references are never counted as loaded photographs. */
+.shion-photo-source-switch{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 12px}
+.shion-photo-source-switch button{border:1px solid var(--theme-line);background:var(--theme-elevated);border-radius:3px;color:var(--theme-muted,#aaa5ad);padding:12px 16px;font-size:13px;transition:background .25s cubic-bezier(.25,1,.5,1),color .25s cubic-bezier(.25,1,.5,1)}
+.shion-photo-source-switch button.is-active{color:#fff;border-color:var(--theme-accent);background:color-mix(in srgb,var(--theme-accent) 14%,var(--theme-elevated))}
+.shion-photo-source-switch button span{margin-left:9px;font-variant-numeric:tabular-nums;opacity:.72}
+.shion-source-explanation{font-size:13px;line-height:1.7;color:#a9a1ab;margin:0 0 20px;max-width:800px}
+.shion-reference-section h2{font-size:20px;letter-spacing:-.02em;font-weight:560;margin:28px 0 10px}
+.shion-social-source-section p{font-size:12px;color:#a7a0aa;margin-bottom:16px}
+.shion-source-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.shion-source-card{display:flex;flex-direction:column;justify-content:space-between;gap:9px;min-width:0;min-height:124px;padding:16px;border:1px solid var(--theme-line);background:var(--theme-elevated);border-radius:4px;color:var(--theme-text,#fff);text-decoration:none;transition:border-color .25s cubic-bezier(.25,1,.5,1),transform .25s cubic-bezier(.25,1,.5,1)}
+.shion-source-card:hover,.shion-source-card:focus-visible{border-color:var(--theme-accent);transform:translateY(-2px)}
+.shion-source-card-type{font-size:11px;color:#a9a0ac}
+.shion-source-card strong{font-size:13px;line-height:1.45;font-weight:530;overflow-wrap:anywhere}
+.shion-source-card small{font-size:11px;color:var(--theme-accent,#f3afd0)}
+@media(max-width:820px){.shion-source-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.shion-source-card{padding:12px;min-height:134px}.shion-photo-source-switch button{padding:11px 12px;font-size:12px}}
+@media(prefers-reduced-motion:reduce){.shion-source-card{transition:none}}
