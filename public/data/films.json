@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "note": "검증 가능한 공식 공개 영상 링크만 수록. S20이 참여한 유닛 콘텐츠를 포함하며 S20 개인 영상만 의미하지 않습니다.",
+  "items": [
+    {
+      "youtubeId": "_OTK4AZ0uHc",
+      "title": "ParkShiOn.SSS",
+      "category": "other",
+      "publishedAt": "2023-12-24",
+      "memberIds": ["S20"],
+      "group": "S20",
+      "note": "박시온 공개 영상"
+    },
+    {
+      "youtubeId": "2EtFv4apgvo",
+      "title": "∞! (Hatchi) — Untitled",
+      "category": "music",
+      "publishedAt": "2024-11-20",
+      "memberIds": ["S20"],
+      "group": "∞! (Hatchi)",
+      "note": "공식 MV"
+    },
+    {
+      "youtubeId": "m25wQkLg1jc",
+      "title": "∞! (Hatchi) — Password",
+      "category": "music",
+      "publishedAt": "2025-10-01",
+      "memberIds": ["S20"],
+      "group": "∞! (Hatchi)",
+      "note": "공식 MV"
+    },
+    {
+      "youtubeId": "With0YDpuWQ",
+      "title": "msnz moon — Cameo Love",
+      "category": "music",
+      "publishedAt": "2025-11-24",
+      "memberIds": ["S20"],
+      "group": "Moon",
+      "note": "공식 MV"
+    },
+    {
+      "youtubeId": "zqUO3zwllhc",
+      "title": "msnz moon — Dream Dress",
+      "category": "music",
+      "publishedAt": "2026-08-01",
+      "memberIds": ["S20"],
+      "group": "Moon",
+      "note": "공식 비주얼 클립"
+    },
+    {
+      "youtubeId": "dVJ_CVEkECs",
+      "title": "msnz moon — World Wild Women",
+      "category": "music",
+      "publishedAt": "2026-08-17",
+      "memberIds": ["S20"],
+      "group": "Moon",
+      "note": "공식 MV"
+    }
+  ]
+}
