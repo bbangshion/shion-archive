@@ -1,259 +1,346 @@
 import { ArrowIcon } from './Icons';
 
 /**
- * SHION ARCHIVE · PROFILE 1.5.2
- * Existing Vite / React / Tailwind project: drop-in ProfilePage.tsx replacement.
- * Sources are described in the page footer. Fan-compiled facts are not claimed as official.
- * No new dependencies, images, context values, or routes are required.
+ * SHION ARCHIVE · PROFILE 1.5.3
+ * Standalone ProfilePage replacement, compatible with the existing 1.5.x route.
+ * Factual details are separated by provenance below; fan catalogues are not official statements.
+ * Verified/cross-checked against listed resources on 2026-11-14.
  */
 
 const PORTRAIT = `${import.meta.env.BASE_URL}images/shion-home.jpg`;
 
-const facts: ReadonlyArray<{ name: string; value: string; note?: string }> = [
-  { name: '이름', value: '박시온 · Park ShiOn' },
-  { name: '영어 이름', value: 'Sophie Park', note: '팬 프로필에 수록된 표기' },
-  { name: '그룹', value: 'tripleS' },
-  { name: '멤버 번호', value: 'S20' },
-  { name: '생년월일', value: '2006년 4월 3일' },
-  { name: '출생지', value: '대전광역시' },
-  { name: '포지션', value: '메인보컬', note: '팬 프로필 및 NXT 활동 소개 기준' },
-  { name: '혈액형', value: 'A형' },
-  {
-    name: 'MBTI',
-    value: 'ESFP',
-    note: '일본 공식 프로필 기준 · 최근 팬 위키에는 ISFJ로 표기되어 있어 출처에 차이가 있습니다',
-  },
-  { name: '대표 색상', value: 'French Rose · #FF428A' },
-  { name: 'S 공개일', value: '2023년 12월 24일' },
-  { name: '유닛 데뷔', value: '2023년 12월 23일 · NXT', note: 'S 공개일과는 구분' },
+type SourceKind = '공식' | '본인 인터뷰' | '공식 발표 인용' | '공연 기록' | '팬 자료';
+type Fact = { label: string; value: string; note?: string };
+type Unit = {
+  name: string;
+  subtitle: string;
+  period: string;
+  badge: string;
+  members: readonly string[];
+  songs: readonly string[];
+  description: string;
+  history: readonly string[];
+  sourceText: string;
+  sourceUrl: string;
+  recent?: boolean;
+};
+
+const facts: readonly Fact[] = [
+  { label: '이름', value: '박시온 · Park ShiOn' },
+  { label: '영어 이름', value: 'Sophie Park', note: '팬 프로필 표기' },
+  { label: '그룹', value: 'tripleS' },
+  { label: '멤버 번호', value: 'S20 · Cream01' },
+  { label: '생년월일', value: '2006년 4월 3일' },
+  { label: '출생', value: '대전광역시 유성구', note: '팬 자료 기준' },
+  { label: '혈액형', value: 'A형' },
+  { label: 'MBTI', value: 'ESFP', note: '일본 공식 프로필 표기 · 일부 팬 자료에서는 ISFJ로 소개' },
+  { label: '포지션', value: 'NXT 메인보컬', note: 'NXT 활동 당시 언론 및 팬 자료 기준' },
+  { label: '대표 색상', value: 'French Rose · #FF428A', note: '팬 데이터 표기' },
+  { label: 'S 공개', value: '2023년 12월 24일' },
+  { label: '첫 유닛 음원', value: 'NXT · Just Do It (2023년 12월 23일)' },
 ];
 
-const nicknames: ReadonlyArray<{ name: string; description: string; label?: string }> = [
-  { name: '빵시온', description: '빵을 특히 좋아하는 취향에서 비롯된 별명', label: '대표 별명' },
-  { name: '쇼니 / 숀', description: '이름을 친근하게 줄여 부르는 애칭' },
-  { name: '먹잘알', description: '음식과 맛집에 관심이 많은 모습에서 나온 별명' },
-  { name: '애기목소리', description: '가늘고 개성 있는 목소리를 가리키는 별명' },
-  { name: '헬륨아씨', description: '높고 맑은 목소리에서 연상된 팬 별명' },
-  { name: '참새', description: '정하연이 붙여준 것으로 알려진 별명' },
-  { name: '인간 논스케일', description: '〈Non Scale〉과 잘 어울리는 음색에서 나온 팬 별명' },
-  { name: '빨간 머리 숀', description: '빨간 머리 스타일링을 계기로 쓰인 별명' },
-  { name: '오이시온', description: '일본 매체 인터뷰에서 직접 소개한 애칭', label: '인터뷰' },
+const nicknameList: readonly { name: string; text: string; origin: string }[] = [
+  { name: '오이시온', text: '일본어의 ‘맛있다(おいしい)’와 시온을 합친 애칭', origin: '본인 인터뷰' },
+  { name: '빵시온', text: '빵과 디저트를 좋아하는 취향에서 알려진 애칭', origin: '팬 사용' },
+  { name: '쇼니 · 숀', text: '시온의 이름을 줄여 부르는 친근한 호칭', origin: '팬 사용' },
+  { name: '애기 목소리', text: '음색과 말투의 특징을 표현하는 별명', origin: '팬 프로필' },
+  { name: '먹잘알', text: '맛집을 찾고 음식 이야기를 즐기는 취향을 나타내는 표현', origin: '팬 프로필' },
 ];
 
-const interests: ReadonlyArray<{ title: string; items: readonly string[]; description?: string }> = [
+const interestGroups: readonly { title: string; description: string; items: readonly string[]; source: string }[] = [
   {
     title: '취미',
-    items: ['피아노', '산책', '독서', '드라마·영화 감상', '사진 촬영', '맛집 탐방', '운동'],
-    description: '본인 소개 자료와 인터뷰에서 언급한 관심사',
+    description: '일상에서 즐기는 활동',
+    items: ['피아노', '사진 촬영', '맛집 찾기', '산책', '운동', '독서', '드라마 감상', '영화 감상'],
+    source: '본인 인터뷰 · 멤버 소개',
   },
   {
-    title: '좋아하는 음식',
-    items: ['빵', '크림빵', '스콘', '케이크', '떡볶이', '햄버거', '찜닭', '국밥', '치킨'],
-    description: '특히 빵과 디저트에 관심이 많은 것으로 알려져 있어요',
+    title: '음식',
+    description: '빵과 디저트를 포함해 즐겨 먹는 음식',
+    items: ['크림빵', '스콘', '쿠키', '아이스크림', '떡볶이', '햄버거', '국밥', '찜닭', '치킨', '피자'],
+    source: '멤버 소개',
   },
   {
-    title: '좋아하는 음악',
-    items: ['Generation · Acid Angel from Asia', '미열 37.5 · EVOLution'],
-    description: '좋아하는 tripleS 곡으로 소개한 노래',
+    title: '좋아하는 tripleS 노래',
+    description: '멤버 프로필에서 직접 언급한 선호곡',
+    items: ['Generation — Acid Angel from Asia', '37.5°C — EVOLution'],
+    source: '팬 정리 자료',
   },
   {
     title: '좋아하는 작품과 캐릭터',
-    items: ['캐릭캐릭 체인지', '꿈빛 파티시엘', '뽀로로의 패티', '짱구는 못말려', '해리 포터'],
-    description: '캐릭터 취향은 팬 프로필, 영화 취향은 인터뷰 참고',
+    description: '본인 인터뷰와 공개 소개 자료 기준',
+    items: ['해리 포터', '나의 소녀시대', '도깨비', '캐릭캐릭 체인지', '꿈빛 파티시엘', '짱구는 못말려', '뽀로로의 패티'],
+    source: '본인 인터뷰 · 팬 정리 자료',
   },
   {
-    title: '계절과 패션',
-    items: ['봄', '스포티·캐주얼', '개성 있는 코디', '페미닌 스타일', '겨울 옷'],
-    description: '일본 패션 매체 인터뷰에서 공개한 취향 포함',
+    title: '패션',
+    description: '일본 패션 매체에서 밝힌 취향',
+    items: ['스포티', '캐주얼', '개성 있는 코디', '페미닌 스타일', '겨울 옷', 'NIKE', 'Matin Kim', 'THE NORTH FACE'],
+    source: 'Droptokyo 인터뷰',
   },
 ];
 
-const talents: ReadonlyArray<{ title: string; detail: string }> = [
-  { title: '사진과 영상', detail: '촬영과 편집을 잘한다고 소개한 분야' },
-  { title: '꾸미기', detail: '사진 꾸미기와 장식을 좋아하는 것으로 알려져 있어요' },
-  { title: '목소리 흉내', detail: '인물의 말투와 목소리를 따라 하는 성대모사' },
-  { title: '맛집 찾기', detail: '음식과 식당에 대한 관심을 살린 특기' },
-  { title: '운동과 산책', detail: '운동, 산책, 등산을 즐긴다고 직접 소개했어요' },
+const units: readonly Unit[] = [
+  {
+    name: 'Aura', subtitle: '아우라 · 두 번째 발라드 디멘션', period: '2026',
+    badge: '최신 유닛', recent: true,
+    members: ['S1 윤서연', 'S18 주빈', 'S20 박시온', 'S23 서아'],
+    songs: ['Dream Drip — ANDLESS 공연에서 선공개'],
+    description: 'Aria에 이은 tripleS의 두 번째 발라드 디멘션. 2026년 8월 Grand Gravity에서 주빈을 제외한 세 멤버가 WAV 투표로 선정됐습니다.',
+    history: [
+      '2026.08.20–23 · COSMO Grand Gravity 진행',
+      '2026.08.23 · 최종 멤버 윤서연·주빈·박시온·서아 확정',
+      '2026.10.10–11 · ANDLESS 서울 공연에서 Aura와 Dream Drip 무대 공개',
+      '정식 음원 발매일과 공연 공개일은 구분해 기록',
+    ],
+    sourceText: '모드하우스 발표 인용 보도',
+    sourceUrl: 'https://www.swtvnews.com/news/newsview.php?ncode=1065566054605581',
+  },
+  {
+    name: 'Moon', subtitle: '문 · msnz 디멘션', period: '2025–', badge: 'msnz',
+    members: ['S9 카에데', 'S14 박소현', 'S17 린', 'S20 박시온', 'S22 설린', 'S24 지연'],
+    songs: ['Cameo Love — Beyond Beauty', 'Dream Dress — 일본 오리지널 곡'],
+    description: 'msnz의 네 디멘션 중 하나로, 설린을 중심으로 구성된 6인조 유닛입니다. Beyond Beauty 수록곡 Cameo Love와 일본 오리지널 곡 Dream Dress에 참여했습니다.',
+    history: [
+      '2025.11.24 · msnz Beyond Beauty 발표',
+      'Moon의 곡 Cameo Love 활동',
+      '2026.08.01 · 일본 디지털 곡 Dream Dress 공개',
+    ],
+    sourceText: 'tripleS 팬 아카이브 · Moon 활동',
+    sourceUrl: 'https://triplesfans.com/members/shion',
+  },
+  {
+    name: 'Alphie', subtitle: '알피(@%) · 투어 프로젝트 유닛', period: '2025', badge: '투어',
+    members: ['S5 김유연', 'S11 코토네', 'S13 니엔', 'S17 린', 'S19 정하연', 'S20 박시온', 'S21 김채원', 'S24 지연'],
+    songs: ['Lit Pop — 투어 공개곡'],
+    description: '2025년 Alpha Percent 월드투어를 위해 결성된 8인조 프로젝트 유닛입니다. 북미 투어와 영어 곡 Lit Pop으로 활동했습니다.',
+    history: [
+      '2025.07 · 8인조 투어 유닛 발표',
+      '2025.09.03 · Alpha Percent 북미 투어 시작',
+      '투어 기간 Lit Pop 무대 진행',
+    ],
+    sourceText: 'Alpha Percent 공식 공연장 소개',
+    sourceUrl: 'https://www.palaceoffinearts.org/event/triples-alphie-world-tour/',
+  },
+  {
+    name: '∞! (Hatchi)', subtitle: '하치 · 일본 활동 디멘션', period: '2024–', badge: '일본 활동',
+    members: ['S3 이지우', 'S4 김채연', 'S5 김유연', 'S6 김수민', 'S11 코토네', 'S16 마유', 'S20 박시온', 'S21 김채원'],
+    songs: ['Untitled — 2024', 'Password — 2025'],
+    description: '일본 활동을 위한 8인조 디멘션. 박시온과 마유가 사전 선발됐으며, 나머지 멤버는 Gravity로 결정됐습니다. 구성 멤버가 바뀔 수 있는 로테이션 유닛입니다.',
+    history: [
+      '2024.07 · 박시온과 마유 사전 선정, 나머지 멤버 Gravity 결정',
+      '2024.11.20 · 일본 데뷔 싱글 Untitled',
+      '2025.10.01 · SecretHimitsuBimil / Password 활동',
+    ],
+    sourceText: 'tripleS 팬 아카이브 · 하치 활동',
+    sourceUrl: 'https://triplesfans.com/members/shion',
+  },
+  {
+    name: 'NXT', subtitle: '넥스트 · 첫 활동 유닛', period: '2023', badge: '출발점',
+    members: ['S17 린', 'S18 주빈', 'S19 정하연', 'S20 박시온'],
+    songs: ['Just Do It — 2023'],
+    description: '2023년 12월 연이어 공개된 네 멤버로 구성된 디멘션. 박시온이 처음 참여한 유닛으로, Just Do It을 발표하며 활동을 시작했습니다.',
+    history: [
+      '2023.12.23 · NXT Just Do It 공개',
+      '2023.12.24 · 박시온 S20 개인 공개',
+      '팬 투표로 결성된 유닛이 아닌 사전 구성 유닛',
+    ],
+    sourceText: 'tripleS 공식 음반 목록 · 팬 아카이브',
+    sourceUrl: 'https://www.triples-official.jp/discography/',
+  },
 ];
 
-const dimensions: ReadonlyArray<{ name: string; time: string; description: string; status?: string }> = [
-  { name: 'NXT', time: '2023', description: '린 · 주빈 · 정하연 · 박시온 · 〈Just Do It〉', status: '데뷔 유닛' },
-  { name: '∞! (Hatchi)', time: '2024', description: '일본 활동 디멘션 · 〈Untitled〉' },
-  { name: 'Alphie (@%)', time: '2025', description: '투어를 위해 구성된 프로젝트 유닛' },
-  { name: 'Moon', time: '2025', description: 'msnz 디멘션 · 〈Cameo Love〉' },
-  { name: 'Aura', time: '2026', description: '발라드 디멘션 2 · 멤버 선정', status: '선정' },
+const highlights: readonly { date: string; title: string; detail: string }[] = [
+  { date: '2023.12', title: 'NXT · Just Do It', detail: 'NXT의 4인조 구성으로 활동을 시작했고, 12월 24일 S20으로 공개됐습니다.' },
+  { date: '2024.05', title: 'ASSEMBLE24', detail: '24인 완전체의 Girls Never Die 활동에 참여했습니다.' },
+  { date: '2024.11', title: '∞! 일본 데뷔', detail: '하치의 Untitled 활동으로 일본 디멘션의 무대에 섰습니다.' },
+  { date: '2025.05', title: 'ASSEMBLE25', detail: '완전체의 Are You Alive 활동에 참여했습니다.' },
+  { date: '2025.09', title: 'Alphie 월드투어', detail: 'Alpha Percent 투어의 프로젝트 유닛으로 북미 무대에 올랐습니다.' },
+  { date: '2025.11', title: 'Moon · Cameo Love', detail: 'msnz의 Moon 멤버로 Beyond Beauty 활동에 참여했습니다.' },
+  { date: '2026.06', title: 'ASSEMBLE26 · Baby Flower', detail: '완전체 LOVE&POP pt.1의 Baby Flower 활동에 참여했습니다.' },
+  { date: '2026.08', title: 'Aura 멤버 확정', detail: '두 번째 발라드 디멘션에 WAV 투표로 합류했습니다.' },
+  { date: '2026.10', title: 'Aura · Dream Drip', detail: 'ANDLESS 서울 공연에서 Dream Drip 무대가 공개됐습니다.' },
 ];
 
-const links: ReadonlyArray<{ title: string; type: string; href: string; context: string }> = [
-  {
-    title: 'tripleS 일본 공식 프로필', type: '공식',
-    href: 'https://www.triples-official.jp/profile/',
-    context: '생년월일 · 혈액형 · 일본 공식 사이트의 MBTI',
-  },
-  {
-    title: 'Droptokyo · ShiOn 인터뷰', type: '본인 인터뷰',
-    href: 'https://droptokyo.com/wedrop/334219/',
-    context: '애칭 · 취미 · 패션 · 좋아하는 작품',
-  },
-  {
-    title: 'tripleS Wiki · Park ShiOn Facts', type: '팬 아카이브',
-    href: 'https://triples.fandom.com/wiki/Park_ShiOn/Facts',
-    context: '취미 · 음식 · 특기 · 캐릭터',
-  },
-  {
-    title: '박시온 · 나무위키', type: '팬 위키',
-    href: 'https://namu.wiki/w/%EB%B0%95%EC%8B%9C%EC%98%A8',
-    context: '별명 · 취향 · 활동 이력 · 최근 MBTI 표기',
-  },
-  {
-    title: 'tripleS Fans · ShiOn', type: '팬 아카이브',
-    href: 'https://triplesfans.com/members/shion',
-    context: 'NXT · ∞! · Moon · 활동 개요',
-  },
+const voiceNotes: readonly { name: string; detail: string }[] = [
+  { name: 'NXT에서 시작한 보컬', detail: 'NXT의 메인보컬로 소개됐으며, Just Do It을 통해 처음 음악 활동을 알렸습니다.' },
+  { name: '서로 다른 음악의 유닛', detail: '일본 활동의 하치, msnz의 Moon, 발라드 중심의 Aura까지 다양한 편성에 참여했습니다.' },
+  { name: '팬들이 기억하는 음색', detail: '높고 맑은 목소리의 개성을 표현하는 애칭이 알려져 있습니다. 음색에 대한 평가는 팬들의 감상일 수 있습니다.' },
 ];
 
-function Heading({ kicker, title, id, description }: { kicker: string; title: string; id: string; description?: string }) {
-  return (
-    <div className="mb-6 sm:mb-8">
-      <span className="mb-3 block text-[10px] font-semibold tracking-[.17em] text-[#cbb4c3]">{kicker}</span>
-      <h2 id={id} className="text-[clamp(25px,4vw,37px)] font-medium tracking-[-.055em] text-paper">{title}</h2>
-      {description && <p className="mt-3 max-w-2xl text-[12px] leading-7 text-ash">{description}</p>}
-    </div>
-  );
+const interview: readonly { title: string; description: string }[] = [
+  { title: '휴식 방법', description: '아무것도 하지 않고 쉬거나, 산책·운동·등산을 하거나, 빵을 사러 나가며 기분을 전환한다고 밝혔습니다.' },
+  { title: '여행', description: '가족이나 친구와 국내 여행을 떠나고, 새로운 지역의 음식점과 문화를 경험해 보고 싶다고 답했습니다.' },
+  { title: '일본에서 하고 싶은 일', description: '도쿄타워, 편의점, 동네 식당, 빵집을 찾아가고 멤버들과 디즈니랜드에 가 보고 싶다고 했습니다.' },
+  { title: '존경하는 아티스트', description: 'IU를 존경하는 선배 아티스트로 꼽으며 꾸준히 최선을 다하는 태도를 이유로 들었습니다.' },
+  { title: '마음가짐', description: '항상 기뻐하고 모든 일에 감사하는 것을 좌우명으로 소개했습니다.' },
+  { title: '활동 목표', description: '연습과 고민을 거쳐 좋은 모습을 보여 주고, 계속 성장하고 싶다고 전했습니다.' },
+];
+
+const sources: readonly { label: string; kind: SourceKind; detail: string; href: string }[] = [
+  { label: 'tripleS 일본 공식 프로필', kind: '공식', detail: '생년월일 · 혈액형 · 공식 페이지의 MBTI', href: 'https://www.triples-official.jp/profile/' },
+  { label: 'Droptokyo · ShiOn 인터뷰', kind: '본인 인터뷰', detail: '애칭 · 옷 · 취미 · 여행 · 존경하는 아티스트', href: 'https://droptokyo.com/wedrop/334219/' },
+  { label: '모드하우스 발표 인용 보도', kind: '공식 발표 인용', detail: 'Aura 최종 멤버 · Gravity 선정 방식', href: 'https://www.swtvnews.com/news/newsview.php?ncode=1065566054605581' },
+  { label: '2026 ANDLESS 서울 공연 세트리스트', kind: '공연 기록', detail: 'Aura의 Dream Drip 무대 기록', href: 'https://www.setlist.fm/setlist/triples/2026/jangchung-arena-seoul-south-korea-1b738554.html' },
+  { label: 'Alphie · 공식 공연장 소개', kind: '공식', detail: 'Alpha Percent 투어 유닛 8인 구성', href: 'https://www.palaceoffinearts.org/event/triples-alphie-world-tour/' },
+  { label: 'tripleS 공식 음반 목록', kind: '공식', detail: 'NXT 및 주요 음반', href: 'https://www.triples-official.jp/discography/' },
+  { label: 'tripleS Wiki · ShiOn Facts', kind: '팬 자료', detail: '별명 · 음식 · 취미 · 특기', href: 'https://triples.fandom.com/wiki/Park_ShiOn/Facts' },
+  { label: 'tripleS Fans · ShiOn', kind: '팬 자료', detail: 'S20 공개 · 디멘션 · 멤버 활동 이력', href: 'https://triplesfans.com/members/shion' },
+];
+
+function SectionHeading({ id, english, title, description }: { id: string; english: string; title: string; description?: string }) {
+  return <div className="mb-6 sm:mb-9">
+    <span className="mb-2 block text-[10px] font-medium tracking-[.13em] text-[#cab2c2]">{english}</span>
+    <h2 id={id} className="text-[clamp(26px,4vw,37px)] font-medium tracking-[-.055em] text-paper">{title}</h2>
+    {description && <p className="mt-2 max-w-3xl text-[12px] leading-7 text-ash">{description}</p>}
+  </div>;
 }
 
-function Tag({ label }: { label: string }) {
-  return <span className="inline-flex items-center rounded-sm border border-white/[.13] bg-white/[.035] px-3 py-2 text-[12px] text-[#e2dce2]">{label}</span>;
+function Pill({ children }: { children: string }) {
+  return <span className="inline-flex min-h-8 items-center rounded-sm border border-white/[.13] bg-white/[.025] px-3 py-1.5 text-[11px] leading-5 text-[#dfd9e0]">{children}</span>;
 }
 
 export function ProfilePage() {
-  return (
-    <section className="shion-profile animate-appear pb-10" aria-labelledby="profile-heading">
-      <header className="shion-page-heading">
-        <span className="shion-page-kicker">S20 / PROFILE</span>
-        <h1 id="profile-heading">박시온</h1>
-        <p>tripleS · Park ShiOn</p>
-      </header>
+  return <section className="shion-profile animate-appear pb-12" aria-labelledby="profile-heading">
+    <header className="shion-page-heading">
+      <span className="shion-page-kicker">S20 / PROFILE</span>
+      <h1 id="profile-heading">박시온</h1>
+      <p>tripleS · Park ShiOn</p>
+    </header>
 
-      <nav aria-label="프로필 목차" className="mb-9 -mx-1 flex gap-2 overflow-x-auto px-1 pb-3 sm:mb-12">
-        {([
-          ['basic', '기본 정보'],
-          ['nicknames', '별명'],
-          ['interests', '취미와 취향'],
-          ['talents', '특기'],
-          ['dimensions', '활동'],
-          ['references', '출처'],
-        ] as const).map(([id, label]) => (
-          <a key={id} href={`#profile-${id}`} className="shrink-0 rounded-sm border border-white/[.13] bg-white/[.025] px-4 py-2.5 text-[12px] text-[#ccc3cd] transition-colors duration-[250ms] ease-plush hover:border-blush/60 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-blush">
-            {label}
-          </a>
-        ))}
-      </nav>
+    <nav aria-label="프로필 목차" className="-mx-1 mb-10 flex gap-2 overflow-x-auto px-1 pb-3 sm:mb-12">
+      {([
+        ['basic', '소개'], ['units', '유닛'], ['history', '활동 기록'], ['voice', '보컬'],
+        ['nicknames', '별명'], ['interests', '취향'], ['interview', '인터뷰'], ['references', '출처'],
+      ] as const).map(([id, text]) => <a key={id} href={`#profile-${id}`}
+        className="shrink-0 rounded-sm border border-white/[.12] bg-white/[.025] px-3.5 py-2.5 text-[12px] text-[#cfc6cf] transition-colors duration-[250ms] hover:border-[#d6b4c8] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d6b4c8]">
+        {text}
+      </a>)}
+    </nav>
 
-      <div id="profile-basic" className="shion-profile-intro scroll-mt-28">
-        <figure className="shion-profile-portrait">
-          <img src={PORTRAIT} alt="공항에서 촬영한 박시온" width="1152" height="1536" loading="eager" decoding="async" />
-          <figcaption>Park ShiOn · S20</figcaption>
-        </figure>
-        <div className="shion-profile-info">
-          <span className="shion-page-kicker">PARK SHION / TRIPLES</span>
-          <h2>Park ShiOn</h2>
-          <p className="shion-profile-sub">2023년 공개된 tripleS의 스무 번째 멤버. NXT로 활동을 시작해 ∞!, Moon 등 여러 디멘션에 참여하고 있습니다.</p>
-          <div className="mb-8 flex flex-wrap gap-2" aria-label="대표 키워드">
-            <Tag label="S20" />
-            <Tag label="메인보컬" />
-            <Tag label="🍞 빵시온" />
-            <Tag label="French Rose" />
-          </div>
-          <dl className="shion-fact-grid">
-            {facts.map((fact) => (
-              <div key={fact.name}>
-                <dt>{fact.name}</dt>
-                <dd>{fact.value}{fact.note && <small>{fact.note}</small>}</dd>
-              </div>
-            ))}
-          </dl>
-          <a className="shion-official-link" href="https://www.triples-official.jp/profile/" target="_blank" rel="noopener noreferrer">
-            공식 프로필 보기 <ArrowIcon width={16} height={16} />
-          </a>
+    <div id="profile-basic" className="shion-profile-intro scroll-mt-28">
+      <figure className="shion-profile-portrait">
+        <img src={PORTRAIT} alt="박시온 메인 프로필 사진" width="1152" height="1536" loading="eager" decoding="async" />
+        <figcaption>Park ShiOn · S20</figcaption>
+      </figure>
+      <div className="shion-profile-info">
+        <span className="shion-page-kicker">TRIPLES / S20</span>
+        <h2>Park ShiOn</h2>
+        <p className="shion-profile-sub">tripleS의 스무 번째 멤버. 2023년 NXT로 활동을 시작했으며 일본 디멘션 ∞!, Alphie, Moon을 거쳐 2026년 발라드 디멘션 Aura의 멤버로 선정됐습니다.</p>
+        <div className="mb-8 flex flex-wrap gap-2">
+          {['S20', 'NXT', '∞!', 'Moon', 'Aura'].map(label => <Pill key={label}>{label}</Pill>)}
         </div>
+        <dl className="shion-fact-grid">
+          {facts.map(item => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}{item.note && <small>{item.note}</small>}</dd></div>)}
+        </dl>
+        <a className="shion-official-link" href="https://www.triples-official.jp/profile/" target="_blank" rel="noopener noreferrer">
+          공식 프로필 <ArrowIcon width={16} height={16} />
+        </a>
       </div>
+    </div>
 
-      <section id="profile-nicknames" aria-labelledby="profile-nicknames-heading" className="mt-20 scroll-mt-28 sm:mt-28">
-        <Heading kicker="NICKNAMES" title="별명" id="profile-nicknames-heading" description="팬 커뮤니티와 인터뷰에서 사용된 애칭을 정리했습니다. 일부는 팬들이 붙인 별명입니다." />
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {nicknames.map((item) => (
-            <article key={item.name} className="min-w-0 rounded-sm border border-white/[.1] bg-[#17161b] p-5 sm:p-6">
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="text-[18px] font-medium tracking-[-.04em] text-paper">{item.name}</h3>
-                {item.label && <span className="shrink-0 border-b border-[#e4abc7]/50 pb-1 text-[10px] text-[#dfb8d0]">{item.label}</span>}
-              </div>
-              <p className="mt-4 text-[12px] leading-[1.9] text-[#b4acb5]">{item.description}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-5 text-[11px] leading-6 text-ash">시온이 팬들을 부르는 이름으로는 ‘밥온단’이 알려져 있습니다.</p>
-      </section>
-
-      <section id="profile-interests" aria-labelledby="profile-interests-heading" className="mt-20 scroll-mt-28 sm:mt-28">
-        <Heading kicker="INTERESTS" title="취미와 취향" id="profile-interests-heading" description="음식, 음악, 작품, 일상까지 조금 더 자세히 살펴보는 시온의 취향" />
-        <div className="grid gap-3 md:grid-cols-2">
-          {interests.map((item) => (
-            <article key={item.title} className="min-w-0 rounded-sm border border-white/[.1] bg-white/[.025] p-5 sm:p-7">
-              <h3 className="text-[17px] font-medium tracking-[-.03em] text-paper">{item.title}</h3>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {item.items.map((value) => <Tag key={value} label={value} />)}
-              </div>
-              {item.description && <p className="mt-5 text-[11px] leading-6 text-ash">{item.description}</p>}
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="profile-talents" aria-labelledby="profile-talents-heading" className="mt-20 scroll-mt-28 sm:mt-28">
-        <Heading kicker="SKILLS" title="특기와 관심사" id="profile-talents-heading" description="본인 소개와 인터뷰에 나온 내용 중심으로 정리했습니다." />
-        <div className="border-t border-white/[.14]">
-          {talents.map((item, index) => (
-            <article key={item.title} className="grid grid-cols-[30px_minmax(0,1fr)] gap-3 border-b border-white/[.12] py-5 sm:grid-cols-[56px_190px_minmax(0,1fr)] sm:items-center sm:gap-5 sm:py-6">
-              <span className="pt-1 text-[11px] tabular-nums text-ash sm:pt-0">{String(index + 1).padStart(2, '0')}</span>
-              <h3 className="text-[15px] font-medium text-paper sm:text-[17px]">{item.title}</h3>
-              <p className="col-start-2 text-[12px] leading-6 text-ash sm:col-start-3">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="profile-dimensions" className="shion-profile-units scroll-mt-28" aria-labelledby="profile-dimensions-heading">
-        <Heading kicker="DIMENSIONS" title="활동 유닛" id="profile-dimensions-heading" description="확정된 활동과 멤버 선정 이력을 구분해서 표시했습니다." />
-        <div className="shion-unit-list">
-          {dimensions.map((unit) => (
-            <article key={unit.name} className="shion-unit-row">
-              <span>{unit.time}</span>
-              <div>
-                <h3 className="flex flex-wrap items-center gap-3">{unit.name}{unit.status && <span className="text-[10px] font-normal tracking-normal text-[#d8b6c8]">{unit.status}</span>}</h3>
-                <p>{unit.description}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="profile-references" aria-labelledby="profile-references-heading" className="mt-20 scroll-mt-28 sm:mt-28">
-        <Heading kicker="SOURCES" title="정보 출처" id="profile-references-heading" description="공식 자료와 본인 인터뷰를 우선으로 확인하고, 별명과 일부 취향은 팬 위키를 참고했습니다." />
-        <div className="divide-y divide-white/[.09] border-y border-white/[.14]">
-          {links.map((link) => (
-            <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="group flex min-w-0 items-center justify-between gap-4 py-5 text-left transition-colors duration-[250ms] ease-plush hover:text-blush focus-visible:outline focus-visible:outline-2 focus-visible:outline-blush">
-              <span className="min-w-0">
-                <span className="mb-2 block text-[10px] tracking-[.04em] text-ash">{link.type}</span>
-                <span className="block text-[13px] font-medium text-paper group-hover:text-blush">{link.title}</span>
-                <span className="mt-2 block text-[11px] leading-5 text-ash">{link.context}</span>
+    <section id="profile-units" className="mt-20 scroll-mt-28 sm:mt-28" aria-labelledby="profile-units-heading">
+      <SectionHeading id="profile-units-heading" english="DIMENSIONS" title="활동 유닛" description="NXT부터 Aura까지. 유닛을 누르면 멤버 구성과 활동 기록을 확인할 수 있습니다." />
+      <div className="divide-y divide-white/[.12] border-y border-white/[.13]">
+        {units.map(unit => <details key={unit.name} open={unit.recent ? true : undefined} className="group">
+          <summary className="flex cursor-pointer list-none items-center gap-3 py-5 outline-none transition-colors duration-[250ms] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d6b4c8] sm:gap-5 sm:py-7 [&::-webkit-details-marker]:hidden">
+            <span className="w-12 shrink-0 text-[11px] tabular-nums text-ash sm:w-16">{unit.period}</span>
+            <span className="min-w-0 flex-1">
+              <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span className="text-[20px] font-medium tracking-[-.035em] text-paper sm:text-[26px]">{unit.name}</span>
+                <span className="border border-[#bd93ae]/40 px-2 py-1 text-[10px] text-[#dab8cd]">{unit.badge}</span>
               </span>
-              <ArrowIcon width={17} height={17} />
+              <span className="mt-1 block text-[11px] leading-5 text-ash">{unit.subtitle}</span>
+            </span>
+            <span aria-hidden="true" className="text-[22px] font-light text-[#c5b3c1] group-open:rotate-45 transition-transform duration-[250ms]">+</span>
+          </summary>
+          <div className="pb-7 pl-0 sm:pb-9 sm:pl-20">
+            <p className="max-w-3xl text-[13px] leading-[1.95] text-[#cbc3cd]">{unit.description}</p>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2">
+              <div>
+                <h4 className="mb-3 text-[11px] font-medium tracking-[.08em] text-[#cdb8c7]">MEMBERS · {unit.members.length}</h4>
+                <div className="flex flex-wrap gap-2">{unit.members.map(name => <Pill key={name}>{name}</Pill>)}</div>
+              </div>
+              <div>
+                <h4 className="mb-3 text-[11px] font-medium tracking-[.08em] text-[#cdb8c7]">MUSIC</h4>
+                <div className="space-y-2">{unit.songs.map(song => <p key={song} className="text-[12px] leading-6 text-[#d8d0da]">{song}</p>)}</div>
+              </div>
+            </div>
+            <ol className="mt-6 space-y-3 border-l border-white/[.16] pl-4">
+              {unit.history.map(event => <li key={event} className="text-[12px] leading-6 text-ash">{event}</li>)}
+            </ol>
+            <a href={unit.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 text-[11px] text-[#dcbace] underline decoration-white/25 underline-offset-4 hover:text-white">
+              자료 보기 · {unit.sourceText} <ArrowIcon width={13} height={13} />
             </a>
-          ))}
-        </div>
-        <p className="shion-source-note">2026년 11월 14일 기준으로 참고한 자료입니다. MBTI와 활동 정보처럼 변동될 수 있는 항목은 출처에 따라 다르게 표기될 수 있습니다. 이 페이지는 비공식 팬 아카이브입니다.</p>
-      </section>
+          </div>
+        </details>)}
+      </div>
+      <p className="mt-4 text-[11px] leading-6 text-ash">Alphie는 투어 프로젝트 유닛입니다. Aura의 음악은 공연 공개와 음원 발매를 구분해 기록했습니다.</p>
     </section>
-  );
+
+    <section id="profile-history" className="mt-20 scroll-mt-28 sm:mt-28" aria-labelledby="profile-history-heading">
+      <SectionHeading id="profile-history-heading" english="HISTORY" title="활동 기록" description="S 공개부터 최근 유닛 활동까지 주요 기록" />
+      <ol className="border-t border-white/[.14]">
+        {highlights.map(item => <li key={`${item.date}-${item.title}`} className="grid grid-cols-[76px_minmax(0,1fr)] gap-3 border-b border-white/[.09] py-5 sm:grid-cols-[125px_minmax(0,1fr)] sm:gap-8 sm:py-6">
+          <time className="pt-1 text-[11px] tabular-nums text-[#ccb3c2]">{item.date}</time>
+          <div><h3 className="text-[15px] font-medium text-paper sm:text-[17px]">{item.title}</h3><p className="mt-2 max-w-3xl text-[12px] leading-6 text-ash">{item.detail}</p></div>
+        </li>)}
+      </ol>
+    </section>
+
+    <section id="profile-voice" className="mt-20 scroll-mt-28 sm:mt-28" aria-labelledby="profile-voice-heading">
+      <SectionHeading id="profile-voice-heading" english="VOICE & MUSIC" title="보컬과 음악" description="확인 가능한 참여 이력을 중심으로 정리한 박시온의 음악 활동" />
+      <div className="grid gap-3 md:grid-cols-3">
+        {voiceNotes.map(item => <article key={item.name} className="rounded-sm border border-white/[.1] bg-white/[.025] p-6">
+          <h3 className="text-[16px] font-medium text-paper">{item.name}</h3>
+          <p className="mt-4 text-[12px] leading-[1.9] text-ash">{item.detail}</p>
+        </article>)}
+      </div>
+    </section>
+
+    <section id="profile-nicknames" className="mt-20 scroll-mt-28 sm:mt-28" aria-labelledby="profile-nicknames-heading">
+      <SectionHeading id="profile-nicknames-heading" english="NICKNAMES" title="별명" description="본인 인터뷰에 등장한 애칭과 팬 커뮤니티에서 사용하는 호칭을 구분했습니다." />
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {nicknameList.map(item => <article key={item.name} className="rounded-sm border border-white/[.1] bg-[#17161b] p-5 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-[17px] font-medium text-paper">{item.name}</h3><span className="text-[10px] text-[#cbb0c1]">{item.origin}</span></div>
+          <p className="mt-3 text-[12px] leading-6 text-ash">{item.text}</p>
+        </article>)}
+      </div>
+    </section>
+
+    <section id="profile-interests" className="mt-20 scroll-mt-28 sm:mt-28" aria-labelledby="profile-interests-heading">
+      <SectionHeading id="profile-interests-heading" english="INTERESTS" title="취미와 취향" />
+      <div className="grid gap-3 md:grid-cols-2">
+        {interestGroups.map(group => <article key={group.title} className="rounded-sm border border-white/[.1] bg-white/[.025] p-5 sm:p-7">
+          <h3 className="text-[17px] font-medium text-paper">{group.title}</h3>
+          <p className="mt-2 text-[12px] leading-6 text-ash">{group.description}</p>
+          <div className="mt-5 flex flex-wrap gap-2">{group.items.map(item => <Pill key={item}>{item}</Pill>)}</div>
+          <p className="mt-5 text-[10px] text-[#9e95a0]">{group.source}</p>
+        </article>)}
+      </div>
+    </section>
+
+    <section id="profile-interview" className="mt-20 scroll-mt-28 sm:mt-28" aria-labelledby="profile-interview-heading">
+      <SectionHeading id="profile-interview-heading" english="INTERVIEW NOTES" title="인터뷰에서 알게 된 시온" description="Droptokyo 인터뷰를 한국어로 간결하게 요약했습니다. 직접 인용이 아닌 요약입니다." />
+      <div className="grid gap-3 md:grid-cols-2">
+        {interview.map((item, index) => <article key={item.title} className="grid grid-cols-[26px_1fr] gap-3 border-b border-white/[.12] py-5 sm:gap-4 sm:py-6">
+          <span className="text-[10px] tabular-nums text-ash">{String(index + 1).padStart(2, '0')}</span>
+          <div><h3 className="text-[15px] font-medium text-paper">{item.title}</h3><p className="mt-3 text-[12px] leading-6 text-ash">{item.description}</p></div>
+        </article>)}
+      </div>
+      <a className="mt-5 inline-flex items-center gap-2 text-[12px] text-[#e0bdd0] underline decoration-white/25 underline-offset-4 hover:text-white" target="_blank" rel="noopener noreferrer" href="https://droptokyo.com/wedrop/334219/">Droptokyo 인터뷰 원문 <ArrowIcon width={15} height={15} /></a>
+    </section>
+
+    <section id="profile-references" className="mt-20 scroll-mt-28 sm:mt-28" aria-labelledby="profile-references-heading">
+      <SectionHeading id="profile-references-heading" english="REFERENCES" title="정보 출처" description="공식 자료와 본인 인터뷰를 우선하며, 팬 자료에서 정리한 내용은 별도로 표시합니다." />
+      <div className="divide-y divide-white/[.09] border-y border-white/[.14]">
+        {sources.map(item => <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between gap-4 py-5 transition-colors duration-[250ms] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d6b4c8]">
+          <span className="min-w-0"><span className="mb-1 block text-[10px] text-[#c6aabb]">{item.kind}</span><span className="block text-[13px] font-medium text-paper">{item.label}</span><span className="mt-1 block text-[11px] leading-5 text-ash">{item.detail}</span></span>
+          <ArrowIcon width={16} height={16} />
+        </a>)}
+      </div>
+      <p className="mt-5 text-[11px] leading-[1.9] text-ash">확인일 2026.11.14 · SHION ARCHIVE는 비공식 팬사이트입니다. MBTI, 별명, 유닛 활동 상태 등 변동 가능한 정보는 출처와 시점에 따라 차이가 있을 수 있습니다.</p>
+    </section>
+  </section>;
 }
