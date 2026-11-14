@@ -20,7 +20,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
       - name: Checkout SHION ARCHIVE
         uses: actions/checkout@v4
@@ -35,6 +35,14 @@ jobs:
 
       - name: Sync ALL confirmed S20 Objekts from WAV ARCHIVE
         run: node scripts/sync-wav-s20.mjs
+
+      - name: Validate SHION FILM indexer
+        run: node scripts/sync-shion-films.mjs --self-test
+
+      - name: Sync official SHION videos and WAV SIGNAL references
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node scripts/sync-shion-films.mjs
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
