@@ -83,6 +83,12 @@ function readPhotos(payload: unknown): Photo[] {
   }
   return results;
 }
+/** The displayed curator label is not a replacement for the original photo source. */
+function isSNSArchiveAlbum(album: LocalizedText): boolean {
+  return [album.ko, album.en, album.ja].some((name) =>
+    typeof name === 'string' && /^(?:SNS\s*아카이브|SNS\s*Archive|SNS\s*アーカイブ)$/i.test(name.trim())
+  );
+}
 function dateKey(photo: Photo): string { return photo.date?.slice(0, 7) ?? 'unknown'; }
 function comparePhotos(a: Photo, b: Photo, order: SortOrder): number {
   if (a.date && !b.date) return -1;
@@ -126,6 +132,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
   const swipeStart = useRef<number | null>(null);
   const deferred = useDeferredValue(query.trim().toLocaleLowerCase());
   const text = (label: LocalizedText): string => label[language] || t(label.ko);
+  const albumText = (label: LocalizedText): string => isSNSArchiveAlbum(label) ? '빵시온' : text(label);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -140,13 +147,13 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
   const years = useMemo(() => [...new Set(photos.flatMap((photo) => photo.date ? [photo.date.slice(0, 4)] : []))].sort().reverse(), [photos]);
   const months = useMemo(() => [...new Set(photos.flatMap((photo) => photo.date && (year === 'all' || photo.date.startsWith(year)) ? [photo.date.slice(5, 7)] : []))].sort(), [photos, year]);
   const albums = useMemo(() => [...new Set(photos.map((photo) => photo.album.ko))].sort((a, b) => a.localeCompare(b, 'ko')), [photos]);
-  const albumNames = useMemo(() => new Map(photos.map((photo) => [photo.album.ko, text(photo.album)])), [photos, language]);
+  const albumNames = useMemo(() => new Map(photos.map((photo) => [photo.album.ko, albumText(photo.album)])), [photos, language]);
   const filtered = useMemo(() => photos.filter((photo) =>
     (year === 'all' || photo.date?.startsWith(year)) &&
     (month === 'all' || photo.date?.slice(5, 7) === month) &&
     (album === 'all' || photo.album.ko === album) &&
     (!deferred || [photo.title.ko, photo.title.en, photo.title.ja, photo.album.ko, photo.album.en,
-      photo.album.ja, photo.date, photo.credit?.ko, ...photo.tags]
+      photo.album.ja, isSNSArchiveAlbum(photo.album) ? '빵시온' : '', photo.date, photo.credit?.ko, ...photo.tags]
       .filter(Boolean).join(' ').toLocaleLowerCase().includes(deferred))
   ).sort((a, b) => comparePhotos(a, b, sort)), [photos, year, month, album, deferred, sort]);
   const visible = filtered.slice(0, limit);
@@ -238,7 +245,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
         {groups.map(([key, list]) => <section className="shion-photo-group" key={`${mode}-${key}`} aria-label={groupLabel(key)}>
           <div className="shion-photo-group-head"><h2>{groupLabel(key)}</h2><span>{formatNumber(list.length)} {t('장')}</span></div>
           <div className="shion-photo-grid">{list.map((photo) =>
-            <PhotoTile key={photo.id} photo={photo} title={text(photo.title)} album={text(photo.album)} onClick={() => setSelectedId(photo.id)}/>)}</div>
+            <PhotoTile key={photo.id} photo={photo} title={text(photo.title)} album={albumText(photo.album)} onClick={() => setSelectedId(photo.id)}/>)}</div>
         </section>)}
         {limit < filtered.length && <button className="shion-photo-more" type="button" onClick={() => setLimit((n) => n + PAGE_SIZE)}>{t('더 보기')}</button>}
       </>}
@@ -258,7 +265,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
         <button className="shion-lightbox-step" type="button" onClick={() => step(1)} aria-label={t('다음 사진')}>›</button>
       </div>
       <div className="shion-lightbox-caption shion-lightbox-caption-v2"><div><strong>{text(selected.title)}</strong>
-        <span>{text(selected.album)} · {photoDate(selected.date)}</span>
+        <span>{albumText(selected.album)} · {photoDate(selected.date)}</span>
         {selected.credit && <span>{selected.id.startsWith('fandom-s20-') ? text(selected.credit) : `${t('출처')}: ${text(selected.credit)}`}</span>}</div>
         {selected.source && <a href={selected.source} target="_blank" rel="noopener noreferrer">{t('원본 게시물')}</a>}
       </div>
