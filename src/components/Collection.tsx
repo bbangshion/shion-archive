@@ -5,6 +5,7 @@ import { filterObjekts } from '../lib/catalog';
 import { ArrowIcon, HeartIcon, SearchIcon } from './Icons';
 import { ObjektCard } from './ObjektCard';
 import { DetailDialog } from './DetailDialog';
+import { clearRouteItem, getRouteItem } from '../lib/archiveRoute';
 type Props = {
     items: Objekt[];
     favorites: Set<string>;
@@ -21,7 +22,11 @@ export function Collection({ items, favorites, onToggleFavorite }: Props) {
     const [mode, setMode] = useState<CollectionMode>('all');
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [selected, setSelected] = useState<Objekt | null>(null);
-    const closeDetail = useCallback(() => setSelected(null), []);
+    const closeDetail = useCallback(() => { setSelected(null); clearRouteItem('collection'); }, []);
+    useEffect(() => {
+        const id = getRouteItem('collection');
+        if (id) setSelected(items.find((item) => item.id === id) ?? null);
+    }, [items]);
     const seriesOptions = useMemo(() => [...new Set(items.map((item) => item.series))].sort(), [items]);
     const seasonOptions = useMemo(() => [...new Set(items.map((item) => item.season))].sort().reverse(), [items]);
     const results = useMemo(() => filterObjekts(items, { query: deferredQuery, series, season, sort, mode, favoriteIds: favorites }), [items, deferredQuery, series, season, sort, mode, favorites]);

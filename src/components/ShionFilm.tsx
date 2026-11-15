@@ -3,6 +3,7 @@ import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowIcon } from './Icons';
 import { filmEmbedUrl, filmThumbnail, filmYoutubeUrl, normalizeFilms, readableFilmDate, filmScopeLabel } from '../lib/films';
 import type { Film, FilmCategory } from '../lib/films';
+import { clearRouteItem, getRouteItem } from '../lib/archiveRoute';
 const DATA_PATH = `${import.meta.env.BASE_URL}data/films.json`;
 const STORAGE_KEY = 'shion-archive-film-favorites-v1';
 const PAGE_SIZE = 24;
@@ -170,6 +171,10 @@ export default function ShionFilm() {
         void load();
         return () => controller.abort();
     }, []);
+    useEffect(() => {
+        const id = getRouteItem('film');
+        if (id && films.some((film) => film.id === id)) setPlayingId(id);
+    }, [films]);
     const years = useMemo(() => Array.from(new Set(films.flatMap((film) => film.publishedAt ? [film.publishedAt.slice(0, 4)] : []))).sort((a, b) => b.localeCompare(a)), [films]);
     const filtered = useMemo(() => films.filter((film) => (filter === 'all' || (filter === 'saved' ? saved.has(film.id) : film.category === filter)) &&
         (year === 'all' || film.publishedAt?.startsWith(year)) &&
@@ -215,6 +220,6 @@ export default function ShionFilm() {
       </> : <div className="shion-film-empty"><h2><Trans value="표시할 영상이 없습니다"/></h2><p><Trans value="다른 분류를 선택하거나 검색어를 바꿔보세요"/></p>{(filter !== 'all' || query || year !== 'all') && <button type="button" onClick={() => { setFilter('all'); setQuery(''); setYear('all'); }}><Trans value="전체 보기"/></button>}</div>}
 
     <aside className="shion-film-note"><span><Trans value="영상 안내"/></span><p><Trans value="공식 채널과 방송사에서 공개한 영상 링크를 정리합니다. 출연 여부가 확인된 영상부터 등록하며, 전체 영상이 모두 수록된 것은 아닙니다. 재생은 YouTube에서 이루어집니다."/></p><a href="https://www.youtube.com/@triplescosmos" target="_blank" rel="noopener noreferrer"><Trans value="tripleS 공식 채널 "/><ArrowIcon width={14} height={14}/></a></aside>
-    {selected && <PlayerDialog video={selected} onClose={() => setPlayingId(null)}/>}
+    {selected && <PlayerDialog video={selected} onClose={() => { setPlayingId(null); clearRouteItem('film'); }}/>}
   </div>;
 }

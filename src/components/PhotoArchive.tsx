@@ -1,6 +1,7 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useI18n } from '../i18n/I18nContext';
+import { clearRouteItem, getRouteItem } from '../lib/archiveRoute';
 
 type LocalizedText = { ko: string; en?: string; ja?: string };
 type Photo = {
@@ -144,6 +145,15 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
     return () => controller.abort();
   }, []);
 
+  useEffect(() => {
+    if (isLoading) return;
+    const id = getRouteItem('photos');
+    if (id && photos.some((photo) => photo.id === id)) {
+      setYear('all'); setMonth('all'); setAlbum('all'); setQuery('');
+      setSelectedId(id);
+    }
+  }, [isLoading, photos]);
+
   const years = useMemo(() => [...new Set(photos.flatMap((photo) => photo.date ? [photo.date.slice(0, 4)] : []))].sort().reverse(), [photos]);
   const months = useMemo(() => [...new Set(photos.flatMap((photo) => photo.date && (year === 'all' || photo.date.startsWith(year)) ? [photo.date.slice(5, 7)] : []))].sort(), [photos, year]);
   const albums = useMemo(() => [...new Set(photos.map((photo) => photo.album.ko))].sort((a, b) => a.localeCompare(b, 'ko')), [photos]);
@@ -169,7 +179,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
   }, [visible, mode]);
   const currentIndex = selectedId === null ? -1 : filtered.findIndex((photo) => photo.id === selectedId);
   const selected = currentIndex < 0 ? null : filtered[currentIndex] ?? null;
-  const close = () => setSelectedId(null);
+  const close = () => { setSelectedId(null); clearRouteItem('photos'); };
   const step = (direction: -1 | 1) => {
     if (currentIndex < 0 || filtered.length === 0) return;
     setSelectedId(filtered[(currentIndex + direction + filtered.length) % filtered.length]?.id ?? null);
