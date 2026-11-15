@@ -16,6 +16,7 @@ const Collection = lazy(() => import('./components/Collection').then((module) =>
 const TournamentArena = lazy(() => import('./components/TournamentArena').then((module) => ({ default: module.TournamentArena })));
 const ProfilePage = lazy(() => import('./components/ProfilePage').then((module) => ({ default: module.ProfilePage })));
 const PhotoArchive = lazy(() => import('./components/PhotoArchive').then((module) => ({ default: module.PhotoArchive })));
+const SearchPage = lazy(() => import('./components/SearchPage'));
 const PHOTO_URL = `${import.meta.env.BASE_URL}images/shion-home.jpg`;
 const MENU: readonly {
     key: ArchiveScreen;
@@ -28,6 +29,7 @@ const MENU: readonly {
     { key: 'film', label: '영상', number: '04' },
     { key: 'collection', label: '오브젝트', number: '05' },
     { key: 'worldcup', label: '월드컵', number: '06' },
+    { key: 'search', label: '통합 검색', number: '07' },
 ];
 function SiteHeader() {
     const { screen, setScreen } = useArchive();
@@ -142,6 +144,10 @@ function Home() {
               <span className="shion-feature-top"><span>05 / WORLD CUP</span><ArrowIcon width={21} height={21}/></span>
               <span className="shion-feature-bottom"><strong><Trans value="오브젝트 월드컵"/></strong><span><Trans value="두 장씩 비교하며 최애 카드 고르기"/></span><small><Trans value="즐겨찾기 "/>{formatNumber(favorites.size)}<Trans value="개"/></small></span>
             </button>
+            <button type="button" className="shion-feature-card" onClick={() => setScreen('search')}>
+              <span className="shion-feature-top"><span>06 / SEARCH OS</span><ArrowIcon width={21} height={21}/></span>
+              <span className="shion-feature-bottom"><strong><Trans value="통합 검색"/></strong><span><Trans value="모든 아카이브를 한 번에 검색"/></span></span>
+            </button>
           </div>
           <div className="shion-home-footnote"><span>S20 · PARK SHION</span><span>CREATED BY @bbangshion</span></div>
         </div>
@@ -162,9 +168,9 @@ function ArchivePage() {
         <div className="shion-page-crumb">
           <button type="button" onClick={() => setScreen('home')}><Trans value="홈"/></button>
           <span aria-hidden="true">/</span>
-          <span>{t(screen === 'collection' ? '오브젝트' : screen === 'worldcup' ? '월드컵' : screen === 'profile' ? '프로필' : screen === 'film' ? '영상' : '사진')}</span>
+          <span>{t(screen === 'collection' ? '오브젝트' : screen === 'worldcup' ? '월드컵' : screen === 'profile' ? '프로필' : screen === 'film' ? '영상' : screen === 'search' ? '통합 검색' : '사진')}</span>
         </div>
-        {screen === 'profile' ? <ProfilePage /> : screen === 'film' ? <Suspense fallback={<LoadingView />}><ShionFilm /></Suspense> : screen === 'photos' ? <PhotoArchive/> : state.status === 'loading' ? <LoadingView /> : state.status === 'error' ? (<div role="alert" className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="오브젝트를 불러오지 못했어요"/></p><p className="mt-3 max-w-xl break-words text-sm leading-7 text-ash">{t(state.error)}</p><button type="button" className="btn-primary mt-6 gap-2" onClick={state.retry}><Trans value="다시 시도 "/><ArrowIcon width={16} height={16}/></button></div>) : items.length === 0 ? (<div className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="표시할 카드가 없어요"/></p><p className="mt-3 max-w-xl text-sm leading-7 text-ash"><Trans value="연결된 데이터에서 박시온 카드를 찾지 못했습니다"/></p><button type="button" className="btn-ghost mt-6" onClick={state.retry}><Trans value="다시 확인"/></button></div>) : (<>
+        {screen === 'search' ? <SearchPage /> : screen === 'profile' ? <ProfilePage /> : screen === 'film' ? <Suspense fallback={<LoadingView />}><ShionFilm /></Suspense> : screen === 'photos' ? <PhotoArchive/> : state.status === 'loading' ? <LoadingView /> : state.status === 'error' ? (<div role="alert" className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="오브젝트를 불러오지 못했어요"/></p><p className="mt-3 max-w-xl break-words text-sm leading-7 text-ash">{t(state.error)}</p><button type="button" className="btn-primary mt-6 gap-2" onClick={state.retry}><Trans value="다시 시도 "/><ArrowIcon width={16} height={16}/></button></div>) : items.length === 0 ? (<div className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="표시할 카드가 없어요"/></p><p className="mt-3 max-w-xl text-sm leading-7 text-ash"><Trans value="연결된 데이터에서 박시온 카드를 찾지 못했습니다"/></p><button type="button" className="btn-ghost mt-6" onClick={state.retry}><Trans value="다시 확인"/></button></div>) : (<>
             {catalog?.isDemo && <div role="note" className="mb-6 rounded-lg border border-white/10 bg-surface px-4 py-3 text-xs text-ash"><Trans value="미리보기 데이터입니다 · 실제 카드 데이터가 연결되면 자동으로 바뀝니다"/></div>}
             {screen === 'collection' ? <Collection items={items} favorites={favorites} onToggleFavorite={toggleFavorite}/> : <TournamentArena items={items} isDemo={!!catalog?.isDemo} favorites={favorites} onToggleFavorite={toggleFavorite}/>}
           </>)}
