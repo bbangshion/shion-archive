@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useCatalog } from '../hooks/useCatalog';
 import { useFavorites } from '../hooks/useFavorites';
 
-export type ArchiveScreen = 'home' | 'profile' | 'photos' | 'film' | 'collection' | 'worldcup' | 'search';
+export type ArchiveScreen = 'home' | 'profile' | 'photos' | 'film' | 'collection' | 'worldcup' | 'search' | 'timeline';
 
 type ArchiveContextValue = {
   screen: ArchiveScreen;
@@ -24,6 +24,7 @@ function getScreenFromAddress(): ArchiveScreen {
   if (route === 'objekt' || route === 'collection') return 'collection';
   if (route === 'worldcup' || route === 'world-cup') return 'worldcup';
   if (route === 'search' || route === 'find') return 'search';
+  if (route === 'timeline' || route === 'history') return 'timeline';
   return 'home';
 }
 
@@ -43,7 +44,7 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setScreen = useCallback((next: ArchiveScreen, itemId?: string) => {
-    const baseHash = next === 'home' ? '' : next === 'profile' ? '#profile' : next === 'photos' ? '#photos' : next === 'film' ? '#film' : next === 'collection' ? '#objekt' : next === 'worldcup' ? '#worldcup' : '#search';
+    const baseHash = next === 'home' ? '' : next === 'profile' ? '#profile' : next === 'photos' ? '#photos' : next === 'film' ? '#film' : next === 'collection' ? '#objekt' : next === 'worldcup' ? '#worldcup' : next === 'timeline' ? '#timeline' : '#search';
     const nextHash = itemId && baseHash && next !== 'search' ? `${baseHash}?item=${encodeURIComponent(itemId)}` : baseHash;
     const nextAddress = `${window.location.pathname}${window.location.search}${nextHash}`;
     if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== nextAddress) {
