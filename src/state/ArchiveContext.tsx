@@ -3,11 +3,11 @@ import type { ReactNode } from 'react';
 import { useCatalog } from '../hooks/useCatalog';
 import { useFavorites } from '../hooks/useFavorites';
 
-export type ArchiveScreen = 'home' | 'profile' | 'photos' | 'film' | 'collection' | 'worldcup';
+export type ArchiveScreen = 'home' | 'profile' | 'photos' | 'film' | 'collection' | 'worldcup' | 'search';
 
 type ArchiveContextValue = {
   screen: ArchiveScreen;
-  setScreen: (screen: ArchiveScreen) => void;
+  setScreen: (screen: ArchiveScreen, itemId?: string) => void;
   catalogState: ReturnType<typeof useCatalog>;
   favorites: Set<string>;
   toggleFavorite: (id: string) => void;
@@ -17,12 +17,13 @@ const ArchiveContext = createContext<ArchiveContextValue | null>(null);
 
 function getScreenFromAddress(): ArchiveScreen {
   if (typeof window === 'undefined') return 'home';
-  const route = window.location.hash.toLowerCase().replace(/^#\/?/, '');
+  const route = window.location.hash.toLowerCase().replace(/^#\/?/, '').split('?')[0];
   if (route === 'profile') return 'profile';
   if (route === 'photos' || route === 'photo') return 'photos';
   if (route === 'film' || route === 'videos' || route === 'video') return 'film';
   if (route === 'objekt' || route === 'collection') return 'collection';
   if (route === 'worldcup' || route === 'world-cup') return 'worldcup';
+  if (route === 'search' || route === 'find') return 'search';
   return 'home';
 }
 
@@ -41,8 +42,9 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const setScreen = useCallback((next: ArchiveScreen) => {
-    const nextHash = next === 'home' ? '' : next === 'profile' ? '#profile' : next === 'photos' ? '#photos' : next === 'film' ? '#film' : next === 'collection' ? '#objekt' : '#worldcup';
+  const setScreen = useCallback((next: ArchiveScreen, itemId?: string) => {
+    const baseHash = next === 'home' ? '' : next === 'profile' ? '#profile' : next === 'photos' ? '#photos' : next === 'film' ? '#film' : next === 'collection' ? '#objekt' : next === 'worldcup' ? '#worldcup' : '#search';
+    const nextHash = itemId && baseHash && next !== 'search' ? `${baseHash}?item=${encodeURIComponent(itemId)}` : baseHash;
     const nextAddress = `${window.location.pathname}${window.location.search}${nextHash}`;
     if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== nextAddress) {
       window.history.pushState({ screen: next }, '', nextAddress);
