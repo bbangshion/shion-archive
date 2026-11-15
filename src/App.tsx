@@ -18,6 +18,8 @@ const TournamentArena = lazy(() => import('./components/TournamentArena').then((
 const ProfilePage = lazy(() => import('./components/ProfilePage').then((module) => ({ default: module.ProfilePage })));
 const PhotoArchive = lazy(() => import('./components/PhotoArchive').then((module) => ({ default: module.PhotoArchive })));
 const SearchPage = lazy(() => import('./components/SearchPage'));
+const TimelinePage = lazy(() => import('./components/TimelinePage').then((module) => ({ default: module.TimelinePage })));
+const HomeUpdates = lazy(() => import('./components/HomeUpdates'));
 const PHOTO_URL = `${import.meta.env.BASE_URL}images/shion-home.jpg`;
 const MENU: readonly {
     key: ArchiveScreen;
@@ -28,9 +30,10 @@ const MENU: readonly {
     { key: 'profile', label: '프로필', number: '02' },
     { key: 'photos', label: '사진', number: '03' },
     { key: 'film', label: '영상', number: '04' },
-    { key: 'collection', label: '오브젝트', number: '05' },
-    { key: 'worldcup', label: '월드컵', number: '06' },
-    { key: 'search', label: '통합 검색', number: '07' },
+    { key: 'timeline', label: '타임라인', number: '05' },
+    { key: 'collection', label: '오브젝트', number: '06' },
+    { key: 'worldcup', label: '월드컵', number: '07' },
+    { key: 'search', label: '통합 검색', number: '08' },
 ];
 function SiteHeader() {
     const { screen, setScreen } = useArchive();
@@ -115,6 +118,8 @@ function Home() {
         <div className="shion-scroll-note" aria-hidden="true"><span /> <Trans value="SCROLL TO EXPLORE"/></div>
       </section>
 
+      <Suspense fallback={<div className="shion-overview-loading shion-content-width" role="status"><Trans value="최신 자료를 불러오는 중"/></div>}><HomeUpdates /></Suspense>
+
       <section className="shion-home-explore" aria-labelledby="shion-explore-title">
         <div className="shion-content-width">
           <div className="shion-section-lead">
@@ -137,16 +142,20 @@ function Home() {
               <span className="shion-feature-top"><span>03 / FILM</span><ArrowIcon width={21} height={21}/></span>
               <span className="shion-feature-bottom"><strong><Trans value="영상"/></strong><span><Trans value="SIGNAL과 공식 영상"/></span></span>
             </button>
+            <button type="button" className="shion-feature-card" onClick={() => setScreen('timeline')}>
+              <span className="shion-feature-top"><span>04 / TIMELINE</span><ArrowIcon width={21} height={21}/></span>
+              <span className="shion-feature-bottom"><strong><Trans value="활동 타임라인"/></strong><span><Trans value="박시온의 주요 활동과 날짜별 기록"/></span></span>
+            </button>
             <button type="button" className="shion-feature-card" onClick={() => setScreen('collection')}>
-              <span className="shion-feature-top"><span>04 / COLLECTION</span><ArrowIcon width={21} height={21}/></span>
+              <span className="shion-feature-top"><span>05 / COLLECTION</span><ArrowIcon width={21} height={21}/></span>
               <span className="shion-feature-bottom"><strong><Trans value="오브젝트 컬렉션"/></strong><span><Trans value="시즌별 카드 검색과 즐겨찾기"/></span><small>{catalogState.status === 'loading' ? t('불러오는 중') : `${count} ${t('개')}`}</small></span>
             </button>
             <button type="button" className="shion-feature-card" onClick={() => setScreen('worldcup')}>
-              <span className="shion-feature-top"><span>05 / WORLD CUP</span><ArrowIcon width={21} height={21}/></span>
+              <span className="shion-feature-top"><span>06 / WORLD CUP</span><ArrowIcon width={21} height={21}/></span>
               <span className="shion-feature-bottom"><strong><Trans value="오브젝트 월드컵"/></strong><span><Trans value="두 장씩 비교하며 최애 카드 고르기"/></span><small><Trans value="즐겨찾기 "/>{formatNumber(favorites.size)}<Trans value="개"/></small></span>
             </button>
             <button type="button" className="shion-feature-card" onClick={() => setScreen('search')}>
-              <span className="shion-feature-top"><span>06 / SEARCH OS</span><ArrowIcon width={21} height={21}/></span>
+              <span className="shion-feature-top"><span>07 / SEARCH OS</span><ArrowIcon width={21} height={21}/></span>
               <span className="shion-feature-bottom"><strong><Trans value="통합 검색"/></strong><span><Trans value="모든 아카이브를 한 번에 검색"/></span></span>
             </button>
           </div>
@@ -169,9 +178,9 @@ function ArchivePage() {
         <div className="shion-page-crumb">
           <button type="button" onClick={() => setScreen('home')}><Trans value="홈"/></button>
           <span aria-hidden="true">/</span>
-          <span>{t(screen === 'collection' ? '오브젝트' : screen === 'worldcup' ? '월드컵' : screen === 'profile' ? '프로필' : screen === 'film' ? '영상' : screen === 'search' ? '통합 검색' : '사진')}</span>
+          <span>{t(screen === 'collection' ? '오브젝트' : screen === 'worldcup' ? '월드컵' : screen === 'profile' ? '프로필' : screen === 'film' ? '영상' : screen === 'search' ? '통합 검색' : screen === 'timeline' ? '타임라인' : '사진')}</span>
         </div>
-        {screen === 'search' ? <SearchPage /> : screen === 'profile' ? <ProfilePage /> : screen === 'film' ? <Suspense fallback={<LoadingView />}><ShionFilm /></Suspense> : screen === 'photos' ? <PhotoArchive/> : state.status === 'loading' ? <LoadingView /> : state.status === 'error' ? (<div role="alert" className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="오브젝트를 불러오지 못했어요"/></p><p className="mt-3 max-w-xl break-words text-sm leading-7 text-ash">{t(state.error)}</p><button type="button" className="btn-primary mt-6 gap-2" onClick={state.retry}><Trans value="다시 시도 "/><ArrowIcon width={16} height={16}/></button></div>) : items.length === 0 ? (<div className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="표시할 카드가 없어요"/></p><p className="mt-3 max-w-xl text-sm leading-7 text-ash"><Trans value="연결된 데이터에서 박시온 카드를 찾지 못했습니다"/></p><button type="button" className="btn-ghost mt-6" onClick={state.retry}><Trans value="다시 확인"/></button></div>) : (<>
+        {screen === 'timeline' ? <TimelinePage /> : screen === 'search' ? <SearchPage /> : screen === 'profile' ? <ProfilePage /> : screen === 'film' ? <Suspense fallback={<LoadingView />}><ShionFilm /></Suspense> : screen === 'photos' ? <PhotoArchive/> : state.status === 'loading' ? <LoadingView /> : state.status === 'error' ? (<div role="alert" className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="오브젝트를 불러오지 못했어요"/></p><p className="mt-3 max-w-xl break-words text-sm leading-7 text-ash">{t(state.error)}</p><button type="button" className="btn-primary mt-6 gap-2" onClick={state.retry}><Trans value="다시 시도 "/><ArrowIcon width={16} height={16}/></button></div>) : items.length === 0 ? (<div className="empty-box"><p className="text-lg font-medium text-paper"><Trans value="표시할 카드가 없어요"/></p><p className="mt-3 max-w-xl text-sm leading-7 text-ash"><Trans value="연결된 데이터에서 박시온 카드를 찾지 못했습니다"/></p><button type="button" className="btn-ghost mt-6" onClick={state.retry}><Trans value="다시 확인"/></button></div>) : (<>
             {catalog?.isDemo && <div role="note" className="mb-6 rounded-lg border border-white/10 bg-surface px-4 py-3 text-xs text-ash"><Trans value="미리보기 데이터입니다 · 실제 카드 데이터가 연결되면 자동으로 바뀝니다"/></div>}
             {screen === 'collection' ? <Collection items={items} favorites={favorites} onToggleFavorite={toggleFavorite}/> : <TournamentArena items={items} isDemo={!!catalog?.isDemo} favorites={favorites} onToggleFavorite={toggleFavorite}/>}
           </>)}

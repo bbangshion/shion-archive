@@ -749,3 +749,91 @@ body, .shion-home, .shion-hero, .shion-subpage, .shion-footer, .archive-tab-bar 
     animation: none !important;
   }
 }
+
+/* SHION ARCHIVE 2.0 — editorial HOME overview & TIMELINE; no heavy motion. */
+.shion-overview { padding: 58px 0 72px; border-top: 1px solid var(--theme-line, rgba(255,255,255,.1)); background: var(--theme-canvas, #0b0b0e); }
+.shion-overview-lead { margin-bottom: 27px; }
+.shion-overview-timeline-link { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; padding: 9px 13px; border: 1px solid rgba(220,195,212,.4); border-radius: 5px; background: none; color: var(--theme-paper, #f6f3f6); font-size: 12px; }
+.shion-overview-stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); border: 1px solid var(--theme-line,rgba(255,255,255,.15)); border-radius: 9px; overflow: hidden; background: var(--theme-surface,#18171b); }
+.shion-overview-stats > div { display: flex; flex-direction: column; gap: 9px; min-width: 0; padding: 24px 26px; }
+.shion-overview-stats > div + div { border-left: 1px solid var(--theme-line,rgba(255,255,255,.14)); }
+.shion-overview-stats span { color: #c3adbc; font-size: 10px; font-weight: 650; letter-spacing: .18em; }
+.shion-overview-stats strong { color: var(--theme-paper,#fafafa); font-size: clamp(28px,4.5vw,42px); font-weight: 560; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.shion-overview-stats small { color: #bab2bc; font-size: 11px; }
+.shion-overview-group { margin-top: 48px; }
+.shion-overview-heading { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+.shion-overview-heading > div > span { color: #b8aab8; font-size: 10px; letter-spacing: .14em; }
+.shion-overview-heading h3 { margin: 5px 0 0; font-size: clamp(21px,3.6vw,28px); font-weight: 600; letter-spacing: -.04em; }
+.shion-overview-heading button { display: flex; gap: 6px; align-items: center; padding: 7px 4px; color: #dbd1dc; background: transparent; border: 0; font-size: 12px; }
+.shion-overview-photo-grid { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 12px; }
+.shion-overview-photo { display: block; position: relative; width: 100%; min-width: 0; overflow: hidden; padding: 0; border: 1px solid var(--theme-line,rgba(255,255,255,.1)); border-radius: 6px; background: var(--theme-surface,#17171b); color: white; text-align: left; }
+.shion-overview-photo > img { display: block; width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+.shion-overview-photo > span { display: block; padding: 10px 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+.shion-overview-photo small { display: block; margin-top: 4px; color: #b9afb9; font-size: 10px; }
+.shion-overview-film-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+.shion-overview-film { display: block; min-width: 0; padding: 0; border: 1px solid var(--theme-line,rgba(255,255,255,.1)); border-radius: 7px; overflow: hidden; background: var(--theme-surface,#17171b); color: white; text-align: left; }
+.shion-overview-film-image { display: block; position: relative; aspect-ratio: 16/9; background: #211e23; }
+.shion-overview-film-image img { width: 100%; height: 100%; object-fit: cover; }
+.shion-overview-film-image b { display: grid; position: absolute; inset: 0; place-items: center; font-size: 21px; color: white; text-shadow: 0 2px 12px #000; }
+.shion-overview-film-info { display: block; padding: 13px; }
+.shion-overview-film-info strong { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 34px; font-size: 12px; line-height: 1.5; font-weight: 500; }
+.shion-overview-film-info small { display: block; margin-top: 6px; color: #b6abb6; font-size: 10px; }
+.shion-overview-foot { margin-top: 25px; color: #a99eaa; font-size: 11px; line-height: 1.8; }
+.shion-overview-status, .shion-overview-loading { padding: 18px 0; color: #d5c5d4; font-size: 12px; }
+.shion-overview-warning { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 15px 0; padding: 11px 14px; border: 1px solid rgba(234,191,159,.35); border-radius: 6px; color: #f1d6bd; background: rgba(151,108,68,.07); font-size: 11px; }
+.shion-overview-warning button { border: 1px solid rgba(235,198,166,.45); border-radius: 5px; background: transparent; color: inherit; padding: 8px 11px; }
+.shion-overview :is(button):hover, .shion-timeline :is(button,a):hover { border-color: rgba(234,215,233,.6); }
+.shion-overview :is(button):focus-visible, .shion-timeline :is(button,a,select):focus-visible { outline: 2px solid #e1c0d8; outline-offset: 3px; }
+.shion-timeline { max-width: 1100px; margin-inline: auto; }
+.shion-timeline-header { margin-bottom: 25px; }
+.shion-timeline-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.shion-timeline-tabs { display: flex; flex-wrap: wrap; gap: 7px; }
+.shion-timeline-tabs button, .shion-timeline-year select { min-height: 38px; padding: 8px 12px; border: 1px solid var(--theme-line,rgba(255,255,255,.16)); border-radius: 5px; color: #d6cbd6; background: var(--theme-surface,#17171b); font-size: 12px; }
+.shion-timeline-tabs button.is-active { border-color: #cfb0c9; color: white; background: rgba(223,192,213,.12); }
+.shion-timeline-description { margin: 17px 0 24px; color: #aea4af; font-size: 11px; line-height: 1.8; }
+.shion-timeline-count { margin: 18px 0; color: #d7ced6; font-size: 12px; }
+.shion-timeline-list { position: relative; display: grid; gap: 19px; padding: 0 0 0 24px; margin: 0; list-style: none; border-left: 1px solid rgba(209,179,201,.27); }
+.shion-timeline-entry { position: relative; display: grid; grid-template-columns: 115px minmax(0,1fr); gap: 18px; align-items: start; }
+.shion-timeline-entry::before { content: ''; position: absolute; left: -29px; top: 12px; width: 9px; height: 9px; border: 2px solid #bc9ab3; border-radius: 50%; background: var(--theme-canvas,#0b0b0e); }
+.shion-timeline-entry time { padding-top: 6px; color: #c9b5c5; font-size: 12px; font-variant-numeric: tabular-nums; }
+.shion-timeline-entry-body { min-width: 0; padding: 19px; border: 1px solid var(--theme-line,rgba(255,255,255,.14)); border-radius: 7px; background: var(--theme-surface,#18171b); }
+.shion-timeline-entry.is-milestone .shion-timeline-entry-body { border-color: rgba(219,184,207,.36); }
+.shion-timeline-kind { color: #d3bace; font-size: 10px; font-weight: 650; letter-spacing: .15em; }
+.shion-timeline-entry-body h2 { margin: 8px 0; color: #f5f0f5; font-size: clamp(16px,2.2vw,20px); font-weight: 580; letter-spacing: -.025em; line-height: 1.42; }
+.shion-timeline-entry-body > p { margin: 0; font-size: 12px; color: #bcb2be; line-height: 1.7; }
+.shion-timeline-media { display: flex; gap: 9px; margin-top: 15px; }
+.shion-timeline-media button { width: 75px; height: 93px; padding: 0; border: 1px solid rgba(255,255,255,.13); border-radius: 4px; overflow: hidden; background: #211d24; color: #f3edf3; }
+.shion-timeline-entry.is-film .shion-timeline-media button { width: 132px; height: 76px; }
+.shion-timeline-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.shion-timeline-open { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 8px 11px; border: 1px solid var(--theme-line,rgba(255,255,255,.2)); border-radius: 5px; background: transparent; color: #e7dbe5; text-decoration: none; font-size: 11px; }
+.shion-timeline-more { display: flex; justify-content: center; margin: 24px; }
+.shion-timeline-more button { min-width: 170px; padding: 12px 18px; border: 1px solid var(--theme-line,rgba(255,255,255,.18)); border-radius: 5px; color: white; background: var(--theme-surface,#18171b); font-size: 12px; }
+.shion-timeline-more span { display: block; color: #a99eaa; font-size: 10px; margin-top: 4px; }
+.shion-timeline-empty, .shion-timeline-loading { margin: 30px 0; padding: 35px; text-align: center; border: 1px solid var(--theme-line,rgba(255,255,255,.12)); border-radius: 6px; color: #b9adb9; font-size: 12px; }
+.shion-timeline-footer { margin: 38px 0 0; color: #a59aa6; font-size: 10px; letter-spacing: .12em; text-align: right; }
+/* There are now eight navigation items. Use the existing mobile menu at tablet widths. */
+@media (max-width: 1230px) { .shion-site-header .shion-desktop-nav, .shion-site-header .shion-header-tag { display: none; } .shion-site-header .shion-menu-toggle { display: grid; } }
+@media (max-width: 760px) {
+  .shion-overview { padding: 37px 0 42px; }
+  .shion-overview-lead { align-items: flex-start; }
+  .shion-overview-timeline-link { margin-top: 4px; font-size: 11px; }
+  .shion-overview-stats > div { padding: 14px 12px; }
+  .shion-overview-stats strong { font-size: 26px; }
+  .shion-overview-photo-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+  .shion-overview-film-grid { grid-template-columns: 1fr; gap: 10px; }
+  .shion-overview-film { display: grid; grid-template-columns: 42% minmax(0,1fr); align-items: center; }
+  .shion-overview-film-info strong { font-size: 11px; }
+  .shion-overview-film-image { height: 100%; }
+  .shion-overview-group { margin-top: 32px; }
+  .shion-timeline-entry { grid-template-columns: minmax(0,1fr); gap: 5px; }
+  .shion-timeline-entry time { padding-top: 0; }
+  .shion-timeline-entry-body { padding: 14px; }
+  .shion-timeline-list { gap: 17px; }
+  .shion-timeline-controls { flex-direction: column; align-items: stretch; }
+  .shion-timeline-year select { width: 100%; }
+  .shion-timeline-tabs { flex-wrap: nowrap; overflow-x: auto; }
+  .shion-timeline-tabs button { flex: 0 0 auto; }
+}
+@media (prefers-reduced-motion: reduce) { .shion-overview :is(button), .shion-timeline :is(button,a) { animation: none; transition: none; } }
+@media (max-width: 1230px) { .shion-site-header ~ .shion-mobile-menu { max-height: calc(100dvh - 76px); overflow-y: auto; overscroll-behavior: contain; } }
+@media (max-width: 760px) { .shion-site-header ~ .shion-mobile-menu { max-height: calc(100dvh - 68px); } }
