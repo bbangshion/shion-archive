@@ -9,6 +9,7 @@ import { ArrowIcon } from './components/Icons';
 import { ArchiveProvider, useArchive } from './state/ArchiveContext';
 import type { ArchiveScreen } from './state/ArchiveContext';
 import { ArchiveErrorBoundary } from './components/ArchiveErrorBoundary';
+import ScrollReveal from './components/ScrollReveal';
 // 1.8: Do not include every archive screen in the initial HOME bundle.
 // Modules are loaded only when their menu is opened; the data and UX remain unchanged.
 const ShionFilm = lazy(() => import('./components/ShionFilm'));
@@ -182,6 +183,7 @@ function ArchiveApp() {
     return (<div className="min-h-dvh bg-canvas text-paper">
       <a className="shion-skip-link" href="#main-content"><Trans value="본문으로 건너뛰기"/></a>
       <SiteHeader />
+      <ScrollReveal />
       {screen === 'home' ? <Home /> : (
         <ArchiveErrorBoundary key={screen}>
           <Suspense fallback={<main id="main-content" className="shion-subpage"><div className="shion-content-width"><LoadingView /></div></main>}>

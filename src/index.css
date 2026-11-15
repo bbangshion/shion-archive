@@ -716,3 +716,36 @@ body, .shion-home, .shion-hero, .shion-subpage, .shion-footer, .archive-tab-bar 
   .shion-desktop-nav { gap: 11px; }
   .shion-desktop-nav button { font-size: 11px; }
 }
+
+
+/* SHION ARCHIVE 1.9.1 — WAV-inspired scroll reveal, without scroll hijacking.
+   Only elements waiting below the viewport are hidden, for a single entrance.
+   No scroll listeners, blur filters, perpetual GPU layers or layout shifts. */
+.shion-reveal-pending {
+  opacity: 0;
+  transform: translate3d(0, 15px, 0);
+}
+.shion-reveal-enter {
+  animation: shion-scroll-reveal 500ms cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: var(--shion-reveal-delay, 0ms);
+}
+@keyframes shion-scroll-reveal {
+  from { opacity: 0; transform: translate3d(0, 15px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@media (max-width: 760px) {
+  .shion-reveal-pending { transform: translate3d(0, 11px, 0); }
+  .shion-reveal-enter { animation-duration: 420ms; }
+  @keyframes shion-scroll-reveal {
+    from { opacity: 0; transform: translate3d(0, 11px, 0); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shion-reveal-pending,
+  .shion-reveal-enter {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
