@@ -1764,3 +1764,30 @@ Object.assign(DICTIONARY, {
   "사진과 영상 인덱스를 불러오는 중": { en: "Loading photo and video indexes", ja: "写真・動画のインデックスを読み込み中" },
   "다른 검색어나 분류를 선택해 보세요": { en: "Try another keyword or category", ja: "別のキーワードやカテゴリを選んでください" },
 });
+
+/* SHION ARCHIVE 2.0 — language-ready HOME and TIMELINE copy. */
+Object.assign(DICTIONARY, {
+  "타임라인": { en: "Timeline", ja: "タイムライン" },
+  "활동 타임라인": { en: "Activity timeline", ja: "活動タイムライン" },
+  "최근 기록": { en: "Latest updates", ja: "最新の記録" },
+  "아카이브 등록 현황": { en: "Archive totals", ja: "アーカイブ登録状況" },
+  "등록된 사진": { en: "Photos archived", ja: "登録写真" },
+  "등록된 영상": { en: "Videos archived", ja: "登録動画" },
+  "등록된 카드": { en: "Objekts archived", ja: "登録Objekt" },
+  "최근 사진": { en: "Latest photos", ja: "最近の写真" },
+  "최근 영상": { en: "Latest videos", ja: "最近の動画" },
+  "모두 보기": { en: "View all", ja: "すべて見る" },
+  "최신 자료를 불러오는 중": { en: "Loading recent archive entries", ja: "最新の記録を読み込み中" },
+  "일부 목록을 불러오지 못했습니다": { en: "Some archive data could not be loaded", ja: "一部のデータを読み込めませんでした" },
+  "등록된 데이터에서 자동으로 표시하며 원본 자료의 날짜를 사용합니다": { en: "Automatically updated from indexed data and source dates", ja: "登録データと出典の日付に基づいて自動表示します" },
+  "박시온의 주요 활동과 날짜별 기록": { en: "Key ShiOn activities and dated archive records", ja: "シオンの主な活動と日付別の記録" },
+  "주요 활동과 날짜별 사진·영상을 한곳에서 살펴보세요": { en: "Explore key activities, photos and videos in chronological order", ja: "主な活動と写真・動画を時系列で見られます" },
+  "자료 분류": { en: "Archive type", ja: "資料の種類" },
+  "주요 활동": { en: "Milestones", ja: "主な活動" },
+  "공식 활동은 출처를 명시하고, 사진과 영상은 자료에 기록된 날짜를 기준으로 표시합니다": { en: "Milestones cite their sources. Photos and videos follow the dates in archived records.", ja: "主な活動には出典を記載し、写真・動画は資料に記録された日付で表示します" },
+  "타임라인을 불러오는 중": { en: "Loading timeline", ja: "タイムラインを読み込み中" },
+  "개 기록": { en: "records", ja: "件の記録" },
+  "자료 열기": { en: "Open archive item", ja: "資料を開く" },
+  "공식 자료 확인": { en: "View source", ja: "出典を見る" },
+  "선택한 조건에 해당하는 기록이 없습니다": { en: "No records match these filters", ja: "条件に一致する記録がありません" },
+});
