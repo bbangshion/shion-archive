@@ -1746,3 +1746,21 @@ Object.assign(DICTIONARY, {
   "원본 게시물": { "en": "Original post", "ja": "元の投稿" },
 
 });
+
+Object.assign(DICTIONARY, {
+  "통합 검색": { en: "Search", ja: "統合検索" },
+  "모든 아카이브를 한 번에 검색": { en: "Find anything in the archive", ja: "アーカイブ全体から探す" },
+  "사진 · 영상 · 오브젝트 · 프로필을 한곳에서 찾아보세요": { en: "Find photos, videos, Objekts and profile details in one place", ja: "写真・動画・Objekt・プロフィールをまとめて検索" },
+  "날짜, 이름, SIGNAL, 오브젝트 번호 검색": { en: "Search dates, names, SIGNAL or Objekt numbers", ja: "日付・名前・SIGNAL・Objekt番号で検索" },
+  "아카이브 통합 검색": { en: "Search the archive", ja: "アーカイブ内を検索" },
+  "검색어 지우기": { en: "Clear search", ja: "検索語を削除" },
+  "검색 유형": { en: "Content type", ja: "コンテンツの種類" },
+  "개 결과": { en: "results", ja: "件の結果" },
+  "목록을 불러오는 중": { en: "Loading the archive", ja: "アーカイブを読み込み中" },
+  "전체 아카이브 탐색": { en: "Browse all content", ja: "すべてのコンテンツを見る" },
+  "일부 자료를 불러오지 못했습니다": { en: "Some content could not be loaded", ja: "一部のデータを読み込めませんでした" },
+  "다시 접속하면 재시도합니다": { en: "Open this page again to retry", ja: "ページを開き直すと再試行します" },
+  "목록을 불러오지 못했습니다": { en: "Could not load the collection", ja: "コレクションを読み込めませんでした" },
+  "사진과 영상 인덱스를 불러오는 중": { en: "Loading photo and video indexes", ja: "写真・動画のインデックスを読み込み中" },
+  "다른 검색어나 분류를 선택해 보세요": { en: "Try another keyword or category", ja: "別のキーワードやカテゴリを選んでください" },
+});
