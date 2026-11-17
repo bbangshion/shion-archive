@@ -50,7 +50,7 @@ const LABELS = {
     error: '일부 목록을 불러오지 못했습니다', retry: '다시 시도',
     empty: '해당 조건의 기록이 없습니다', clear: '필터 초기화', more: '더 보기',
     view: '자료 보기', source: '출처 확인', upcoming: '예정', planned: '발표 일정', scopes: '전체 활동',
-    about: '활동 자료는 출처 링크와 함께 기록합니다. 사진과 영상은 각 항목에 입력된 날짜를 기준으로 표시됩니다.',
+    dayPhotos: '같은 날짜 사진', about: '활동 자료는 출처 링크와 함께 기록합니다. 같은 날짜 사진은 해당 활동과 직접 관련되지 않을 수 있습니다.',
     notes: '개별 방송·행사 등은 확인된 자료부터 계속 추가합니다.',
   },
   en: {
@@ -63,7 +63,7 @@ const LABELS = {
     error: 'Some archive data could not be loaded', retry: 'Retry',
     empty: 'No records match these filters', clear: 'Clear filters', more: 'Load more',
     view: 'Open archive', source: 'View source', upcoming: 'Scheduled', planned: 'Announced', scopes: 'All activities',
-    about: 'Activity records include their reference links. Photos and videos use their recorded dates.',
+    dayPhotos: 'Photos on this date', about: 'Activity records include source links. Photos with matching dates are not necessarily from the same event.',
     notes: 'Additional broadcasts and events are added as their sources are verified.',
   },
   ja: {
@@ -76,7 +76,7 @@ const LABELS = {
     error: '一部の記録を読み込めませんでした', retry: '再試行',
     empty: '条件に一致する記録がありません', clear: '条件をリセット', more: 'もっと見る',
     view: '資料を見る', source: '出典を見る', upcoming: '予定', planned: '発表済み日程', scopes: 'すべての活動',
-    about: '活動記録には参照リンクを記載。写真と動画は登録された日付で表示されます。',
+    dayPhotos: '同じ日付の写真', about: '活動記録には出典があります。同じ日付の写真が当該イベントと直接関連するとは限りません。',
     notes: '番組・イベントなどは出典を確認しながら追加します。',
   },
 } as const;
@@ -127,14 +127,26 @@ export function TimelinePage() {
     for (const entry of activities) merged.set(entry.key, entry);
     return [...merged.values()].sort((a, b) => b.date.localeCompare(a.date) || a.key.localeCompare(b.key));
   }, [data, activities]);
+  const sameDayPhotos = useMemo(() => {
+    const result = new Map<string, SearchEntry[]>();
+    for (const photo of data?.photos ?? []) {
+      if (!photo.date) continue;
+      const group = result.get(photo.date) ?? [];
+      group.push(photo);
+      result.set(photo.date, group);
+    }
+    return result;
+  }, [data]);
   const years = useMemo(() => Array.from(new Set(timeline.map((item) => item.date.slice(0, 4)))).sort().reverse(), [timeline]);
   const scopes = useMemo(() => Array.from(new Set(activities.map((entry) => entry.scope).filter((entry): entry is string => !!entry))).sort(), [activities]);
   const matches = useMemo(() => {
     const q = normalizeSearchText(search);
     const filtered = timeline.filter((item) => {
+      // Published activities and announced-but-unverified shows must not be mixed.
+      if (filter === 'planned' ? !item.scheduled : Boolean(item.scheduled)) return false;
       if (year !== 'all' && !item.date.startsWith(year)) return false;
       if (scope !== 'all' && item.scope !== scope) return false;
-      if (filter === 'planned' ? !item.scheduled : filter === 'signal' ? !isSignal(item) : filter !== 'all' && item.kind !== filter) return false;
+      if (filter !== 'planned' && (filter === 'signal' ? !isSignal(item) : filter !== 'all' && item.kind !== filter)) return false;
       if (!q) return true;
       const haystack = normalizeSearchText([
         item.date, item.scope ?? '', ...Object.values(item.title), ...Object.values(item.description),
@@ -220,6 +232,7 @@ export function TimelinePage() {
         {matches.slice(0, visible).map((item, index) => {
           const photos = item.kind === 'photos';
           const videos = item.kind === 'film';
+          const datePhotos = isActivity(item.kind) ? sameDayPhotos.get(item.date) ?? [] : [];
           return <Fragment key={item.key}>
             {(index === 0 || matches[index - 1]?.date.slice(0, 4) !== item.date.slice(0, 4)) &&
               <li className="shion-timeline-year-divider" aria-label={item.date.slice(0, 4)}>{item.date.slice(0, 4)}</li>}
@@ -244,6 +257,8 @@ export function TimelinePage() {
                 {(photos || videos) && <button className="shion-timeline-open" type="button"
                   onClick={() => setScreen(photos ? 'photos' : 'film', item.entries[0]?.id)}>
                   {ui.view} <ArrowIcon width={14} height={14}/></button>}
+                {datePhotos.length > 0 && <button className="shion-timeline-open shion-timeline-related" type="button"
+                  onClick={() => setScreen('photos', datePhotos[0]?.id)}>{ui.dayPhotos} · {formatNumber(datePhotos.length)} <ArrowIcon width={14} height={14}/></button>}
                 {item.source && <a className="shion-timeline-open" href={item.source} target="_blank" rel="noopener noreferrer">
                   {ui.source}{item.sourceName ? ` · ${item.sourceName}` : ''} <ArrowIcon width={14} height={14}/></a>}
               </div>

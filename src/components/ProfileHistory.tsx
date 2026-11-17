@@ -15,7 +15,7 @@ const I18N = {
     kicker: 'HISTORY / S20', title: '활동 연대기', lead: '첫 공개부터 음반, 유닛, 무대까지. 출처로 확인할 수 있는 기록을 날짜 순서로 정리했습니다.',
     all: '전체', release: '음반 · 음원', unit: '유닛', concert: '공연', appearance: '콘텐츠 · 행사', milestone: '주요 기록',
     allYears: '모든 연도', allUnits: '모든 활동', newest: '최신순', oldest: '오래된순', search: '곡, 공연, 유닛 검색',
-    entryCount: '등록 기록', yearCount: '활동 연도', unitCount: '활동 범위', itemCount: '건',
+    entryCount: '등록 기록', yearCount: '활동 연도', unitCount: '활동 범위', itemCount: '건', latest: '최근 활동',
     scheduled: '발표된 일정', more: '기록 더 보기', allTimeline: '전체 타임라인', source: '자료 확인',
     empty: '선택한 조건의 기록이 없습니다.', reset: '조건 초기화', error: '활동 기록을 불러올 수 없습니다.', retry: '다시 시도',
     loading: '활동을 불러오는 중', note: '공연 일정과 실제 출연은 서로 구분합니다. 이 목록은 계속 보완하는 공개 기록이며 전체 출연 목록을 의미하지 않습니다.',
@@ -24,7 +24,7 @@ const I18N = {
     kicker: 'HISTORY / S20', title: 'Activity history', lead: 'A source-linked record of releases, units, stages and milestones, from the first reveal onward.',
     all: 'All', release: 'Releases', unit: 'Units', concert: 'Live', appearance: 'Media · Events', milestone: 'Milestones',
     allYears: 'All years', allUnits: 'All activities', newest: 'Newest first', oldest: 'Oldest first', search: 'Search music, shows or units',
-    entryCount: 'Recorded events', yearCount: 'Years indexed', unitCount: 'Activity scopes', itemCount: 'records',
+    entryCount: 'Recorded events', yearCount: 'Years indexed', unitCount: 'Activity scopes', itemCount: 'records', latest: 'Latest activity',
     scheduled: 'Announced schedule', more: 'Show more', allTimeline: 'Full timeline', source: 'View source',
     empty: 'No matching entries.', reset: 'Reset filters', error: 'Unable to load activity records.', retry: 'Retry',
     loading: 'Loading activities', note: 'Tour announcements are kept separate from confirmed appearances. This evolving index is not exhaustive.',
@@ -33,7 +33,7 @@ const I18N = {
     kicker: 'HISTORY / S20', title: '活動年表', lead: '公開から音楽、ユニット、公演まで。出典のある記録を日付順に掲載しています。',
     all: 'すべて', release: '音楽', unit: 'ユニット', concert: '公演', appearance: '映像・イベント', milestone: '主な記録',
     allYears: 'すべての年', allUnits: 'すべての活動', newest: '新しい順', oldest: '古い順', search: '楽曲・公演・ユニットを検索',
-    entryCount: '登録記録', yearCount: '活動年数', unitCount: '活動分野', itemCount: '件',
+    entryCount: '登録記録', yearCount: '活動年数', unitCount: '活動分野', itemCount: '件', latest: '最近の活動',
     scheduled: '発表済み日程', more: 'さらに表示', allTimeline: '全タイムライン', source: '出典を見る',
     empty: '該当する記録はありません。', reset: '条件をリセット', error: '活動記録を読み込めませんでした。', retry: '再試行',
     loading: '活動記録を読み込み中', note: '公演予定と出演実績は別に記録しています。全出演を網羅するリストではありません。',
@@ -82,6 +82,7 @@ export function ProfileHistory() {
   }, [records, filter, year, scope, query, sort]);
   const reset = () => { setFilter('all'); setYear('all'); setScope('all'); setSort('new'); setQuery(''); setVisible(PAGE_SIZE); };
   const showing = matches.slice(0, visible);
+  const latest = records[0];
   return <section id="profile-history" className="shion-profile-history mt-20 scroll-mt-28 sm:mt-28" aria-labelledby="profile-history-heading">
     <div className="shion-profile-history-intro">
       <div><span className="shion-page-kicker">{labels.kicker}</span><h2 id="profile-history-heading">{labels.title}</h2><p>{labels.lead}</p></div>
@@ -92,6 +93,13 @@ export function ProfileHistory() {
       <div><span>{labels.yearCount}</span><strong>{loading ? '—' : formatNumber(years.length)}</strong></div>
       <div><span>{labels.unitCount}</span><strong>{loading ? '—' : formatNumber(scopes.length)}</strong></div>
     </div>
+    {!loading && latest && <div className="shion-history-latest">
+      <div className="shion-history-latest-label"><span>RECENT</span><span>{labels.latest}</span></div>
+      <div><time dateTime={latest.date}>{latest.date.replace(/-/g, '.')}</time>
+        <h3>{searchLabel(latest.title, language)}</h3>
+        <p>{searchLabel(latest.description, language)}</p></div>
+      <a href={latest.source} target="_blank" rel="noopener noreferrer">{labels.source}<ArrowIcon width={12} height={12}/></a>
+    </div>}
     <div className="shion-history-controls">
       <div className="shion-history-tabs" role="group" aria-label={labels.title}>
         {FILTERS.map((kind: Filter) => <button key={kind} type="button" className={filter === kind ? 'is-active' : ''} aria-pressed={filter === kind} onClick={() => { setFilter(kind); setVisible(PAGE_SIZE); }}>{labels[kind]}</button>)}

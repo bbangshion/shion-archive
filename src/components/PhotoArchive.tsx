@@ -2,6 +2,7 @@ import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useI18n } from '../i18n/I18nContext';
 import { clearRouteItem, getRouteItem } from '../lib/archiveRoute';
+import { RecentPhotoSources } from './RecentPhotoSources';
 
 type LocalizedText = { ko: string; en?: string; ja?: string };
 type Photo = {
@@ -97,6 +98,12 @@ function comparePhotos(a: Photo, b: Photo, order: SortOrder): number {
   const diff = (a.date ?? '').localeCompare(b.date ?? '');
   return (order === 'newest' ? -diff : diff) || a.id.localeCompare(b.id);
 }
+/** Lightweight previews for official X images; open the original in the viewer. */
+function thumbnailURL(image: string): string {
+  if (!image.startsWith('https://pbs.twimg.com/media/')) return image;
+  try { const url = new URL(image); url.searchParams.set('name', 'small'); return url.toString(); }
+  catch { return image; }
+}
 function PhotoTile({ photo, title, album, onClick }: {
   photo: Photo;
   title: string;
@@ -109,7 +116,7 @@ function PhotoTile({ photo, title, album, onClick }: {
   return <button type="button" className="shion-gallery-tile" onClick={onClick} aria-label={`${title} — ${t('사진 확대')}`}>
     <span className="shion-gallery-image">
       {broken ? <span className="shion-gallery-image-error">{t('이미지를 표시할 수 없습니다')}</span>
-        : <img src={photo.image} alt={title} loading="lazy" decoding="async" onError={() => setBroken(true)}/>}
+        : <img src={thumbnailURL(photo.image)} alt={title} loading="lazy" decoding="async" onError={() => setBroken(true)}/>}
     </span>
     <span className="shion-gallery-meta"><strong>{title}</strong><span>{album}</span></span>
   </button>;
@@ -127,6 +134,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
   const [mode, setMode] = useState<ViewMode>('date');
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(PAGE_SIZE);
+  const [recentOnly, setRecentOnly] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [brokenDetail, setBrokenDetail] = useState(false);
   const closeButton = useRef<HTMLButtonElement>(null);
@@ -158,14 +166,19 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
   const months = useMemo(() => [...new Set(photos.flatMap((photo) => photo.date && (year === 'all' || photo.date.startsWith(year)) ? [photo.date.slice(5, 7)] : []))].sort(), [photos, year]);
   const albums = useMemo(() => [...new Set(photos.map((photo) => photo.album.ko))].sort((a, b) => a.localeCompare(b, 'ko')), [photos]);
   const albumNames = useMemo(() => new Map(photos.map((photo) => [photo.album.ko, albumText(photo.album)])), [photos, language]);
+  const recentCutoff = useMemo(() => {
+    const day = new Date(); day.setDate(day.getDate() - 30);
+    return [day.getFullYear(), String(day.getMonth() + 1).padStart(2, '0'), String(day.getDate()).padStart(2, '0')].join('-');
+  }, []);
   const filtered = useMemo(() => photos.filter((photo) =>
+    (!recentOnly || (photo.date !== null && photo.date >= recentCutoff)) &&
     (year === 'all' || photo.date?.startsWith(year)) &&
     (month === 'all' || photo.date?.slice(5, 7) === month) &&
     (album === 'all' || photo.album.ko === album) &&
     (!deferred || [photo.title.ko, photo.title.en, photo.title.ja, photo.album.ko, photo.album.en,
       photo.album.ja, isSNSArchiveAlbum(photo.album) ? '빵시온' : '', photo.date, photo.credit?.ko, ...photo.tags]
       .filter(Boolean).join(' ').toLocaleLowerCase().includes(deferred))
-  ).sort((a, b) => comparePhotos(a, b, sort)), [photos, year, month, album, deferred, sort]);
+  ).sort((a, b) => comparePhotos(a, b, sort)), [photos, year, month, album, deferred, sort, recentOnly, recentCutoff]);
   const visible = filtered.slice(0, limit);
   const groups = useMemo(() => {
     const collected = new Map<string, Photo[]>();
@@ -184,7 +197,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
     if (currentIndex < 0 || filtered.length === 0) return;
     setSelectedId(filtered[(currentIndex + direction + filtered.length) % filtered.length]?.id ?? null);
   };
-  useEffect(() => { setLimit(PAGE_SIZE); }, [year, month, album, sort, deferred, mode]);
+  useEffect(() => { setLimit(PAGE_SIZE); }, [year, month, album, sort, deferred, mode, recentOnly]);
   useEffect(() => { setBrokenDetail(false); }, [selectedId]);
   useEffect(() => {
     if (!selected) return;
@@ -208,7 +221,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
     window.addEventListener('keydown', onKey);
     return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow; previous?.focus(); };
   }, [selectedId, filtered]);
-  const reset = () => { setYear('all'); setMonth('all'); setAlbum('all'); setQuery(''); setSort('newest'); };
+  const reset = () => { setYear('all'); setMonth('all'); setAlbum('all'); setQuery(''); setSort('newest'); setRecentOnly(false); };
   const photoDate = (date: string | null) => date ?? t('날짜 미상');
   const monthLabel = (monthValue: string) => new Intl.DateTimeFormat(language === 'en' ? 'en-US' : language === 'ja' ? 'ja-JP' : 'ko-KR', { month: 'long' }).format(new Date(2020, Number(monthValue) - 1, 1));
   const groupLabel = (key: string) => mode === 'album'
@@ -222,6 +235,7 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
       <p>{t('박시온 사진을 날짜와 앨범으로 모아봤어요')}</p>
       <p className="shion-source-note">{language === 'en' ? 'Curated by @bbangshion' : language === 'ja' ? 'アーカイブ編集 · @bbangshion' : '아카이브 정리 · @bbangshion'}</p>
     </header>
+    <RecentPhotoSources />
     <div className="shion-photo-controls">
       <div className="shion-photo-view-tabs" role="group" aria-label={t('사진 보기 방식')}>
         <button type="button" className={mode === 'date' ? 'is-active' : ''} aria-pressed={mode === 'date'} onClick={() => setMode('date')}>{t('날짜별')}</button>
@@ -244,6 +258,10 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
           <option value="newest">{t('최신순')}</option><option value="oldest">{t('오래된순')}</option>
         </select></label>
       </div>
+    </div>
+    <div className="shion-photo-recent-toggle" role="group" aria-label={language === 'ko' ? '사진 기간' : language === 'en' ? 'Photo period' : '写真の期間'}>
+      <button type="button" className={!recentOnly ? 'is-active' : ''} aria-pressed={!recentOnly} onClick={() => setRecentOnly(false)}>{language === 'ko' ? '전체 사진' : language === 'en' ? 'All photos' : 'すべて'}</button>
+      <button type="button" className={recentOnly ? 'is-active' : ''} aria-pressed={recentOnly} onClick={() => setRecentOnly(true)}>{language === 'ko' ? '최근 30일' : language === 'en' ? 'Last 30 days' : '過去30日'}</button>
     </div>
     <div className="shion-photo-result" aria-live="polite">
       <span>{formatNumber(filtered.length)} {t('장')}</span>
