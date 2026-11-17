@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { ArrowIcon } from './Icons';
 import { buildTimeline, loadOverview, retryOverview } from '../lib/overview';
 import type { SearchEntry, SearchLabel } from '../lib/searchIndex';
 import { searchLabel, normalizeSearchText } from '../lib/searchIndex';
 import { useArchive } from '../state/ArchiveContext';
 import { useI18n } from '../i18n/I18nContext';
+import { currentLocalDate, loadActivityCatalog } from '../lib/activityCatalog';
 import './timeline-refine.css';
 
 /**
@@ -14,7 +15,7 @@ import './timeline-refine.css';
  */
 type ActivityKind = 'milestone' | 'unit' | 'release' | 'concert' | 'appearance';
 type ViewKind = ActivityKind | 'photos' | 'film';
-type FilterKind = 'all' | ViewKind | 'signal';
+type FilterKind = 'all' | ViewKind | 'signal' | 'planned';
 type ViewEntry = {
   key: string;
   date: string;
@@ -25,41 +26,17 @@ type ViewEntry = {
   source?: string;
   sourceName?: string;
   scope?: string;
+  scheduled?: boolean;
 };
 type OverviewData = Awaited<ReturnType<typeof loadOverview>>;
-const ACTIVITY_KINDS: readonly ActivityKind[] = ['milestone', 'unit', 'release', 'concert', 'appearance'];
-const validDate = (value: unknown): value is string => {
-  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-  const date = new Date(`${value}T00:00:00Z`);
-  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
-};
-const isObj = (x: unknown): x is Record<string, unknown> => x !== null && typeof x === 'object' && !Array.isArray(x);
-const isLabel = (x: unknown): x is SearchLabel =>
-  isObj(x) && ['ko', 'en', 'ja'].every((lang) => typeof x[lang] === 'string');
-
-/** Load the activity file independently; no assumptions about Overview fields. */
-async function loadActivityEntries(): Promise<ViewEntry[]> {
-  const response = await fetch(`${import.meta.env.BASE_URL}data/shion-activities.json`, { cache: 'no-cache' });
-  if (!response.ok) throw new Error(`activities: ${response.status}`);
-  const raw: unknown = await response.json();
-  const rows: unknown[] = Array.isArray(raw) ? raw : isObj(raw) && Array.isArray(raw.activities) ? raw.activities : [];
-  const unique = new Set<string>();
-  const entries: ViewEntry[] = [];
-  for (const row of rows) {
-    if (!isObj(row) || row.s20 !== true || typeof row.id !== 'string' || !row.id.trim()) continue;
-    if (unique.has(row.id) || !validDate(row.date)) continue;
-    if (typeof row.kind !== 'string' || !ACTIVITY_KINDS.some((kind) => kind === row.kind)) continue;
-    if (!isLabel(row.title) || !isLabel(row.description) || typeof row.source !== 'string') continue;
-    if (!/^https:\/\//i.test(row.source)) continue;
-    unique.add(row.id);
-    entries.push({
-      key: `activity:${row.id}`, date: row.date, kind: row.kind as ActivityKind,
-      title: row.title, description: row.description, entries: [], source: row.source,
-      sourceName: typeof row.sourceName === 'string' ? row.sourceName : undefined,
-      scope: typeof row.scope === 'string' ? row.scope : undefined,
-    });
-  }
-  return entries;
+/** Keep historical activity data shared with the profile page. */
+async function loadActivityEntries(refresh = false): Promise<ViewEntry[]> {
+  const catalog = await loadActivityCatalog(refresh);
+  return catalog.entries.map((row) => ({
+    key: `activity:${row.id}`, date: row.date, kind: row.kind,
+    title: row.title, description: row.description, entries: [], source: row.source,
+    sourceName: row.sourceName, scope: row.scope, scheduled: row.scheduled,
+  }));
 }
 const PAGE_SIZE = 24;
 const LABELS = {
@@ -72,7 +49,7 @@ const LABELS = {
     activity: '참여 활동', indexed: '사진 · 영상', loading: '기록을 불러오는 중',
     error: '일부 목록을 불러오지 못했습니다', retry: '다시 시도',
     empty: '해당 조건의 기록이 없습니다', clear: '필터 초기화', more: '더 보기',
-    view: '자료 보기', source: '출처 확인', upcoming: '예정',
+    view: '자료 보기', source: '출처 확인', upcoming: '예정', planned: '발표 일정', scopes: '전체 활동',
     about: '활동 자료는 출처 링크와 함께 기록합니다. 사진과 영상은 각 항목에 입력된 날짜를 기준으로 표시됩니다.',
     notes: '개별 방송·행사 등은 확인된 자료부터 계속 추가합니다.',
   },
@@ -85,7 +62,7 @@ const LABELS = {
     activity: 'Activities', indexed: 'Photos · videos', loading: 'Loading timeline',
     error: 'Some archive data could not be loaded', retry: 'Retry',
     empty: 'No records match these filters', clear: 'Clear filters', more: 'Load more',
-    view: 'Open archive', source: 'View source', upcoming: 'Scheduled',
+    view: 'Open archive', source: 'View source', upcoming: 'Scheduled', planned: 'Announced', scopes: 'All activities',
     about: 'Activity records include their reference links. Photos and videos use their recorded dates.',
     notes: 'Additional broadcasts and events are added as their sources are verified.',
   },
@@ -98,12 +75,12 @@ const LABELS = {
     activity: '活動記録', indexed: '写真・動画', loading: 'タイムラインを読み込み中',
     error: '一部の記録を読み込めませんでした', retry: '再試行',
     empty: '条件に一致する記録がありません', clear: '条件をリセット', more: 'もっと見る',
-    view: '資料を見る', source: '出典を見る', upcoming: '予定',
+    view: '資料を見る', source: '出典を見る', upcoming: '予定', planned: '発表済み日程', scopes: 'すべての活動',
     about: '活動記録には参照リンクを記載。写真と動画は登録された日付で表示されます。',
     notes: '番組・イベントなどは出典を確認しながら追加します。',
   },
 } as const;
-const TABS: readonly FilterKind[] = ['all', 'release', 'unit', 'concert', 'appearance', 'milestone', 'signal', 'photos', 'film'];
+const TABS: readonly FilterKind[] = ['all', 'release', 'unit', 'concert', 'appearance', 'milestone', 'planned', 'signal', 'photos', 'film'];
 const isActivity = (kind: ViewKind) => kind !== 'photos' && kind !== 'film';
 const isSignal = (item: ViewEntry): boolean =>
   item.kind === 'film' && item.entries.some((entry) => /\bsignal\b|시그널|シグナル/i.test(entry.searchText));
@@ -117,6 +94,7 @@ export function TimelinePage() {
   const [activityError, setActivityError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState('all');
+  const [scope, setScope] = useState('all');
   const [filter, setFilter] = useState<FilterKind>('all');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<'new' | 'old'>('new');
@@ -135,6 +113,8 @@ export function TimelinePage() {
   const timeline = useMemo<ViewEntry[]>(() => {
     const merged = new Map<string, ViewEntry>();
     if (data) for (const item of buildTimeline(data)) {
+      // The activity catalogue owns milestones; don't double-count legacy overview milestones.
+      if (item.kind === 'milestone') continue;
       const kind = item.kind as ViewKind;
       merged.set(item.key, {
         key: item.key, date: item.date, kind, title: item.title,
@@ -148,11 +128,13 @@ export function TimelinePage() {
     return [...merged.values()].sort((a, b) => b.date.localeCompare(a.date) || a.key.localeCompare(b.key));
   }, [data, activities]);
   const years = useMemo(() => Array.from(new Set(timeline.map((item) => item.date.slice(0, 4)))).sort().reverse(), [timeline]);
+  const scopes = useMemo(() => Array.from(new Set(activities.map((entry) => entry.scope).filter((entry): entry is string => !!entry))).sort(), [activities]);
   const matches = useMemo(() => {
     const q = normalizeSearchText(search);
     const filtered = timeline.filter((item) => {
       if (year !== 'all' && !item.date.startsWith(year)) return false;
-      if (filter === 'signal' ? !isSignal(item) : filter !== 'all' && item.kind !== filter) return false;
+      if (scope !== 'all' && item.scope !== scope) return false;
+      if (filter === 'planned' ? !item.scheduled : filter === 'signal' ? !isSignal(item) : filter !== 'all' && item.kind !== filter) return false;
       if (!q) return true;
       const haystack = normalizeSearchText([
         item.date, item.scope ?? '', ...Object.values(item.title), ...Object.values(item.description),
@@ -161,25 +143,24 @@ export function TimelinePage() {
       return haystack.includes(q);
     });
     return sort === 'old' ? [...filtered].reverse() : filtered;
-  }, [timeline, year, filter, search, sort]);
+  }, [timeline, year, scope, filter, search, sort]);
   const counts = useMemo(() => ({
-    activity: timeline.filter((item) => isActivity(item.kind)).length,
+    activity: timeline.filter((item) => isActivity(item.kind) && !item.scheduled && item.date <= currentLocalDate()).length,
     media: timeline.filter((item) => !isActivity(item.kind)).length,
   }), [timeline]);
   const selectFilter = (next: FilterKind) => { setFilter(next); setVisible(PAGE_SIZE); };
   const selectYear = (next: string) => { setYear(next); setVisible(PAGE_SIZE); };
   const refresh = () => {
     setLoading(true);
-    void Promise.allSettled([retryOverview(), loadActivityEntries()]).then(([overviewResult, activityResult]) => {
+    void Promise.allSettled([retryOverview(), loadActivityEntries(true)]).then(([overviewResult, activityResult]) => {
       setData(overviewResult.status === 'fulfilled' ? overviewResult.value : null);
       setActivities(activityResult.status === 'fulfilled' ? activityResult.value : []);
       setActivityError(activityResult.status === 'rejected');
       setLoading(false);
     });
   };
-  const reset = () => { setYear('all'); setFilter('all'); setSearch(''); setSort('new'); setVisible(PAGE_SIZE); };
-  const now = new Date();
-  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const reset = () => { setYear('all'); setScope('all'); setFilter('all'); setSearch(''); setSort('new'); setVisible(PAGE_SIZE); };
+  const today = currentLocalDate();
 
   return <div className="shion-timeline shion-timeline-refined" aria-labelledby="shion-timeline-title">
     <header className="shion-page-heading shion-timeline-header">
@@ -212,6 +193,13 @@ export function TimelinePage() {
             {years.map((y) => <option key={y} value={y}>{y}</option>)}
           </select>
         </label>
+        <label className="shion-timeline-select shion-timeline-scope-select">
+          <span className="sr-only">{ui.scopes}</span>
+          <select value={scope} onChange={(event: { target: { value: string } }) => { setScope(event.target.value); setVisible(PAGE_SIZE); }}>
+            <option value="all">{ui.scopes}</option>
+            {scopes.map((value) => <option value={value} key={value}>{value}</option>)}
+          </select>
+        </label>
         <label className="shion-timeline-select shion-timeline-order">
           <span className="sr-only">{ui.recent}</span>
           <select value={sort} onChange={(event: { target: { value: string } }) => { setSort(event.target.value as 'new' | 'old'); setVisible(PAGE_SIZE); }}>
@@ -221,7 +209,7 @@ export function TimelinePage() {
       </div>
     </div>
     <div className="shion-timeline-meta"><span>{formatNumber(matches.length)} {ui.results}</span>
-      {(search || year !== 'all' || filter !== 'all' || sort !== 'new') &&
+      {(search || year !== 'all' || scope !== 'all' || filter !== 'all' || sort !== 'new') &&
         <button type="button" onClick={reset}>{ui.clear}</button>}
     </div>
     {(activityError || (data && (data.photoError || data.filmError))) &&
@@ -229,16 +217,19 @@ export function TimelinePage() {
         <button type="button" onClick={refresh}>{ui.retry}</button></div>}
     {loading ? <div className="shion-timeline-loading" role="status">{ui.loading}</div> : matches.length ?
       <ol className="shion-timeline-list">
-        {matches.slice(0, visible).map((item) => {
+        {matches.slice(0, visible).map((item, index) => {
           const photos = item.kind === 'photos';
           const videos = item.kind === 'film';
-          return <li key={item.key} className={`shion-timeline-entry is-${item.kind}`}>
+          return <Fragment key={item.key}>
+            {(index === 0 || matches[index - 1]?.date.slice(0, 4) !== item.date.slice(0, 4)) &&
+              <li className="shion-timeline-year-divider" aria-label={item.date.slice(0, 4)}>{item.date.slice(0, 4)}</li>}
+            <li className={`shion-timeline-entry is-${item.kind}${item.scheduled ? ' is-scheduled' : ''}`}>
             <time dateTime={item.date}>{item.date.replace(/-/g, '.')}</time>
             <article className="shion-timeline-entry-body">
               <div className="shion-timeline-entry-top">
                 <span className="shion-timeline-kind">{isSignal(item) ? 'SIGNAL' : ui[item.kind]}</span>
                 {item.scope && <span className="shion-timeline-scope">{item.scope}</span>}
-                {item.date > today && <span className="shion-timeline-future">{ui.upcoming}</span>}
+                {(item.scheduled || item.date > today) && <span className="shion-timeline-future">{item.scheduled ? ui.planned : ui.upcoming}</span>}
               </div>
               <h2>{searchLabel(item.title, language)}</h2>
               <p>{searchLabel(item.description, language)}</p>
@@ -257,7 +248,7 @@ export function TimelinePage() {
                   {ui.source}{item.sourceName ? ` · ${item.sourceName}` : ''} <ArrowIcon width={14} height={14}/></a>}
               </div>
             </article>
-          </li>;
+          </li></Fragment>;
         })}
       </ol> : <div className="shion-timeline-empty">{ui.empty}</div>}
 

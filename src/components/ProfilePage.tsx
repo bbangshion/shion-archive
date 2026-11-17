@@ -1,11 +1,7 @@
 import { Trans, useI18n } from '../i18n/I18nContext';
 import { ArrowIcon } from './Icons';
-/**
- * SHION ARCHIVE · PROFILE 1.5.3
- * Standalone ProfilePage replacement, compatible with the existing 1.5.x route.
- * Factual details are separated by provenance below; fan catalogues are not official statements.
- * Verified/cross-checked against listed resources on 2026-11-14.
- */
+import { ProfileHistory } from './ProfileHistory';
+/** Member profile. Source links and date-based activity records are kept separate. */
 const PORTRAIT = `${import.meta.env.BASE_URL}images/shion-home.jpg`;
 type SourceKind = '공식' | '본인 인터뷰' | '공식 발표 인용' | '공연 기록' | '팬 자료';
 type Fact = {
@@ -157,21 +153,6 @@ const units: readonly Unit[] = [
         sourceUrl: 'https://www.triples-official.jp/discography/',
     },
 ];
-const highlights: readonly {
-    date: string;
-    title: string;
-    detail: string;
-}[] = [
-    { date: '2023.12', title: 'NXT · Just Do It', detail: 'NXT의 4인조 구성으로 활동을 시작했고, 12월 24일 S20으로 공개됐습니다.' },
-    { date: '2024.05', title: 'ASSEMBLE24', detail: '24인 완전체의 Girls Never Die 활동에 참여했습니다.' },
-    { date: '2024.11', title: '∞! 일본 데뷔', detail: '하치의 Untitled 활동으로 일본 디멘션의 무대에 섰습니다.' },
-    { date: '2025.05', title: 'ASSEMBLE25', detail: '완전체의 Are You Alive 활동에 참여했습니다.' },
-    { date: '2025.09', title: 'Alphie 월드투어', detail: 'Alpha Percent 투어의 프로젝트 유닛으로 북미 무대에 올랐습니다.' },
-    { date: '2025.11', title: 'Moon · Cameo Love', detail: 'msnz의 Moon 멤버로 Beyond Beauty 활동에 참여했습니다.' },
-    { date: '2026.06', title: 'ASSEMBLE26 · Baby Flower', detail: '완전체 LOVE&POP pt.1의 Baby Flower 활동에 참여했습니다.' },
-    { date: '2026.08', title: 'Aura 멤버 확정', detail: '두 번째 발라드 디멘션에 WAV 투표로 합류했습니다.' },
-    { date: '2026.10', title: 'Aura · Dream Drip', detail: 'ANDLESS 서울 공연에서 Dream Drip 무대가 공개됐습니다.' },
-];
 const voiceNotes: readonly {
     name: string;
     detail: string;
@@ -251,12 +232,12 @@ export function ProfilePage() {
         <h2>Park ShiOn</h2>
         <p className="shion-profile-sub"><Trans value="tripleS의 스무 번째 멤버. 2023년 NXT로 활동을 시작했으며 일본 디멘션 ∞!, Alphie, Moon을 거쳐 2026년 발라드 디멘션 Aura의 멤버로 선정됐습니다."/></p>
         <div className="mb-8 flex flex-wrap gap-2">
-          {['S20', 'NXT', '∞!', 'Moon', 'Aura'].map(label => <Pill key={label}>{label}</Pill>)}
+          {['S20', 'NXT', '∞!', 'Alphie', 'Moon', 'Aura'].map(label => <Pill key={label}>{label}</Pill>)}
         </div>
         <dl className="shion-fact-grid">
           {facts.map(item => <div key={item.label}><dt><Trans value={item.label}/></dt><dd><Trans value={item.value}/>{item.note && <small><Trans value={item.note}/></small>}</dd></div>)}
         </dl>
-        <a className="shion-official-link" href="https://www.triples-official.jp/profile/" target="_blank" rel="noopener noreferrer"><Trans value="&#xA;          공식 프로필 "/><ArrowIcon width={16} height={16}/>
+        <a className="shion-official-link" href="https://www.triples-official.jp/profile/" target="_blank" rel="noopener noreferrer"><Trans value="공식 프로필"/><ArrowIcon width={16} height={16}/>
         </a>
       </div>
     </div>
@@ -291,7 +272,7 @@ export function ProfilePage() {
             <ol className="mt-6 space-y-3 border-l border-white/[.16] pl-4">
               {unit.history.map(event => <li key={event} className="text-[12px] leading-6 text-ash"><Trans value={event}/></li>)}
             </ol>
-            <a href={unit.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 text-[11px] text-[#dcbace] underline decoration-white/25 underline-offset-4 hover:text-white"><Trans value="&#xA;              자료 보기 · "/><Trans value={unit.sourceText}/> <ArrowIcon width={13} height={13}/>
+            <a href={unit.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 text-[11px] text-[#dcbace] underline decoration-white/25 underline-offset-4 hover:text-white"><Trans value="자료 보기 · "/><Trans value={unit.sourceText}/> <ArrowIcon width={13} height={13}/>
             </a>
           </div>
         </details>)}
@@ -299,15 +280,7 @@ export function ProfilePage() {
       <p className="mt-4 text-[11px] leading-6 text-ash"><Trans value="Alphie는 투어 프로젝트 유닛입니다. Aura의 음악은 공연 공개와 음원 발매를 구분해 기록했습니다."/></p>
     </section>
 
-    <section id="profile-history" className="mt-20 scroll-mt-28 sm:mt-28" aria-labelledby="profile-history-heading">
-      <SectionHeading id="profile-history-heading" english="HISTORY" title="활동 기록" description="S 공개부터 최근 유닛 활동까지 주요 기록"/>
-      <ol className="border-t border-white/[.14]">
-        {highlights.map(item => <li key={`${item.date}-${item.title}`} className="grid grid-cols-[76px_minmax(0,1fr)] gap-3 border-b border-white/[.09] py-5 sm:grid-cols-[125px_minmax(0,1fr)] sm:gap-8 sm:py-6">
-          <time className="pt-1 text-[11px] tabular-nums text-[#ccb3c2]">{item.date}</time>
-          <div><h3 className="text-[15px] font-medium text-paper sm:text-[17px]"><Trans value={item.title}/></h3><p className="mt-2 max-w-3xl text-[12px] leading-6 text-ash"><Trans value={item.detail}/></p></div>
-        </li>)}
-      </ol>
-    </section>
+    <ProfileHistory />
 
     <section id="profile-voice" className="mt-20 scroll-mt-28 sm:mt-28" aria-labelledby="profile-voice-heading">
       <SectionHeading id="profile-voice-heading" english="VOICE & MUSIC" title="보컬과 음악" description="확인 가능한 참여 이력을 중심으로 정리한 박시온의 음악 활동"/>

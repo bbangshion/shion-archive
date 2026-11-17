@@ -78,7 +78,7 @@ export default function SearchPage() {
   const showResult = (entry: SearchEntry) => setScreen(entry.category, entry.category === 'profile' ? undefined : entry.id);
   return <section className="shion-search-page animate-appear" aria-labelledby="shion-search-title">
     <header className="shion-search-heading">
-      <p className="shion-search-kicker">SHION ARCHIVE / SEARCH OS 1.9</p>
+      <p className="shion-search-kicker">SHION ARCHIVE / SEARCH</p>
       <h1 id="shion-search-title">{t('통합 검색')}</h1>
       <p>{t('사진 · 영상 · 오브젝트 · 프로필을 한곳에서 찾아보세요')}</p>
     </header>

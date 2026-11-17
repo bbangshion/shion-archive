@@ -1,0 +1,98 @@
+/* Profile chronology + full archive timeline — understated editorial UI. */
+.shion-profile-history { color: var(--theme-paper, #f5f1f5); }
+.shion-profile-history-intro { display: flex; justify-content: space-between; align-items: end; gap: 22px; margin-bottom: 26px; }
+.shion-profile-history-intro h2 { margin: 10px 0 0; font-size: clamp(29px, 4.5vw, 42px); font-weight: 540; line-height: 1.2; letter-spacing: -.058em; }
+.shion-profile-history-intro p { max-width: 650px; margin: 12px 0 0; color: var(--theme-muted, #aaa4ae); font-size: 13px; line-height: 1.85; word-break: keep-all; }
+.shion-history-full { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; padding: 11px 13px; border: 1px solid rgba(231,214,229,.36); border-radius: 3px; background: transparent; color: #eee2ea; font-size: 12px; }
+.shion-history-full:hover { border-color: #dbc4d5; }
+.shion-history-stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); margin-bottom: 29px; border-top: 1px solid rgba(255,255,255,.15); border-bottom: 1px solid rgba(255,255,255,.15); }
+.shion-history-stats > div { min-width: 0; padding: 22px 26px 22px 0; }
+.shion-history-stats > div + div { padding-left: 26px; border-left: 1px solid rgba(255,255,255,.1); }
+.shion-history-stats span { display: block; margin-bottom: 9px; color: #ad9da9; font-size: 11px; }
+.shion-history-stats strong { font-size: clamp(25px,4vw,36px); font-weight: 500; letter-spacing: -.045em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.shion-history-tabs, .shion-timeline-filter-scroll { display: flex; align-items: center; gap: 7px; padding: 0 1px 10px; overflow-x: auto; scrollbar-width: thin; scrollbar-color: rgba(221,204,218,.35) transparent; }
+.shion-history-tabs button, .shion-timeline-filter-scroll button { flex: 0 0 auto; min-height: 37px; padding: 8px 14px; border: 1px solid rgba(255,255,255,.14); border-radius: 3px; background: transparent; color: #aba4ad; font-size: 12px; line-height: 1.5; white-space: nowrap; }
+.shion-history-tabs button.is-active, .shion-timeline-filter-scroll button.is-active { border-color: rgba(221,185,207,.55); background: rgba(212,178,200,.1); color: #f7eaf2; }
+.shion-history-filterrow, .shion-timeline-filter-row { display: grid; grid-template-columns: minmax(0,1fr) 145px 170px 145px; gap: 9px; margin-top: 10px; }
+.shion-history-search, .shion-history-select, .shion-timeline-query, .shion-timeline-select { display: block; min-width: 0; }
+.shion-history-filterrow input, .shion-history-filterrow select, .shion-timeline-filter-row input, .shion-timeline-filter-row select { display: block; width: 100%; min-width: 0; min-height: 42px; padding: 9px 12px; border: 1px solid rgba(255,255,255,.15); border-radius: 3px; outline: none; background: var(--theme-surface, #1a181e); color: #e5dce6; font: inherit; font-size: 12px; }
+.shion-history-filterrow input::placeholder, .shion-timeline-filter-row input::placeholder { color: #918995; opacity: 1; }
+.shion-history-filterrow :is(input,select):focus-visible, .shion-timeline-filter-row :is(input,select):focus-visible { outline: 2px solid #bd8dae; outline-offset: 2px; }
+.shion-history-count, .shion-timeline-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 45px; margin-top: 8px; color: #ac9eae; font-size: 11px; }
+.shion-history-count button, .shion-timeline-meta button { padding: 8px; border: 0; background: transparent; color: #e3c8d8; font-size: 11px; text-decoration: underline; text-underline-offset: 3px; }
+.shion-history-list { padding: 0; margin: 0; list-style: none; border-top: 1px solid rgba(255,255,255,.1); }
+.shion-history-event { padding: 0; }
+.shion-history-year { padding: 29px 0 15px; border-bottom: 1px solid rgba(255,255,255,.08); color: #c7a0b8; font-size: clamp(22px,4.4vw,30px); font-weight: 450; letter-spacing: -.05em; line-height: 1; }
+.shion-history-event-inner { display: grid; grid-template-columns: 70px minmax(0,1fr); gap: 22px; padding: 23px 0; border-bottom: 1px solid rgba(255,255,255,.09); }
+.shion-history-event-inner > time { padding-top: 3px; color: #b9a6b5; font-size: 12px; font-variant-numeric: tabular-nums; }
+.shion-history-event-meta, .shion-timeline-entry-top { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
+.shion-history-event-meta span:first-child { color: #d7b8cb; }
+.shion-history-event-meta span { color: #a69da8; font-size: 10px; }
+.shion-history-event-content { min-width: 0; }
+.shion-history-event-content h3 { margin: 9px 0 7px; color: #f4eff4; font-size: clamp(15px, 2vw, 17px); font-weight: 520; letter-spacing: -.025em; line-height: 1.5; word-break: keep-all; }
+.shion-history-event-content > p { margin: 0; color: #b4aab5; font-size: 12px; line-height: 1.85; word-break: keep-all; }
+.shion-history-event-content > a { display: inline-flex; align-items: center; gap: 5px; margin-top: 13px; color: #c9b6c5; font-size: 10px; text-decoration: underline; text-decoration-color: rgba(231,209,224,.25); text-underline-offset: 3px; }
+.shion-history-event-content > a:hover { color: white; }
+.shion-history-more { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; min-height: 48px; margin: 24px auto 0; border: 1px solid rgba(255,255,255,.18); border-radius: 3px; background: var(--theme-accent-soft, rgba(255,255,255,.025)); color: #e4dce4; font-size: 12px; }
+.shion-history-more span { color: #a89daa; font-size: 10px; font-variant-numeric: tabular-nums; }
+.shion-history-more:hover { border-color: rgba(221,193,211,.55); }
+.shion-history-state { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 18px; min-height: 112px; border: 1px solid rgba(255,255,255,.1); color: #c4b9c5; font-size: 12px; }
+.shion-history-state button { padding: 9px 13px; border: 1px solid #826979; border-radius: 3px; background: transparent; color: #efdfec; }
+.shion-history-footnote { margin: 22px 0 0; max-width: 760px; color: #9d949f; font-size: 11px; line-height: 1.85; word-break: keep-all; }
+.shion-profile-history :is(button,a):focus-visible { outline: 2px solid #dec2d6; outline-offset: 3px; }
+
+/* Full timeline: a compact index rather than a stack of decorative cards. */
+.shion-timeline-refined { max-width: 1100px; }
+.shion-timeline-quickstats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); margin: 22px 0 25px; border: 1px solid rgba(255,255,255,.13); border-radius: 4px; background: var(--theme-surface, #18161b); }
+.shion-timeline-quickstats > div { min-width: 0; padding: 18px 22px; }
+.shion-timeline-quickstats > div + div { border-left: 1px solid rgba(255,255,255,.1); }
+.shion-timeline-quickstats span { display: block; font-size: 10px; letter-spacing: .13em; color: #bc9fb4; }
+.shion-timeline-quickstats strong { display: block; margin-top: 9px; color: #f5eff4; font-size: clamp(24px,3.5vw,35px); font-weight: 530; letter-spacing: -.05em; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.shion-timeline-quickstats strong i { margin: 0 5px; font-size: 14px; color: #a89ca6; font-style: normal; }
+.shion-timeline-quickstats small { display: block; margin-top: 5px; color: #a69dab; font-size: 10px; }
+.shion-timeline-filter-scroll { margin-top: 6px; }
+.shion-timeline-refined .shion-timeline-list { display: grid; gap: 12px; padding: 0 0 0 20px; border-left: 1px solid rgba(212,171,200,.32); }
+.shion-timeline-year-divider { position: relative; margin: 15px 0 4px -21px; padding: 6px 0 6px 23px; color: #d7b9cf; font-size: 21px; line-height: 1.3; letter-spacing: -.03em; font-weight: 500; }
+.shion-timeline-refined .shion-timeline-entry { grid-template-columns: 104px minmax(0,1fr); gap: 14px; }
+.shion-timeline-refined .shion-timeline-entry::before { left: -26px; width: 9px; height: 9px; background: var(--theme-surface, #18161b); }
+.shion-timeline-refined .shion-timeline-entry-body { border-radius: 4px; padding: 18px 20px; }
+.shion-timeline-entry-top { gap: 7px 9px; }
+.shion-timeline-scope, .shion-timeline-future { color: #b9a5b6; font-size: 10px; }
+.shion-timeline-scope::before { content: ' / '; color: #7f737e; margin-right: 4px; }
+.shion-timeline-future { padding: 3px 6px; border: 1px solid rgba(233,186,153,.32); color: #e2c5ad; border-radius: 2px; }
+.shion-timeline-entry.is-scheduled .shion-timeline-entry-body { border-style: dashed; border-color: rgba(235,189,154,.27); }
+.shion-timeline-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.shion-timeline-refined .shion-timeline-open { margin-top: 12px; }
+.shion-timeline-editorial { display: flex; align-items: start; flex-wrap: wrap; justify-content: space-between; gap: 9px 30px; padding-top: 21px; margin-top: 28px; border-top: 1px solid rgba(255,255,255,.1); }
+.shion-timeline-editorial p { flex: 1 1 300px; max-width: 650px; margin: 0; color: #a99ba8; font-size: 11px; line-height: 1.9; }
+.shion-timeline-editorial span { color: #b4a6b2; font-size: 10px; letter-spacing: .09em; }
+.shion-timeline-filter-scroll button:focus-visible { outline: 2px solid #dec2d6; outline-offset: 2px; }
+@media (max-width: 860px) {
+  .shion-history-filterrow, .shion-timeline-filter-row { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .shion-history-search, .shion-timeline-query { grid-column: 1 / -1; }
+  .shion-history-order, .shion-timeline-order { grid-column: span 1; }
+}
+@media (max-width: 600px) {
+  .shion-profile-history-intro { align-items: start; flex-direction: column; gap: 17px; }
+  .shion-history-full { min-height: 40px; }
+  .shion-history-stats > div { padding: 15px 8px 15px 0; }
+  .shion-history-stats > div + div { padding-left: 12px; }
+  .shion-history-stats span { font-size: 10px; }
+  .shion-history-stats strong { font-size: 25px; }
+  .shion-history-filterrow, .shion-timeline-filter-row { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 7px; }
+  .shion-history-select, .shion-timeline-select { min-width: 0; }
+  .shion-history-event-inner { grid-template-columns: 52px minmax(0,1fr); gap: 12px; padding: 20px 0; }
+  .shion-history-event-content h3 { font-size: 15px; }
+  .shion-timeline-quickstats > div { padding: 15px 10px; }
+  .shion-timeline-quickstats strong { font-size: 22px; }
+  .shion-timeline-quickstats strong i { margin: 0 2px; font-size: 10px; }
+  .shion-timeline-quickstats small { font-size: 9px; }
+  .shion-timeline-refined .shion-timeline-entry { grid-template-columns: minmax(0,1fr); gap: 5px; }
+  .shion-timeline-refined .shion-timeline-entry-body { padding: 15px; }
+  .shion-timeline-refined .shion-timeline-list { padding-left: 18px; }
+  .shion-timeline-year-divider { margin-left: -19px; padding-left: 20px; }
+  .shion-timeline-refined .shion-timeline-entry::before { left: -24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shion-profile-history *, .shion-timeline-refined * { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}

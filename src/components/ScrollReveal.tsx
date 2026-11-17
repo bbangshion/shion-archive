@@ -16,6 +16,8 @@ const REVEAL_TARGETS = [
   '.shion-overview-photo',
   '.shion-overview-film',
   '.shion-timeline-entry',
+  '.shion-history-year',
+  '.shion-history-event',
   '.shion-subpage .shion-page-heading',
   '.shion-subpage .shion-page-crumb',
   '.shion-profile-intro',
