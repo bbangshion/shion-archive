@@ -1,0 +1,32 @@
+/* Recent source list — editorial and understated, with no image duplicates. */
+.shion-photo-sources { margin: 24px 0 34px; padding: 22px 0 7px; border-block: 1px solid rgba(255,255,255,.14); }
+.shion-photo-sources-heading { margin-bottom: 13px; }
+.shion-photo-sources-heading span { color: #c5a3b7; font-size: 10px; font-weight: 500; letter-spacing: .14em; }
+.shion-photo-sources-heading h2 { margin: 6px 0; color: #f5eef3; font-size: clamp(19px,3vw,25px); font-weight: 520; letter-spacing: -.035em; }
+.shion-photo-sources-heading p { margin: 0; color: #afa4b0; font-size: 12px; line-height: 1.6; }
+.shion-photo-sources-list { display: flex; flex-direction: column; }
+.shion-photo-source-row { display: grid; grid-template-columns: 99px minmax(0,1fr) auto 16px; gap: 12px; align-items: center; min-height: 67px; padding: 14px 4px; border-bottom: 1px solid rgba(255,255,255,.085); color: #f3eaf1; text-decoration: none; transition: background-color 180ms ease; }
+.shion-photo-source-row:hover { background: rgba(255,255,255,.025); }
+.shion-photo-source-row:focus-visible, .shion-photo-sources-bottom button:focus-visible { outline: 2px solid #d5aac4; outline-offset: 2px; }
+.shion-photo-source-row time { align-self: start; padding-top: 2px; white-space: nowrap; color: #aa9cac; font-size: 11px; font-variant-numeric: tabular-nums; }
+.shion-photo-source-description { min-width: 0; }
+.shion-photo-source-description strong { display: block; color: #ede6ee; font-weight: 530; font-size: 13px; line-height: 1.4; word-break: keep-all; }
+.shion-photo-source-description small { display: block; margin-top: 4px; color: #aaa1ac; font-size: 11px; line-height: 1.6; word-break: keep-all; }
+.shion-photo-source-label { display: flex; flex-direction: column; gap: 5px; align-items: end; color: #bdacba; font-size: 10px; text-align: right; white-space: nowrap; }
+.shion-photo-source-label b { padding: 2px 5px; border: 1px solid rgba(212,179,202,.3); color: #d5becd; font-weight: 400; font-size: 9px; }
+.shion-photo-source-link { align-self: center; color: #d9bfd0; font-size: 16px; }
+.shion-photo-sources-bottom { display: flex; justify-content: space-between; gap: 14px; align-items: center; padding: 14px 2px 5px; }
+.shion-photo-sources-bottom p { max-width: 680px; margin: 0; color: #8f8793; font-size: 10px; line-height: 1.7; word-break: keep-all; }
+.shion-photo-sources-bottom button { flex: none; padding: 8px; color: #e4c8d8; font-size: 11px; background: transparent; border: 0; }
+.shion-photo-sources-bottom button span { display: inline-block; margin-left: 6px; font-size: 16px; }
+.shion-photo-recent-toggle { display: flex; gap: 8px; align-items: center; padding: 6px 2px 13px; }
+.shion-photo-recent-toggle button { padding: 7px 11px; background: transparent; border: 1px solid rgba(255,255,255,.17); border-radius: 2px; color: #bdafbb; font-size: 11px; }
+.shion-photo-recent-toggle button.is-active { color: #f5e9f2; border-color: rgba(229,178,211,.65); background: rgba(199,143,176,.1); }
+.shion-photo-recent-toggle button:focus-visible { outline: 2px solid #d5aac4; outline-offset: 2px; }
+@media (max-width:650px) {
+ .shion-photo-source-row { grid-template-columns: 80px minmax(0,1fr) 14px; gap: 9px; }
+ .shion-photo-source-label { display: none; }
+ .shion-photo-sources-bottom { align-items: start; }
+ .shion-photo-sources-bottom button { padding-top: 2px; }
+}
+@media (prefers-reduced-motion:reduce) { .shion-photo-source-row { transition: none; } }
