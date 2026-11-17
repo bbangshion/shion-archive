@@ -53,32 +53,32 @@ export function ProfileHistory() {
   const [sort, setSort] = useState<'new' | 'old'>('new');
   const [query, setQuery] = useState('');
   const [visible, setVisible] = useState(PAGE_SIZE);
-  const load = (refresh = false) => {
+  const load = (refresh: boolean = false): void => {
     setLoading(true);
-    loadActivityCatalog(refresh).then((result) => { setCatalog(result); setError(false); })
+    loadActivityCatalog(refresh).then((result: ActivityCatalog) => { setCatalog(result); setError(false); })
       .catch(() => { setError(true); }).finally(() => setLoading(false));
   };
   useEffect(() => {
     let active = true;
-    loadActivityCatalog().then((result) => { if (active) { setCatalog(result); setError(false); } })
+    loadActivityCatalog().then((result: ActivityCatalog) => { if (active) { setCatalog(result); setError(false); } })
       .catch(() => { if (active) setError(true); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
   const today = currentLocalDate();
-  const records = useMemo(() => (catalog?.entries ?? []).filter((entry) => !entry.scheduled && entry.date <= today), [catalog, today]);
-  const years = useMemo(() => Array.from(new Set(records.map((item) => item.date.slice(0, 4)))).sort().reverse(), [records]);
-  const scopes = useMemo(() => Array.from(new Set(records.map((item) => item.scope).filter((item): item is string => !!item))).sort(), [records]);
-  const matches = useMemo(() => {
+  const records = useMemo<ActivityRecord[]>(() => (catalog?.entries ?? []).filter((entry: ActivityRecord) => !entry.scheduled && entry.date <= today), [catalog, today]);
+  const years = useMemo<string[]>(() => Array.from(new Set(records.map((item: ActivityRecord) => item.date.slice(0, 4)))).sort().reverse(), [records]);
+  const scopes = useMemo<string[]>(() => Array.from(new Set(records.map((item: ActivityRecord) => item.scope).filter((item): item is string => !!item))).sort(), [records]);
+  const matches = useMemo<ActivityRecord[]>(() => {
     const q = normalizeSearchText(query);
-    const list = records.filter((item) => {
+    const list = records.filter((item: ActivityRecord) => {
       if (filter !== 'all' && item.kind !== filter) return false;
       if (year !== 'all' && !item.date.startsWith(year)) return false;
       if (scope !== 'all' && item.scope !== scope) return false;
       if (!q) return true;
       return normalizeSearchText([item.date, item.scope ?? '', ...Object.values(item.title), ...Object.values(item.description)].join(' ')).includes(q);
     });
-    return sort === 'old' ? list.reverse() : list;
+    return sort === 'old' ? [...list].reverse() : list;
   }, [records, filter, year, scope, query, sort]);
   const reset = () => { setFilter('all'); setYear('all'); setScope('all'); setSort('new'); setQuery(''); setVisible(PAGE_SIZE); };
   const showing = matches.slice(0, visible);
@@ -94,7 +94,7 @@ export function ProfileHistory() {
     </div>
     <div className="shion-history-controls">
       <div className="shion-history-tabs" role="group" aria-label={labels.title}>
-        {FILTERS.map((kind) => <button key={kind} type="button" className={filter === kind ? 'is-active' : ''} aria-pressed={filter === kind} onClick={() => { setFilter(kind); setVisible(PAGE_SIZE); }}>{labels[kind]}</button>)}
+        {FILTERS.map((kind: Filter) => <button key={kind} type="button" className={filter === kind ? 'is-active' : ''} aria-pressed={filter === kind} onClick={() => { setFilter(kind); setVisible(PAGE_SIZE); }}>{labels[kind]}</button>)}
       </div>
       <div className="shion-history-filterrow">
         <label className="shion-history-search"><span className="sr-only">{labels.search}</span><input type="search" value={query} placeholder={labels.search} onChange={(event: { target: { value: string } }) => { setQuery(event.target.value); setVisible(PAGE_SIZE); }} maxLength={120}/></label>
@@ -108,7 +108,7 @@ export function ProfileHistory() {
     {!loading && error && <div className="shion-history-state" role="alert">{labels.error}<button type="button" onClick={() => load(true)}>{labels.retry}</button></div>}
     {!loading && !error && matches.length === 0 && <div className="shion-history-state">{labels.empty}</div>}
     {!loading && !error && matches.length > 0 && <ol className="shion-history-list">
-      {showing.map((event: ActivityRecord, index) => <li className="shion-history-event" key={event.id}>
+      {showing.map((event: ActivityRecord, index: number) => <li className="shion-history-event" key={event.id}>
         {(index === 0 || showing[index - 1]?.date.slice(0, 4) !== event.date.slice(0, 4)) && <div className="shion-history-year" aria-label={event.date.slice(0, 4)}>{event.date.slice(0, 4)}</div>}
         <article className="shion-history-event-inner">
           <time dateTime={event.date}>{event.date.slice(5).replace('-', '.')}</time>
