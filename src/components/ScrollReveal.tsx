@@ -28,7 +28,7 @@ const REVEAL_TARGETS = [
   '.shion-photo-grid .shion-gallery-tile',
   '.shion-film-grid .shion-film-card',
   '.shion-search-results .shion-search-result',
-  '.shion-subpage .grid > article.group',
+
 ].join(', ');
 
 export default function ScrollReveal() {
