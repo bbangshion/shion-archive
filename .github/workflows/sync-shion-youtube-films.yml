@@ -1,0 +1,287 @@
+name: SHION FILM - YouTube Fancams and Official Videos
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        description: 'scan = review catalogue only; publish_all = add all strict public/embeddable S20 matches'
+        options: [scan, publish_all]
+        default: scan
+        required: true
+      pages_per_query:
+        type: choice
+        description: 'YouTube search pages per query (uses Google API quota)'
+        options: ['1', '2']
+        default: '1'
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: shion-youtube-s20-sync
+  cancel-in-progress: false
+jobs:
+  import-s20:
+    if: github.ref == 'refs/heads/main' && github.repository_owner == 'bbangshion'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout SHION ARCHIVE
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Scan YouTube and update SHION film metadata
+        shell: bash
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          MODE: ${{ inputs.mode }}
+          PAGES: ${{ inputs.pages_per_query }}
+        run: |
+          python - <<'PYCODE'
+          #!/usr/bin/env python3
+          """SHION ARCHIVE: discover/embed S20 YouTube videos (no downloading)."""
+          from __future__ import annotations
+          import datetime as dt
+          import json
+          import os
+          from pathlib import Path
+          import re
+          from urllib.error import HTTPError, URLError
+          from urllib.parse import urlencode
+          from urllib.request import Request, urlopen
+          
+          API = 'https://www.googleapis.com/youtube/v3'
+          TOKEN = os.environ.get('YOUTUBE_API_KEY', '').strip()
+          MODE = os.environ.get('MODE', 'scan')
+          PAGES = int(os.environ.get('PAGES', '1'))
+          REPO = os.environ.get('GITHUB_REPOSITORY', '')
+          FILMS = Path('public/data/films.json')
+          REPORT = Path('reports/shion-youtube-review.json')
+          QUERIES = [
+              'tripleS 박시온 직캠',
+              '트리플에스 박시온 무대',
+              'tripleS ShiOn fancam',
+              '#트리플에스 #박시온',
+              '트리플에스 시온 입덕직캠',
+              'tripleS 박시온 SIGNAL',
+              'tripleS msnz moon 박시온',
+              'tripleS ShiOn KBS MBC SBS Mnet',
+              'tripleS 박시온 공식 인터뷰',
+          ]
+          VIDEO_ID = re.compile(r'^[A-Za-z0-9_-]{11}$')
+          MEMBER = re.compile(r'박\s*시온|(?<![a-z])(?:park\s*)?shi[\s-]?on(?![a-z])|(?<![a-z\d])s20(?!\d)|パク\s*[・\s]*シオン|朴\s*詩温', re.I)
+          GROUP = re.compile(r'triple\s*s|트리플\s*에스|トリプルS|모드하우스|modhaus|msnz|미소녀즈|\bNXT\b', re.I)
+          FANCAM = re.compile(r'직캠|입덕직캠|fancam|fan\s*cam|facecam|focuscam|chikkem|チッケム|세로캠|세로직캠', re.I)
+          SIGNAL = re.compile(r'\bsignal\b|시그널|secretbase', re.I)
+          MUSIC = re.compile(r'\bmv\b|music\s*video|뮤직비디오|official\s*video', re.I)
+          STAGE = re.compile(r'무대|stage|performance|music\s*bank|뮤직뱅크|music\s*core|음악중심|인기가요|mcountdown|엠카|쇼챔|쇼챔피언|show\s*champion|dance\s*practice', re.I)
+          LIVE = re.compile(r'라이브|\blive\b|생방송|라이브방송', re.I)
+          EXCLUDE = re.compile(r'\breaction\b|리액션|ai\s*(?:cover|voice)|가사\s*해석|lyrics?\s*video|fanmade|팬메이드|unboxing|언박싱|메이크업\s*따라|패러디', re.I)
+          BROADCASTER = re.compile(r'KBS|MBC|SBS|Mnet|\bM2\b|THE\s*K-POP|ALL\s*THE\s*K-POP|SHOW\s*CHAMPION|Studio\s*CHOOM|1theK|Music\s*Bank', re.I)
+          
+          
+          def api(endpoint, **params):
+              # API key is never included in log output.
+              url = f'{API}/{endpoint}?' + urlencode({**params, 'key': TOKEN})
+              try:
+                  with urlopen(Request(url, headers={'User-Agent': 'SHION-ARCHIVE/1.0'}), timeout=35) as res:
+                      return json.loads(res.read(8_000_000))
+              except HTTPError as e:
+                  reason = 'unknown'
+                  try:
+                      reason = str(json.loads(e.read(6000)).get('error', {}).get('errors', [{}])[0].get('reason', 'unknown'))
+                  except Exception:
+                      pass
+                  raise RuntimeError(f'YouTube {endpoint}: HTTP {e.code}; reason={reason}') from None
+              except URLError as e:
+                  raise RuntimeError(f'YouTube {endpoint}: network request failed ({type(e.reason).__name__})') from None
+          
+          
+          def date(s):
+              if not isinstance(s, str): return None
+              try:
+                  return dt.date.fromisoformat(s[:10]).isoformat()
+              except ValueError:
+                  return None
+          
+          
+          def classify(title):
+              if FANCAM.search(title): return 'performance', 'fancam'
+              if SIGNAL.search(title): return 'signal', 'signal'
+              if STAGE.search(title): return 'performance', 'stage'
+              if MUSIC.search(title): return 'music', 'music'
+              if LIVE.search(title): return 'live', 'live'
+              return 'other', 'interview-or-behind'
+          
+          
+          def film_from_video(video, searches):
+              ident = str(video.get('id') or '')
+              if not VIDEO_ID.fullmatch(ident): return None
+              sn = video.get('snippet') or {}
+              status = video.get('status') or {}
+              if status.get('privacyStatus') != 'public' or status.get('embeddable') is not True:
+                  return None
+              title = str(sn.get('title') or '').strip()
+              desc = str(sn.get('description') or '')[:5000]
+              channel = str(sn.get('channelTitle') or '').strip()
+              title_member = bool(MEMBER.search(title))
+              title_group = bool(GROUP.search(title))
+              described_member = bool(MEMBER.search(desc))
+              group_context = title_group or bool(GROUP.search(desc))
+              if EXCLUDE.search(title) or not group_context: return None
+              # Stop generic tripleS videos whose descriptions only list all 24 members.
+              unit_focus = bool(re.search(r'(?:msnz|미소녀즈)\s*(?:moon|문)|(?:moon|문)\s*(?:msnz|미소녀즈)', title, re.I))
+              if not title_member and not (unit_focus and described_member): return None
+              # The word 'Shion' can be a homonym: require group context explicitly.
+              category, sub = classify(title)
+              scope = 'solo' if title_member and (FANCAM.search(title) or re.search(r'박\s*시온|Shi[\s-]?On', title, re.I)) else ('unit' if unit_focus else 'group')
+              return {
+                  'youtubeId': ident,
+                  'title': title[:190],
+                  'category': category,
+                  'subCategory': sub,
+                  'publishedAt': date(sn.get('publishedAt')),
+                  'memberIds': ['S20'],
+                  'group': 'msnz moon' if unit_focus else 'tripleS',
+                  'scope': scope,
+                  'source': channel[:90],
+                  'channelId': str(sn.get('channelId') or ''),
+                  'videoUrl': 'https://www.youtube.com/watch?v=' + ident,
+                  'verified': False,
+                  'note': 'YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요',
+                  'reviewPriority': 'high' if title_member and title_group else 'check',
+                  'sourceKind': ('broadcaster-name' if BROADCASTER.search(channel) else 'channel-unverified'),
+                  'queries': sorted(searches),
+              }
+          
+          
+          def discover():
+              id_queries = {}
+              calls = 0
+              for q in QUERIES:
+                  page = ''
+                  for _ in range(PAGES):
+                      params = {'part': 'snippet', 'q': q, 'type': 'video', 'maxResults': 50,
+                                'videoEmbeddable': 'true', 'order': 'relevance', 'safeSearch': 'none'}
+                      if page: params['pageToken'] = page
+                      response = api('search', **params)
+                      calls += 1
+                      for found in response.get('items', []):
+                          key = str((found.get('id') or {}).get('videoId') or '')
+                          if VIDEO_ID.fullmatch(key): id_queries.setdefault(key, set()).add(q)
+                      page = response.get('nextPageToken') or ''
+                      if not page: break
+              videos = []
+              ids = list(id_queries)
+              for i in range(0, len(ids), 50):
+                  res = api('videos', part='snippet,status', id=','.join(ids[i:i+50]))
+                  for v in res.get('items', []):
+                      row = film_from_video(v, id_queries.get(v.get('id'), []))
+                      if row is not None: videos.append(row)
+              videos.sort(key=lambda x:(x['publishedAt'] or '',x['youtubeId']), reverse=True)
+              return videos, {'searchCalls': calls, 'rawDistinctVideos': len(ids), 'matchedVideos': len(videos)}
+          
+          
+          def load(path, default):
+              if not path.is_file(): return default
+              return json.loads(path.read_text(encoding='utf-8'))
+          
+          
+          def save(path, obj):
+              path.parent.mkdir(parents=True, exist_ok=True)
+              tmp = path.with_suffix(path.suffix + '.tmp')
+              tmp.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+              tmp.replace(path)
+          
+          
+          def append_films(candidates):
+              if not FILMS.is_file():
+                  raise RuntimeError('films.json not found: SHION FILM data layout must be checked before writing')
+              raw = load(FILMS, {})
+              if isinstance(raw, list):
+                  rows = raw; container = None; key = None
+              elif isinstance(raw, dict):
+                  key = 'items' if isinstance(raw.get('items'), list) else 'videos' if isinstance(raw.get('videos'), list) else None
+                  if key is None: raise RuntimeError('Unsupported films.json structure: refusing to overwrite')
+                  rows = raw[key]; container = raw
+              else: raise RuntimeError('Unsupported films.json structure: refusing to overwrite')
+              if any(not isinstance(row, dict) for row in rows):
+                  raise RuntimeError('Invalid existing FILM records: refusing to overwrite')
+              existing = set()
+              for row in rows:
+                  keyvalue = str(row.get('youtubeId') or row.get('videoId') or '')
+                  if not keyvalue:
+                      url = str(row.get('videoUrl') or row.get('youtubeUrl') or row.get('url') or '')
+                      m = re.search(r'(?:[?&]v=|youtu\.be/|/embed/)([\w-]{11})', url)
+                      keyvalue = m.group(1) if m else ''
+                  if VIDEO_ID.fullmatch(keyvalue): existing.add(keyvalue)
+              added = []
+              for video in candidates:
+                  ident = video['youtubeId']
+                  if ident in existing: continue
+                  # Only fields accepted by SHION FILM plus optional provenance metadata.
+                  rows.append({key:video[key] for key in (
+                      'youtubeId','title','category','subCategory','publishedAt','memberIds',
+                      'group','scope','source','channelId','videoUrl','verified','note')})
+                  existing.add(ident)
+                  added.append(ident)
+              if added:
+                  rows.sort(key=lambda x:(str(x.get('publishedAt') or x.get('date') or ''),str(x.get('youtubeId') or '')),reverse=True)
+                  if container is not None:
+                      container[key] = rows
+                      container['updatedAt'] = dt.datetime.now(dt.timezone.utc).isoformat()
+                      save(FILMS, container)
+                  else: save(FILMS, rows)
+              return added, len(candidates)-len(added),len(rows)
+          
+          
+          def main():
+              if MODE not in ('scan','publish_all') or PAGES not in (1,2):
+                  raise SystemExit('MODE must be scan/publish_all and PAGES must be 1/2')
+              if not TOKEN:
+                  raise SystemExit('Missing secret YOUTUBE_API_KEY in this repository')
+              if REPO and (not REPO.lower().startswith('bbangshion/') or 'shion' not in REPO.lower().split('/')[-1] or 'yeonji' in REPO.lower() or 'chaewon' in REPO.lower()):
+                  raise SystemExit('Wrong repository: this workflow is for SHION ARCHIVE only')
+              # Fail before API calls for an unexpected site layout.
+              if not FILMS.is_file():
+                  raise SystemExit('SHION FILM file public/data/films.json missing; verify repo structure')
+              candidates, stats = discover()
+              added = []
+              dup = 0
+              total = None
+              if MODE == 'publish_all':
+                  added,dup,total = append_films(candidates)
+              old=load(REPORT,{})
+              previous={r.get('youtubeId'):r for r in (old.get('candidates') or []) if isinstance(r,dict) and VIDEO_ID.fullmatch(str(r.get('youtubeId') or ''))}
+              for r in candidates:
+                  prior=previous.get(r['youtubeId'],{})
+                  previous[r['youtubeId']]={**r,'status':'published' if MODE=='publish_all' or prior.get('status')=='published' else 'pending'}
+              save(REPORT, {'generatedAt':dt.datetime.now(dt.timezone.utc).isoformat(),
+                  'note':'자동 검색 조건에 일치하는 공개·임베드 영상 링크만 수집함. 이름/설명 문구만으로 출연이 검증되지는 않으며 검토 필요. 영상 파일을 다운로드하지 않음.',
+                  'mode':MODE, 'searchQueries':QUERIES,
+                  'summary':{**stats,'addedToFilm':len(added),'duplicatesSkipped':dup,'filmTotal':total},
+                  'candidates':sorted(previous.values(),key=lambda r:(r.get('publishedAt') or '',str(r.get('youtubeId') or '')),reverse=True)})
+              s=f'SHION S20 · {MODE}\nSearch calls: {stats["searchCalls"]}; raw videos: {stats["rawDistinctVideos"]}; eligible: {stats["matchedVideos"]}\nNew FILM entries: {len(added)}; duplicates: {dup}; FILM total: {total if total is not None else "unchanged"}\nAll new entries marked verified=false pending individual S20 appearance check.\nReport: reports/shion-youtube-review.json\n'
+              print(s)
+              if os.getenv('GITHUB_STEP_SUMMARY'):
+                  with open(os.environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as out:
+                      out.write('## SHION FILM - YouTube Search\n\n'+'  \n'.join(s.splitlines())+'\n')
+          
+          
+          if __name__ == '__main__': main()
+          PYCODE
+      - name: Commit only S20 video data
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- reports/shion-youtube-review.json public/data/films.json
+          if git diff --cached --quiet; then
+            echo 'No new S20 film results to commit.'
+          else
+            git commit -m 'data: sync SHION S20 YouTube films'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
