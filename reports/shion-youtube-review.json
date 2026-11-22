@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-22T05:32:33.164489+00:00",
+  "generatedAt": "2026-11-22T05:33:33.275997+00:00",
   "note": "자동 검색 조건에 일치하는 공개·임베드 영상 링크만 수집함. 이름/설명 문구만으로 출연이 검증되지는 않으며 검토 필요. 영상 파일을 다운로드하지 않음.",
-  "mode": "scan",
+  "mode": "publish_all",
   "searchQueries": [
     "tripleS 박시온 직캠",
     "트리플에스 박시온 무대",
@@ -15,11 +15,11 @@
   ],
   "summary": {
     "searchCalls": 9,
-    "rawDistinctVideos": 281,
-    "matchedVideos": 156,
-    "addedToFilm": 0,
-    "duplicatesSkipped": 0,
-    "filmTotal": null
+    "rawDistinctVideos": 279,
+    "matchedVideos": 150,
+    "addedToFilm": 145,
+    "duplicatesSkipped": 5,
+    "filmTotal": 163
   },
   "candidates": [
     {
@@ -43,7 +43,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "6QDxbdjoHGI",
@@ -66,7 +66,7 @@
       "queries": [
         "#트리플에스 #박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "_Sj2g2pWywQ",
@@ -89,7 +89,7 @@
       "queries": [
         "#트리플에스 #박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "1kBDnn0x5J0",
@@ -137,7 +137,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "P-MoGQjhY3Y",
@@ -160,7 +160,7 @@
       "queries": [
         "#트리플에스 #박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "l_3At60qWlo",
@@ -183,7 +183,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "NAhuu7Lm024",
@@ -207,7 +207,7 @@
         "tripleS ShiOn fancam",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "d5v5YVYvMhA",
@@ -230,7 +230,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "6utu1o3bHOE",
@@ -254,7 +254,7 @@
         "tripleS ShiOn fancam",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "ussq2817iRQ",
@@ -278,7 +278,7 @@
         "#트리플에스 #박시온",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "_yBtof_FGRI",
@@ -302,7 +302,30 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
+    },
+    {
+      "youtubeId": "18thqKM5WAw",
+      "title": "고맙긴 해 #트리플에스 #triples #박시온 #윤서연 #트리플에스시온 #트리플에스서연",
+      "category": "other",
+      "subCategory": "interview-or-behind",
+      "publishedAt": "2026-10-08",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "오리배선장연지",
+      "channelId": "UC1yTNfT0PsEe06LU_versxA",
+      "videoUrl": "https://www.youtube.com/watch?v=18thqKM5WAw",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS 박시온 SIGNAL"
+      ],
+      "status": "published"
     },
     {
       "youtubeId": "ipOwaJed1c8",
@@ -325,7 +348,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "aLo5FeiWsqI",
@@ -348,7 +371,7 @@
       "queries": [
         "#트리플에스 #박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "FOmH3nOAjrE",
@@ -370,9 +393,10 @@
       "sourceKind": "channel-unverified",
       "queries": [
         "#트리플에스 #박시온",
-        "tripleS 박시온 SIGNAL"
+        "tripleS 박시온 SIGNAL",
+        "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "WRhZ65AveEA",
@@ -393,9 +417,10 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
-        "tripleS ShiOn fancam"
+        "tripleS ShiOn fancam",
+        "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "II_eeqH5D2I",
@@ -420,7 +445,7 @@
         "tripleS 박시온 SIGNAL",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "mpNB7vpyPnA",
@@ -443,7 +468,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "L0MWf64eaHk",
@@ -467,7 +492,7 @@
         "#트리플에스 #박시온",
         "tripleS 박시온 SIGNAL"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "yQLYNqYnPvo",
@@ -490,7 +515,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "CQRFn0Fc1Fg",
@@ -513,7 +538,7 @@
       "queries": [
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "uHwI6mv49V8",
@@ -536,7 +561,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "ZJf5Rde1MRI",
@@ -560,7 +585,7 @@
         "#트리플에스 #박시온",
         "tripleS 박시온 SIGNAL"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "cvMnOpRy-5Q",
@@ -584,7 +609,7 @@
         "#트리플에스 #박시온",
         "tripleS 박시온 SIGNAL"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "cKlcExDxRi0",
@@ -605,10 +630,9 @@
       "reviewPriority": "check",
       "sourceKind": "channel-unverified",
       "queries": [
-        "tripleS 박시온 SIGNAL",
-        "tripleS 박시온 직캠"
+        "tripleS 박시온 SIGNAL"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "lRO92XOOeSc",
@@ -631,7 +655,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "QOHDMMFHsog",
@@ -654,7 +678,7 @@
       "queries": [
         "트리플에스 시온 입덕직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Hwq6BoOfOAY",
@@ -678,9 +702,10 @@
         "#트리플에스 #박시온",
         "tripleS msnz moon 박시온",
         "tripleS 박시온 SIGNAL",
+        "tripleS 박시온 직캠",
         "트리플에스 시온 입덕직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "a8zvqAl79Aw",
@@ -703,7 +728,7 @@
       "queries": [
         "tripleS ShiOn KBS MBC SBS Mnet"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "RfdZBI48q-o",
@@ -726,7 +751,7 @@
       "queries": [
         "tripleS ShiOn KBS MBC SBS Mnet"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "bscJoTwnLQI",
@@ -751,7 +776,7 @@
         "tripleS ShiOn fancam",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "f7bEZVZ9PW8",
@@ -775,7 +800,7 @@
         "#트리플에스 #박시온",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "dLV1ZSBavWg",
@@ -798,7 +823,7 @@
       "queries": [
         "트리플에스 시온 입덕직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "YjPz8anXPPE",
@@ -845,7 +870,7 @@
         "#트리플에스 #박시온",
         "tripleS ShiOn KBS MBC SBS Mnet"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "WpCa1dkgkmg",
@@ -868,7 +893,7 @@
       "queries": [
         "tripleS ShiOn KBS MBC SBS Mnet"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "eM5dk_-uh6c",
@@ -891,7 +916,7 @@
       "queries": [
         "#트리플에스 #박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Wd2Bbh319-k",
@@ -912,10 +937,9 @@
       "reviewPriority": "high",
       "sourceKind": "broadcaster-name",
       "queries": [
-        "tripleS ShiOn KBS MBC SBS Mnet",
-        "tripleS 박시온 SIGNAL"
+        "tripleS ShiOn KBS MBC SBS Mnet"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Jo6Qk1xPWFc",
@@ -939,6 +963,29 @@
         "tripleS 박시온 직캠"
       ],
       "status": "pending"
+    },
+    {
+      "youtubeId": "xd9r4986vYg",
+      "title": "Come & Go, Cameo~ 트리플에스(tripleS) 박시온 'Cameo Love' 직캠",
+      "category": "performance",
+      "subCategory": "fancam",
+      "publishedAt": "2026-05-11",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "펌킨이야",
+      "channelId": "UCUKhv-jyReqchkSOKm45RQA",
+      "videoUrl": "https://www.youtube.com/watch?v=xd9r4986vYg",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS 박시온 직캠"
+      ],
+      "status": "published"
     },
     {
       "youtubeId": "gyc7grUNWak",
@@ -985,7 +1032,30 @@
         "tripleS ShiOn fancam",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
+    },
+    {
+      "youtubeId": "x_NqzWqVLA8",
+      "title": "[20260418] 트리플에스 - 박시온 (tripleS - Park ShiOn) ♪ Love2Love ♬ 2026 4.19혁명 국민문화제",
+      "category": "other",
+      "subCategory": "interview-or-behind",
+      "publishedAt": "2026-04-18",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "ZetaCAM 제타캠",
+      "channelId": "UCQ7UFESGkie65AiJFk9Kx9w",
+      "videoUrl": "https://www.youtube.com/watch?v=x_NqzWqVLA8",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS 박시온 직캠"
+      ],
+      "status": "published"
     },
     {
       "youtubeId": "SMBajgvGU7A",
@@ -1009,7 +1079,7 @@
         "#트리플에스 #박시온",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "YI0y6i31aHo",
@@ -1032,11 +1102,10 @@
       "queries": [
         "#트리플에스 #박시온",
         "tripleS ShiOn fancam",
-        "tripleS msnz moon 박시온",
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "IonYZuFiQgY",
@@ -1063,7 +1132,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "_cVphdB0eK8",
@@ -1090,7 +1159,7 @@
         "tripleS 박시온 SIGNAL",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Zbrz5ZPVFBA",
@@ -1113,7 +1182,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "fK-72Hx5sh8",
@@ -1138,7 +1207,7 @@
         "tripleS msnz moon 박시온",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "2oMHQ19fM5U",
@@ -1162,7 +1231,7 @@
         "tripleS msnz moon 박시온",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "XEj6HBeDGxc",
@@ -1188,7 +1257,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "ZWj2YWkbi9Y",
@@ -1212,7 +1281,7 @@
         "tripleS ShiOn fancam",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "SXtlB2HGn5A",
@@ -1260,7 +1329,7 @@
         "tripleS 박시온 SIGNAL",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "6fafN9wpko0",
@@ -1283,10 +1352,34 @@
       "queries": [
         "tripleS ShiOn fancam",
         "tripleS msnz moon 박시온",
+        "tripleS 박시온 SIGNAL",
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
+    },
+    {
+      "youtubeId": "e4XKLLdfvkk",
+      "title": "park shion making a crime scene 😭  #triples #shion  #kpop",
+      "category": "other",
+      "subCategory": "interview-or-behind",
+      "publishedAt": "2026-03-19",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "minssamchaeyen",
+      "channelId": "UCAZfUW-IoC3YRcbZaC3Zu2Q",
+      "videoUrl": "https://www.youtube.com/watch?v=e4XKLLdfvkk",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS ShiOn fancam"
+      ],
+      "status": "published"
     },
     {
       "youtubeId": "rYivk31qj-o",
@@ -1309,7 +1402,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "hE-sV1AAnw8",
@@ -1332,7 +1425,7 @@
       "queries": [
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "el91ANgDZAk",
@@ -1356,6 +1449,29 @@
         "tripleS 박시온 직캠"
       ],
       "status": "pending"
+    },
+    {
+      "youtubeId": "u0KFzNYa4n8",
+      "title": "260228 트리플에스 박시온 (tripleS ShiOn) 'Diablo' - My Secret New Zone in TAIPEI fancam 직캠",
+      "category": "performance",
+      "subCategory": "fancam",
+      "publishedAt": "2026-03-14",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "샤오러🍑",
+      "channelId": "UC8LtooOd247UyO0BXq1I53Q",
+      "videoUrl": "https://www.youtube.com/watch?v=u0KFzNYa4n8",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS 박시온 직캠"
+      ],
+      "status": "published"
     },
     {
       "youtubeId": "dvHWjn5k8i0",
@@ -1401,7 +1517,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "KhqLb0sRD-g",
@@ -1424,7 +1540,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "RbwXb1EA1YY",
@@ -1449,7 +1565,7 @@
         "tripleS msnz moon 박시온",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "yPO9Q5Jksmo",
@@ -1474,7 +1590,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "xtZfFsCFFnI",
@@ -1498,7 +1614,7 @@
         "tripleS msnz moon 박시온",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "r1qDYdMtpLo",
@@ -1519,9 +1635,10 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
-        "tripleS ShiOn fancam"
+        "tripleS ShiOn fancam",
+        "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Z_8criYuQF8",
@@ -1544,7 +1661,30 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
+    },
+    {
+      "youtubeId": "fi242mk8H9A",
+      "title": "🤍 #트리플에스 #박시온 #시온",
+      "category": "other",
+      "subCategory": "interview-or-behind",
+      "publishedAt": "2026-02-18",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "아티유 ATiU",
+      "channelId": "UCmuwsuJ4HgJ6w857cSKBcqw",
+      "videoUrl": "https://www.youtube.com/watch?v=fi242mk8H9A",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS 박시온 SIGNAL"
+      ],
+      "status": "published"
     },
     {
       "youtubeId": "9_ZbJSubQ6s",
@@ -1568,7 +1708,7 @@
         "tripleS ShiOn fancam",
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "UTJLqcKQK0E",
@@ -1591,7 +1731,7 @@
       "queries": [
         "#트리플에스 #박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "7K0PUKu26IE",
@@ -1614,7 +1754,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "SnX01XmDxZo",
@@ -1636,10 +1776,9 @@
       "sourceKind": "channel-unverified",
       "queries": [
         "#트리플에스 #박시온",
-        "tripleS 박시온 SIGNAL",
         "트리플에스 시온 입덕직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Rjo30Fsb05g",
@@ -1662,7 +1801,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "QdG7B5DjkZ8",
@@ -1685,7 +1824,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "e7ET9mWfqbE",
@@ -1709,7 +1848,7 @@
         "tripleS ShiOn fancam",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "8Vs3w53Xvck",
@@ -1732,7 +1871,7 @@
       "queries": [
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "7gpX5xsY-qQ",
@@ -1756,7 +1895,7 @@
         "tripleS ShiOn fancam",
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "n8WW4Qu-nvw",
@@ -1779,7 +1918,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "uqGOgkZcaH8",
@@ -1802,7 +1941,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "CU55rmcgR1o",
@@ -1825,7 +1964,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "4DK4IsVjO70",
@@ -1848,11 +1987,10 @@
       "queries": [
         "tripleS ShiOn fancam",
         "tripleS msnz moon 박시온",
-        "tripleS 박시온 SIGNAL",
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Iy2fkCPVxPo",
@@ -1875,7 +2013,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "vgLcNXP65j8",
@@ -1922,7 +2060,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "rN92Bu4j3ho",
@@ -1944,10 +2082,9 @@
       "sourceKind": "channel-unverified",
       "queries": [
         "tripleS ShiOn fancam",
-        "tripleS msnz moon 박시온",
-        "tripleS 박시온 직캠"
+        "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "yeXpSo0Q2Xo",
@@ -1970,7 +2107,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "hYa0OTdDi44",
@@ -1996,7 +2133,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "cp-J-IBDIgE",
@@ -2019,7 +2156,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "wMEqrWv3d5E",
@@ -2043,7 +2180,7 @@
         "#트리플에스 #박시온",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "b0fGxYJfRtQ",
@@ -2066,7 +2203,7 @@
       "queries": [
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Eyl77QdGb4Y",
@@ -2089,7 +2226,7 @@
       "queries": [
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "YpPRA_vfo8k",
@@ -2113,7 +2250,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "8nIAv7Yiq2I",
@@ -2159,7 +2296,7 @@
       "queries": [
         "#트리플에스 #박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "UYRHysTZl6k",
@@ -2180,9 +2317,10 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
+        "tripleS 박시온 SIGNAL",
         "트리플에스 시온 입덕직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "zFjrZQ75hB0",
@@ -2205,7 +2343,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "UtPPWr4An4E",
@@ -2226,13 +2364,12 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
-        "#트리플에스 #박시온",
         "tripleS ShiOn fancam",
         "tripleS msnz moon 박시온",
         "tripleS 박시온 SIGNAL",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "781BAxHUOfI",
@@ -2255,7 +2392,7 @@
       "queries": [
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "RigGkaZidxE",
@@ -2276,11 +2413,10 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
-        "tripleS msnz moon 박시온",
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "4PxjfMMvXJY",
@@ -2303,7 +2439,7 @@
       "queries": [
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "nRsoNtU_dvA",
@@ -2327,7 +2463,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "jjyDF2_FUd0",
@@ -2348,10 +2484,9 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
-        "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "ebeG7XhhAv0",
@@ -2374,7 +2509,7 @@
       "queries": [
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "OeLKUmKIw1M",
@@ -2397,10 +2532,11 @@
       "queries": [
         "#트리플에스 #박시온",
         "tripleS msnz moon 박시온",
+        "tripleS 박시온 SIGNAL",
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "O9-jFnkjzYo",
@@ -2423,7 +2559,7 @@
       "queries": [
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "i3nOoQxyAHg",
@@ -2449,7 +2585,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "WIBwO7BgEbo",
@@ -2475,7 +2611,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "AA00LYcVf2c",
@@ -2498,7 +2634,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "c5ghNiVpIls",
@@ -2519,10 +2655,9 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
-        "tripleS 박시온 SIGNAL",
         "트리플에스 시온 입덕직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "3ewGFyEhz-Y",
@@ -2545,7 +2680,7 @@
       "queries": [
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "VIegcugPuXA",
@@ -2568,7 +2703,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "uq1arJ9LAtc",
@@ -2614,7 +2749,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "rClXoODkYNw",
@@ -2638,7 +2773,7 @@
         "#트리플에스 #박시온",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "YdurcCmWa5Y",
@@ -2659,9 +2794,10 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
+        "tripleS 박시온 SIGNAL",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "J7xYCV9IDB8",
@@ -2682,9 +2818,10 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
+        "tripleS 박시온 SIGNAL",
         "트리플에스 시온 입덕직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "dQ2Mqi60iTY",
@@ -2707,7 +2844,7 @@
       "queries": [
         "tripleS 박시온 SIGNAL"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "cH5t_hjIX6g",
@@ -2731,7 +2868,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "riwNz89Wigk",
@@ -2752,9 +2889,32 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
-        "tripleS 박시온 SIGNAL"
+        "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
+    },
+    {
+      "youtubeId": "PQgZTr_qJOo",
+      "title": "250713 트리플에스 박시온 직캠 (tripleS ShiOn) - Choom [tripleS A Live 25 in Seoul] [4K]",
+      "category": "performance",
+      "subCategory": "fancam",
+      "publishedAt": "2025-07-18",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "아티유 ATiU",
+      "channelId": "UCmuwsuJ4HgJ6w857cSKBcqw",
+      "videoUrl": "https://www.youtube.com/watch?v=PQgZTr_qJOo",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS 박시온 직캠"
+      ],
+      "status": "published"
     },
     {
       "youtubeId": "kdCyv-ydkqQ",
@@ -2777,7 +2937,7 @@
       "queries": [
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "0-fQc8Aiy8k",
@@ -2798,9 +2958,10 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
+        "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "KS2Xar5n4o4",
@@ -2823,7 +2984,7 @@
       "queries": [
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "xK0D4jY7I_c",
@@ -2845,9 +3006,10 @@
       "sourceKind": "channel-unverified",
       "queries": [
         "tripleS ShiOn fancam",
+        "tripleS 박시온 SIGNAL",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "o77kknfI5Qs",
@@ -2870,7 +3032,7 @@
       "queries": [
         "#트리플에스 #박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Dv04Ub8bzPY",
@@ -2893,7 +3055,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "kK-EVt9hMF8",
@@ -2914,9 +3076,10 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
-        "#트리플에스 #박시온"
+        "#트리플에스 #박시온",
+        "tripleS 박시온 SIGNAL"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "zheBueLknHY",
@@ -2939,7 +3102,7 @@
       "queries": [
         "tripleS ShiOn KBS MBC SBS Mnet"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "ekKlNi8RMHE",
@@ -2963,7 +3126,7 @@
         "#트리플에스 #박시온",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "50RzJKcLpXk",
@@ -2988,10 +3151,11 @@
         "tripleS ShiOn KBS MBC SBS Mnet",
         "tripleS ShiOn fancam",
         "tripleS msnz moon 박시온",
+        "tripleS 박시온 SIGNAL",
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "2D3LKCAEUJ8",
@@ -3014,7 +3178,7 @@
       "queries": [
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "kfw2qm4FTAs",
@@ -3037,7 +3201,30 @@
       "queries": [
         "tripleS ShiOn KBS MBC SBS Mnet"
       ],
-      "status": "pending"
+      "status": "published"
+    },
+    {
+      "youtubeId": "iJnlWOnj54M",
+      "title": "Shake It To The Max 🐱🍞 #tripleS #트리플에스 #トリプルS #トリプルエス #トエス #ASSEMBLE25 #깨어  #Lynn #린 #ShiOn #시온",
+      "category": "other",
+      "subCategory": "interview-or-behind",
+      "publishedAt": "2025-05-25",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "tripleS official",
+      "channelId": "UCJnL-TBcsYrF2SLs7tmiC8Q",
+      "videoUrl": "https://www.youtube.com/watch?v=iJnlWOnj54M",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS msnz moon 박시온"
+      ],
+      "status": "published"
     },
     {
       "youtubeId": "5q6JlZjBX2E",
@@ -3060,9 +3247,10 @@
       "queries": [
         "tripleS ShiOn KBS MBC SBS Mnet",
         "tripleS ShiOn fancam",
+        "tripleS 박시온 SIGNAL",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "qOwI3b6MotM",
@@ -3084,10 +3272,9 @@
       "sourceKind": "channel-unverified",
       "queries": [
         "#트리플에스 #박시온",
-        "tripleS 박시온 SIGNAL",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "_Fqv6PnwqK0",
@@ -3110,7 +3297,7 @@
       "queries": [
         "tripleS ShiOn KBS MBC SBS Mnet"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "K-TYMD9VY60",
@@ -3131,10 +3318,9 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
-        "tripleS msnz moon 박시온",
-        "tripleS 박시온 SIGNAL"
+        "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "RXT0i8B1ES4",
@@ -3157,7 +3343,7 @@
       "queries": [
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "YBlqSfuKBaQ",
@@ -3180,7 +3366,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "aAo43bck3YM",
@@ -3228,7 +3414,7 @@
         "tripleS msnz moon 박시온",
         "tripleS 박시온 SIGNAL"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Pfw_FjG53U8",
@@ -3251,7 +3437,7 @@
       "queries": [
         "트리플에스 시온 입덕직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "ttsADpZ2JwU",
@@ -3273,10 +3459,9 @@
       "sourceKind": "channel-unverified",
       "queries": [
         "#트리플에스 #박시온",
-        "tripleS 박시온 SIGNAL",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "LRWU1P8XHcE",
@@ -3298,10 +3483,9 @@
       "sourceKind": "channel-unverified",
       "queries": [
         "#트리플에스 #박시온",
-        "tripleS msnz moon 박시온",
-        "tripleS 박시온 직캠"
+        "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Jzh67CoT88A",
@@ -3348,7 +3532,7 @@
         "tripleS 박시온 SIGNAL",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "iVvIRLv2kZU",
@@ -3371,7 +3555,7 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Jbs8dxZre1Q",
@@ -3394,7 +3578,53 @@
       "queries": [
         "tripleS msnz moon 박시온"
       ],
-      "status": "pending"
+      "status": "published"
+    },
+    {
+      "youtubeId": "25CPC78Ae4g",
+      "title": "[EN] tripleS - Shion rubbing Sullin's back 241108",
+      "category": "other",
+      "subCategory": "interview-or-behind",
+      "publishedAt": "2024-11-09",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "Marty",
+      "channelId": "UCtxgepppsS0XiW2ge5dD51g",
+      "videoUrl": "https://www.youtube.com/watch?v=25CPC78Ae4g",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS 박시온 SIGNAL"
+      ],
+      "status": "published"
+    },
+    {
+      "youtubeId": "78B41eC38hM",
+      "title": "tripleS - Shion + Helium = SHeon 241022",
+      "category": "other",
+      "subCategory": "interview-or-behind",
+      "publishedAt": "2024-10-22",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "Marty",
+      "channelId": "UCtxgepppsS0XiW2ge5dD51g",
+      "videoUrl": "https://www.youtube.com/watch?v=78B41eC38hM",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS 박시온 SIGNAL"
+      ],
+      "status": "published"
     },
     {
       "youtubeId": "eE-ryZ1xSeE",
@@ -3418,7 +3648,7 @@
         "#트리플에스 #박시온",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "5lu0gsGZIA8",
@@ -3441,7 +3671,30 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
+    },
+    {
+      "youtubeId": "6GiWjmMsdLQ",
+      "title": "Shion Flexes Her Angelic Vocals #tripleS #트리플에스#트리플에스 #トリプルS #signal #akmu #shion",
+      "category": "signal",
+      "subCategory": "signal",
+      "publishedAt": "2024-08-30",
+      "memberIds": [
+        "S20"
+      ],
+      "group": "tripleS",
+      "scope": "solo",
+      "source": "MangoNim",
+      "channelId": "UCpqM6amdEngQaQbc8954Jbg",
+      "videoUrl": "https://www.youtube.com/watch?v=6GiWjmMsdLQ",
+      "verified": false,
+      "note": "YouTube 공개 링크 · 박시온(S20) 실제 출연 및 출처 개별 검토 필요",
+      "reviewPriority": "high",
+      "sourceKind": "channel-unverified",
+      "queries": [
+        "tripleS 박시온 SIGNAL"
+      ],
+      "status": "published"
     },
     {
       "youtubeId": "gelxmtiQt9M",
@@ -3513,7 +3766,7 @@
         "tripleS 박시온 직캠",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "6TdDIxPU5dM",
@@ -3537,7 +3790,7 @@
         "#트리플에스 #박시온",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "qQhApeezAOU",
@@ -3561,7 +3814,7 @@
         "tripleS msnz moon 박시온",
         "트리플에스 박시온 무대"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "UfQwdy8ZcCY",
@@ -3605,10 +3858,9 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
-        "#트리플에스 #박시온",
-        "tripleS 박시온 SIGNAL"
+        "#트리플에스 #박시온"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "jAtTsrvfuVY",
@@ -3633,7 +3885,7 @@
         "tripleS ShiOn fancam",
         "tripleS 박시온 직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "0mfskXNPXXA",
@@ -3656,7 +3908,7 @@
       "queries": [
         "tripleS ShiOn fancam"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "Xz5Z2ZO1W5Q",
@@ -3700,9 +3952,10 @@
       "reviewPriority": "high",
       "sourceKind": "channel-unverified",
       "queries": [
+        "tripleS 박시온 SIGNAL",
         "트리플에스 시온 입덕직캠"
       ],
-      "status": "pending"
+      "status": "published"
     },
     {
       "youtubeId": "FoUYohIFYEk",
