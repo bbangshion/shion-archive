@@ -1,5 +1,5 @@
 :root { --af-accent: #D7BBD7; }
-/* SHION / ARCHIVE FAMILY 01 — shared editorial UI for SHION / YEONJI / CHAEWON.
+/* SHION / YEONJI MASTER FAMILY V2 — shared editorial UI for SHION / YEONJI / CHAEWON.
    Same components, same spacing and motion. Only --af-accent and portraits differ.
    Import this file LAST. This is a CSS overlay, NOT a reimplementation of features.
 */

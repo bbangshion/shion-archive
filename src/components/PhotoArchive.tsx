@@ -235,7 +235,20 @@ export function PhotoArchive(_legacyProps?: { objekts?: unknown[]; loading?: boo
       <p>{t('박시온 사진을 날짜와 앨범으로 모아봤어요')}</p>
       <p className="shion-source-note">{language === 'en' ? 'Curated by @bbangshion' : language === 'ja' ? 'アーカイブ編集 · @bbangshion' : '아카이브 정리 · @bbangshion'}</p>
     </header>
+    {/* MASTER GALLERY / presentation only; existing photo filters and data unchanged. */}
+    <a className="af-gallery-entry" href={`${import.meta.env.BASE_URL}gallery/index.html`}>
+      <span><small>SHION GALLERY / S20</small><strong>{language === 'en' ? 'Photo gallery' : language === 'ja' ? '写真ギャラリー' : '종합 사진 전시관'}</strong></span>
+      <span aria-hidden="true">↗</span>
+    </a>
     <RecentPhotoSources />
+    {/* Year shortcuts use existing year/setYear state; do not change fetch or filters. */}
+    <div className="af-photo-index" aria-label={language === 'en' ? 'Photo year index' : '사진 연도별 바로가기'}>
+      <div className="af-photo-index-head"><span>SHION PHOTO INDEX</span><p>{language === 'en' ? 'Browse by archived year' : language === 'ja' ? '年別写真を探す' : '등록된 연도별 사진 바로가기'}</p></div>
+      <div className="af-photo-year-buttons" role="group" aria-label="Year">
+        <button type="button" className={year === 'all' && !recentOnly ? 'is-active' : ''} aria-pressed={year === 'all' && !recentOnly} onClick={() => {setYear('all');setMonth('all');setRecentOnly(false);}}>ALL</button>
+        {years.map(item => <button type="button" key={item} className={year === item && !recentOnly ? 'is-active' : ''} aria-pressed={year === item && !recentOnly} onClick={() => {setYear(item);setMonth('all');setRecentOnly(false);}}>{item}</button>)}
+      </div>
+    </div>
     <div className="shion-photo-controls">
       <div className="shion-photo-view-tabs" role="group" aria-label={t('사진 보기 방식')}>
         <button type="button" className={mode === 'date' ? 'is-active' : ''} aria-pressed={mode === 'date'} onClick={() => setMode('date')}>{t('날짜별')}</button>

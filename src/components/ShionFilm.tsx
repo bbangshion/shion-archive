@@ -202,6 +202,17 @@ export default function ShionFilm() {
       <p><Trans value="박시온 개인, 유닛, 완전체 공식 영상"/></p>
     </header>
 
+    {/* YEONJI master: read-only summary; filtering and playback state stay untouched. */}
+    <div className="af-film-summary" aria-label={t('영상 통계')}>
+      {([
+        ['ALL FILMS', films.length],
+        ['FANCAMS', films.filter(video => video.category === 'performance' && video.scope === 'solo').length],
+        ['TRIPLES OFFICIAL', films.filter(video => /triples|official|공식/i.test(video.source)).length],
+        ['SIGNAL', films.filter(video => video.category === 'signal').length],
+        ['BEHIND', films.filter(video => /behind|비하인드/i.test(`${video.title} ${video.note}`)).length],
+      ] as const).map(([label, count]) =>
+        <div key={label}><span>{label}</span><strong>{formatNumber(count)}</strong></div>)}
+    </div>
     <div className="shion-film-controls">
       <div className="shion-film-tabs" role="group" aria-label={t("영상 종류")}>
         {FILTERS.map((item) => <button key={item.id} type="button" className={filter === item.id ? 'is-active' : ''} aria-pressed={filter === item.id} onClick={() => setFilter(item.id)}>{t(item.text)}</button>)}

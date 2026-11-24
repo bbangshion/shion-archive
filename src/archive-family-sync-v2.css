@@ -1,0 +1,151 @@
+/* Archive Collection — YEONJI master layout / 2026-11
+ * Presentation-layer only: no layout hiding, no data filters, no event handlers.
+ * All three sites share these measurements; --af-accent is member-specific.
+ */
+:root {
+  --af-bg: #101014; --af-hero-bg: #0b0b0e; --af-surface: #18171d;
+  --af-raised: #211f27; --af-line: rgba(255,255,255,.125);
+  --af-ink: #f6f3f5; --af-muted: #aea9b2;
+  --af-width: 1180px; --af-radius: 4px;
+  --af-header-h: 76px; --af-ease: cubic-bezier(.25,1,.5,1);
+}
+html { scroll-padding-top:var(--af-header-h); }
+html body { background:var(--af-bg); color:var(--af-ink);
+  font-family:Inter,Pretendard,'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased; }
+/* Same header heights, branding geometry and menu placement as YEONJI. */
+html body .shion-site-header { height:var(--af-header-h); border-bottom:1px solid var(--af-line); }
+html body .shion-header-inner, html body .shion-content-width { width:min(calc(100% - 48px), var(--af-width)); margin-inline:auto; }
+html body .shion-brand { gap:12px; }
+html body .shion-brand-mark { width:36px;height:36px;min-width:36px;min-height:36px;
+ border:1px solid var(--af-accent);color:var(--af-accent);border-radius:50%;
+ font:400 25px/1 Georgia,'Times New Roman',serif; }
+html body .shion-brand-name { font-size:12px;font-weight:650;letter-spacing:.13em; }
+html body .shion-hero { background:var(--af-hero-bg); }
+html body .shion-hero-inner { width:min(calc(100% - 64px),var(--af-width)); }
+html body .shion-hero-copy h1 { font-weight:540;letter-spacing:-.085em; }
+html body .shion-feature-grid { gap:16px; }
+html body .shion-feature-card { min-height:286px;padding:30px;border-radius:var(--af-radius);background:#141620;border:1px solid var(--af-line); }
+html body .shion-feature-bottom strong { font-weight:550;letter-spacing:-.045em; }
+html body .shion-page-heading,
+html body .yeonji-page-heading,
+html body .chaewon-page-heading,
+html body .hayeon-page-heading { margin:0 0 40px; }
+html body :is(.shion-page-heading,.yeonji-page-heading,.chaewon-page-heading,.hayeon-page-heading) h1 {
+ font-size:clamp(39px,6.5vw,72px);font-weight:580;line-height:1.1;letter-spacing:-.065em;
+}
+html body :is(.shion-page-heading,.yeonji-page-heading,.chaewon-page-heading,.hayeon-page-heading) p {
+ margin-top:16px;font-size:13px;line-height:1.8;color:#b9b4bb;
+}
+html body :is(.shion-page-kicker,.yeonji-page-kicker,.chaewon-page-kicker,.hayeon-page-kicker){
+ color:var(--af-accent);font-size:10px;font-weight:650;letter-spacing:.18em;
+}
+/* Profile / same portrait location, two-column proportion and typographic scale. */
+html body .shion-profile-intro { display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:clamp(28px,6vw,90px);align-items:center; }
+html body .shion-profile-portrait { width:100%;min-width:0;margin:0; }
+html body .shion-profile-portrait img { display:block;width:100%;max-height:670px;aspect-ratio:3/4;
+ object-fit:cover;object-position:center 39%;border-radius:var(--af-radius); }
+html body .shion-profile-portrait figcaption { margin-top:12px;color:var(--af-muted);font-size:10px;letter-spacing:.13em; }
+html body .shion-profile-info { min-width:0; }
+html body .shion-profile-info h2 { font-size:clamp(35px,5vw,62px);font-weight:540;line-height:1.05;letter-spacing:-.065em; }
+html body .shion-profile-sub { margin:13px 0 35px;color:#bab4ba;font-size:13px;line-height:1.9; }
+html body .shion-fact-grid { gap:0; }
+html body .shion-profile nav[aria-label] { display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
+ -webkit-overflow-scrolling:touch; }
+html body .shion-profile nav[aria-label]::-webkit-scrollbar { display:none; }
+html body .shion-profile nav[aria-label] a { min-height:44px;display:inline-flex;align-items:center;justify-content:center;
+ border-radius:var(--af-radius);border-color:var(--af-line);background:rgba(255,255,255,.025);font-size:12px;white-space:nowrap; }
+html body .shion-profile nav[aria-label] a:hover { border-color:var(--af-accent); }
+html body .shion-profile [id^="profile-"] { scroll-margin-top:calc(var(--af-header-h) + 20px); }
+html body .shion-profile :is(details,article) { max-width:100%; }
+/* PHOTO / same browsing order, year-index and grid geometry. Existing filters stay intact. */
+html body .af-gallery-entry { display:flex;align-items:center;justify-content:space-between;gap:14px;
+ width:100%;min-height:68px;padding:14px 18px;margin:0 0 22px;
+ border:1px solid var(--af-line);border-radius:var(--af-radius);
+ background:var(--af-surface);color:var(--af-ink);text-decoration:none; }
+html body .af-gallery-entry:hover { border-color:var(--af-accent); }
+html body .af-gallery-entry > span:first-child { display:grid;gap:5px;min-width:0; }
+html body .af-gallery-entry small { display:block;color:var(--af-accent);font-size:10px;font-weight:650;letter-spacing:.16em; }
+html body .af-gallery-entry strong { font-size:16px;font-weight:560;letter-spacing:-.025em; }
+html body .af-gallery-entry > span:last-child { color:var(--af-accent);font-size:24px; }
+html body .af-photo-index { border-block:1px solid var(--af-line);padding:19px 0 14px;margin:10px 0 24px; }
+html body .af-photo-index-head { display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:15px; }
+html body .af-photo-index-head span { color:var(--af-accent);font-size:10px;font-weight:650;letter-spacing:.17em; }
+html body .af-photo-index-head p { margin:0;color:var(--af-muted);font-size:11px; }
+html body .af-photo-year-buttons { display:flex;gap:7px;overflow-x:auto;padding:1px 1px 6px;scrollbar-width:thin; }
+html body .af-photo-year-buttons button { min-height:42px;min-width:78px;flex:none;padding:9px 13px;
+ border:1px solid var(--af-line);border-radius:3px;background:#151824;color:#dde2f2;
+ font-size:12px;font-variant-numeric:tabular-nums; }
+html body .af-photo-year-buttons button.is-active { background:var(--af-accent);border-color:var(--af-accent);color:#111117; }
+html body .shion-photo-controls { margin-top:20px;padding:22px;border:1px solid var(--af-line);background:var(--af-surface);border-radius:var(--af-radius); }
+html body .shion-photo-grid { grid-template-columns:repeat(4,minmax(0,1fr));gap:23px 13px; }
+html body .shion-gallery-image { border-radius:var(--af-radius);background:var(--af-raised); }
+html body .shion-gallery-meta strong { font-weight:570; }
+/* Video: both source implementations share YEONJI's 16:9 / 3-column grid. */
+html body :is(.shion-film-controls,.yfilm-controls) { background:var(--af-surface);border:1px solid var(--af-line);border-radius:var(--af-radius);padding:22px; }
+html body :is(.shion-film-grid,.yfilm-grid) { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px 18px; }
+html body :is(.shion-film-poster,.yfilm-image) { aspect-ratio:16/9;background:#1d2334;border:1px solid var(--af-line);border-radius:var(--af-radius);overflow:hidden; }
+html body :is(.shion-film-poster,.yfilm-image) img { width:100%;height:100%;object-fit:cover; }
+html body :is(.shion-film-tabs,.yfilm-tabs) { gap:7px;overflow-x:auto;scrollbar-width:none; }
+html body :is(.shion-film-tabs,.yfilm-tabs) button { flex:none;min-height:42px;border-radius:var(--af-radius); }
+html body :is(.shion-film-tabs,.yfilm-tabs) button.is-active { background:var(--af-accent);color:#101014;border-color:var(--af-accent); }
+html body :is(.shion-film-search input,.shion-film-year select,.yfilm-search input,.yfilm-selects select) {
+ min-height:44px;background:var(--af-raised);color:var(--af-ink);border:1px solid var(--af-line);border-radius:var(--af-radius);
+}
+html body .yfilm-page { --yfilm-accent:var(--af-accent);--yfilm-border:var(--af-line); }
+html body .yfilm-modal-layer,html body .shion-film-dialog-backdrop { z-index:2147483000;overscroll-behavior:contain; }
+/* TIMELINE / OBSERVATION — typography and controls, never hide events. */
+html body :is(.shion-timeline-controls,.shion-search-box) { background:var(--af-surface);border:1px solid var(--af-line);border-radius:var(--af-radius); }
+html body .shion-timeline-entry { border-color:var(--af-line); }
+html body :is(.shion-top-four,.shion-podium-stage) { border-radius:8px; }
+/* Do not mutate event handlers, object visibility, poster or favorites logic via CSS. */
+html body .shion-subpage :is(button,a,input,select):focus-visible,
+html body .shion-site-header :is(button,a):focus-visible,
+html body .af-gallery-entry:focus-visible { outline:2px solid var(--af-accent);outline-offset:3px; }
+@media (hover:none) {
+ html body .shion-gallery-tile:hover .shion-gallery-image img,
+ html body .shion-film-card-main:hover .shion-film-poster img,
+ html body .yfilm-card-main:hover .yfilm-image img { transform:none; }
+}
+@media (max-width:900px) {
+ html body .shion-profile-intro { gap:28px; }
+ html body :is(.shion-film-grid,.yfilm-grid) { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ html body .shion-photo-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media (max-width:760px) {
+ :root { --af-header-h:68px; }
+ html body .shion-header-inner,html body .shion-content-width { width:min(calc(100% - 36px), var(--af-width)); }
+ html body .shion-hero-inner { width:min(calc(100% - 40px), var(--af-width)); }
+ html body .shion-profile-intro { grid-template-columns:1fr;align-items:stretch;gap:32px; }
+ html body .shion-profile-portrait img { width:100%;max-height:520px; }
+ html body .shion-photo-controls,html body :is(.shion-film-controls,.yfilm-controls) { padding:14px; }
+ html body .shion-photo-grid,html body :is(.shion-film-grid,.yfilm-grid) { grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 10px; }
+ html body .shion-feature-card { min-height:210px;padding:20px; }
+}
+@media (max-width:420px) {
+ html body .shion-brand-name { letter-spacing:.07em; }
+ html body .shion-film-search-row { grid-template-columns:minmax(0,1fr) 110px; }
+ html body .af-gallery-entry { padding:13px; }
+}
+@media (prefers-reduced-motion:reduce){
+ html body :is(.shion-gallery-image img,.shion-film-poster img,.yfilm-image img){ transition:none; }
+}
+
+/* YEONJI FILM five-part archive statistics in existing SHION/CHAEWON FILM views. */
+html body .af-film-summary { display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+ margin:30px 0 38px;border-top:1px solid var(--af-line);border-bottom:1px solid var(--af-line); }
+html body .af-film-summary>div { display:flex;align-items:center;justify-content:space-between;gap:10px;
+ min-width:0;padding:20px 14px;border-right:1px solid var(--af-line); }
+html body .af-film-summary>div:first-child { padding-left:0; }
+html body .af-film-summary>div:last-child { border-right:0; }
+html body .af-film-summary span { color:#9da0ae;font-size:10px;letter-spacing:.12em; }
+html body .af-film-summary strong { color:var(--af-ink);font-size:24px;font-weight:550;letter-spacing:-.045em; }
+@media(max-width:850px) {
+ html body .af-film-summary { grid-template-columns:repeat(3,minmax(0,1fr)); }
+ html body .af-film-summary>div { padding:13px 10px;flex-direction:column;align-items:flex-start;gap:8px;border-bottom:1px solid var(--af-line); }
+ html body .af-film-summary>div:nth-child(3) { border-right:0; }
+ html body .af-film-summary>div:nth-last-child(-n+2) { border-bottom:0; }
+ html body .af-film-summary>div:first-child { padding-left:0; }
+ html body .af-film-summary span { font-size:9px; }
+ html body .af-film-summary strong { font-size:23px; }
+}
